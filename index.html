@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+  </head>
+  <body style="overflow:hidden">
+<script type="text/javascript">
+    // 禁用双指放大
+    document.documentElement.addEventListener('touchstart', function (event) {
+        if (event.touches.length > 1) {
+            event.preventDefault();
+        }
+        }, {
+        passive: false
+    });
+     
+    // 禁用双击放大
+    var m_lastTouchEnd = 0;
+    document.documentElement.addEventListener('touchend', function (event) {
+        var now = Date.now();
+        if (now - m_lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        m_lastTouchEnd = now;
+    }, {
+        passive: false
+    });
+</script>
+    <script type="module">
+      import init, { start } from './pkg/facecat.js';
+
+      async function run_wasm() {
+          await init();
+          //start();
+      }
+
+      run_wasm();
+    </script>
+  </body>
+</html>
