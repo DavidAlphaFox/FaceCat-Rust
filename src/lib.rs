@@ -2100,6 +2100,32 @@ pub fn get_chart_value(chart:&mut FCChart, point:FCPoint)->f64{
     return 0.0;
 }
 
+pub fn get_candle_div_value(chart:&mut FCChart, point:FCPoint)->f64{
+    let candle_height = get_candle_div_height(chart);
+    let rate = (candle_height - chart.m_candle_padding_bottom - point.y) / (candle_height - chart.m_candle_padding_top - chart.m_candle_padding_bottom);
+    let mut c_min = chart.m_candle_min;
+    let mut c_max = chart.m_candle_max;
+    if(chart.m_vscale_type != "standard"){
+        if (c_max > 0.0) {
+            c_max = c_max.log10();
+        } else if (c_max < 0.0) {
+            c_max = -c_max.abs().log10();
+        }
+        if (c_min > 0.0) {
+            c_min = c_min.log10();
+        } else if (c_min < 0.0) {
+            c_min = -c_min.abs().log10();
+        }
+    }
+    let result = c_min + (c_max - c_min) * (rate as f64);;
+    if(chart.m_vscale_type != "standard"){
+        let b:f64 = 10.0;
+        return b.powf(result as f64);
+    }else{
+        return result;
+    }
+}
+
 pub fn select_lines(chart:&mut FCChart, mp:FCPoint, div_index:i32, datas:Vec<f64>, cur_index:i32)->bool{
 	let top_y = get_chart_y(chart, div_index, datas[cur_index as usize]);
     if (chart.m_hscale_pixel <= 1.0) {
@@ -2747,7 +2773,7 @@ pub fn mouse_move_chart(chart:&mut FCChart, first_touch:bool, second_touch:bool,
 	    let new_index = get_chart_index(chart, FCPoint{x:mp_x, y:mp_y});
 	    if(new_index >= 0 && new_index < data_len){
 	        let new_date = get_chart_date_by_index(chart, new_index);
-	        let new_value = get_chart_value(chart, FCPoint{x:mp_x, y:mp_y});
+	        let new_value = get_candle_div_value(chart, FCPoint{x:mp_x, y:mp_y});
             if (chart.m_select_plot_point == 0){
 	            chart.m_splot.m_key1 = new_date;
                 chart.m_splot.m_value1 = new_value;
@@ -2759,7 +2785,7 @@ pub fn mouse_move_chart(chart:&mut FCChart, first_touch:bool, second_touch:bool,
                 chart.m_splot.m_value3 = new_value;
 	        }
             else if (chart.m_start_move_plot){
-	            let bvalue = get_chart_value(chart, FCPoint{x:chart.m_mouse_down_position.x, y:chart.m_mouse_down_position.y});
+	            let bvalue = get_candle_div_value(chart, FCPoint{x:chart.m_mouse_down_position.x, y:chart.m_mouse_down_position.y});
 	            let bindex = get_chart_index(chart, FCPoint{x:chart.m_mouse_down_position.x, y:chart.m_mouse_down_position.y});
                 if (chart.m_splot.m_key1 > 0.0){
                     chart.m_splot.m_value1 = chart.m_splot.m_start_value1 + (new_value - bvalue);
@@ -4666,7 +4692,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
                     new_y =  s_y2 + (s_y1 - s_y2) * (1.0 - ranges[j as usize]);
                 }
                 M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), chart.m_left_vscale_width, new_y, chart.m_view.m_size.cx - chart.m_right_vscale_width, new_y);
-                let value = get_chart_value(chart, FCPoint{x:0.0, y:new_y});
+                let value = get_candle_div_value(chart, FCPoint{x:0.0, y:new_y});
                 let str = to_fixed(value, chart.m_candle_digit);
                 let t_size = M_PAINT.lock().unwrap().text_size(&context, str.clone(), chart.m_font.clone());
                 M_PAINT.lock().unwrap().draw_text(&context, str.clone(), chart.m_text_color.clone(), chart.m_font.clone(), chart.m_left_vscale_width + 2.0, new_y - t_size.cy / 2.0 - 2.0);
@@ -6263,7 +6289,7 @@ pub fn on_mouse_down(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vi
 								if(str_plot == "FiboTimezone"){
 									let f_index = touch_index;
 									let f_date = get_chart_date_by_index(&mut *v, f_index);
-									let y = get_chart_value(&mut *v, first_point.clone());
+									let y = get_candle_div_value(&mut *v, first_point.clone());
 									let mut new_plot:FCPlot = FCPlot::new();
 									new_plot.m_id = create_new_id();
 									if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
@@ -6282,7 +6308,7 @@ pub fn on_mouse_down(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vi
 									if (b_index >= 0) {
 										let f_date = get_chart_date_by_index(&mut *v, b_index);
 										let s_date = get_chart_date_by_index(&mut *v, e_index);
-										let y = get_chart_value(&mut *v, first_point.clone());
+										let y = get_candle_div_value(&mut *v, first_point.clone());
 										let mut new_plot:FCPlot = FCPlot::new();
 										new_plot.m_id = create_new_id();
 										if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
@@ -6305,7 +6331,7 @@ pub fn on_mouse_down(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vi
 									if (b_index >= 0) {
 										let f_date = get_chart_date_by_index(&mut *v, b_index);
 										let s_date = get_chart_date_by_index(&mut *v, e_index);
-										let y = get_chart_value(&mut *v, first_point.clone());
+										let y = get_candle_div_value(&mut *v, first_point.clone());
 										let mut new_plot:FCPlot = FCPlot::new();
 										new_plot.m_id = create_new_id();
 										if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
@@ -6613,7 +6639,7 @@ pub fn on_touch_start(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, v
 								if(str_plot == "FiboTimezone"){
 									let f_index = touch_index;
 									let f_date = get_chart_date_by_index(&mut *v, f_index);
-									let y = get_chart_value(&mut *v, first_point.clone());
+									let y = get_candle_div_value(&mut *v, first_point.clone());
 									let mut new_plot:FCPlot = FCPlot::new();
 									new_plot.m_id = create_new_id();
 									if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
@@ -6632,7 +6658,7 @@ pub fn on_touch_start(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, v
 									if (b_index >= 0) {
 										let f_date = get_chart_date_by_index(&mut *v, b_index);
 										let s_date = get_chart_date_by_index(&mut *v, e_index);
-										let y = get_chart_value(&mut *v, first_point.clone());
+										let y = get_candle_div_value(&mut *v, first_point.clone());
 										let mut new_plot:FCPlot = FCPlot::new();
 										new_plot.m_id = create_new_id();
 										if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
@@ -6655,7 +6681,7 @@ pub fn on_touch_start(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, v
 									if (b_index >= 0) {
 										let f_date = get_chart_date_by_index(&mut *v, b_index);
 										let s_date = get_chart_date_by_index(&mut *v, e_index);
-										let y = get_chart_value(&mut *v, first_point.clone());
+										let y = get_candle_div_value(&mut *v, first_point.clone());
 										let mut new_plot:FCPlot = FCPlot::new();
 										new_plot.m_id = create_new_id();
 										if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
