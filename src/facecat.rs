@@ -6035,7 +6035,7 @@ pub fn mouse_up_grid(grid:&mut FCGrid, first_touch:bool, second_touch:bool, firs
 			c_top = c_top + grid.m_row_height;
 		}
 	}
-	if (grid.m_header_height > 0.0) {
+	if (grid.m_header_height > 0.0 && first_point.y <= grid.m_header_height) {
 		for i in 0..grid.m_columns.len(){
 			let grid_column = (&grid.m_columns[i]).clone();
 			if (grid_column.m_visible) {
