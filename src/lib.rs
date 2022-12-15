@@ -30,6 +30,659 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 #[macro_use]
 extern crate lazy_static; 
 include!("facecat.rs");
+include!("grid.rs");
+include!("div.rs");
+include!("tab.rs");
+include!("layout.rs");
+include!("split.rs");
+include!("btn.rs");
+include!("chart.rs");
+include!("input.rs");
+
+#[wasm_bindgen]
+extern {
+    fn alert(s: &str);
+}
+
+#[wasm_bindgen]
+extern {
+	#[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+}
+
+pub fn on_paint(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, clip_rect:FCRect){
+	if(view.m_type == "chart"){
+		M_PAINT.lock().unwrap().fill_rect(&context, view.m_back_color.clone(), 0.0, 0.0, view.m_size.cx, view.m_size.cy);
+		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				reset_chart_visible_record(&mut *v);
+				check_chart_last_visible_index(&mut *v);
+				calculate_chart_max_min(&mut *v);
+				draw_chart_scale(&context, &mut *v, clip_rect.clone());
+				draw_chart_stock(&context, &mut *v, clip_rect.clone());
+				draw_chart_plot(&context, &mut *v);
+				draw_chart_cross_line(&context, &mut *v, clip_rect.clone());
+				break;
+			}
+		}
+	}else if(view.m_type == "grid"){
+		M_PAINT.lock().unwrap().fill_rect(&context, view.m_back_color.clone(), 0.0, 0.0, view.m_size.cx, view.m_size.cy);
+		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				draw_grid(&context, &mut *v, clip_rect.clone());
+				break;
+			}
+		}		
+	}
+	else if(view.m_type == "radiobutton"){
+		for (id, v) in M_RADIO_BUTTON_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				draw_radio_button(&context, &mut *v, clip_rect.clone());
+				break;
+			}
+		}		
+	}
+	else if(view.m_type == "checkbox"){
+		for (id, v) in M_CHECK_BOX_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				draw_check_box(&context, &mut *v, clip_rect.clone());
+				break;
+			}
+		}	
+	}
+	else if(view.m_type == "tab" || view.m_type == "tabpage" || view.m_type == "layout"){
+		let mut cview = view.clone();
+		draw_div(&context, &mut cview, clip_rect.clone());
+	}
+	else if(view.m_type == "label"){
+		if(view.m_text_color != "none"){
+			M_PAINT.lock().unwrap().draw_text(&context, view.m_text.clone(), view.m_text_color.clone(), view.m_font.clone(), 1.0, view.m_size.cy / 2.0 + 1.0);
+		}
+	}
+	else{
+		let mut cview = view.clone();
+		draw_button(&context, &mut cview, clip_rect.clone());
+	}
+}
+
+pub fn on_paint_border(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, clip_rect:FCRect){
+	if(view.m_type == "grid"){
+		M_PAINT.lock().unwrap().draw_rect(&context, view.m_border_color.clone(), 1.0, Vec::new(), 0.0, 0.0, view.m_size.cx, view.m_size.cy);
+		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				draw_grid_scroll_bar(&context, &mut *v, clip_rect.clone());
+				break;
+			}
+		}
+		
+	}else if(view.m_type == "div" || view.m_type == "layout"){
+		let mut div = view.clone();
+		draw_div_border(&context, &mut div, clip_rect.clone());
+		draw_div_scroll_bar(&context, &mut div, clip_rect.clone());
+	}else if(view.m_type == "tab" || view.m_type == "tabpage"){
+		let mut cview = view.clone();
+		draw_div_border(&context, &mut cview, clip_rect.clone());
+	}
+}
+
+pub fn on_mouse_down(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, mp:FCPoint, buttons:i32, clicks:i32, delta:i32){
+	if(view.m_type == "chart"){
+		let mut first_touch:bool = false;
+		let second_touch:bool = false;
+		let first_point = mp.clone();
+		let second_point = mp.clone();
+		if(buttons == 1){
+			first_touch = true;
+		}
+		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				(*v).m_mouse_position = first_point.clone();
+				(*v).m_mouse_down_position = first_point.clone();
+				(*v).m_cross_stop_index = get_chart_index(&mut *v, first_point.clone());
+				unsafe{
+					if(M_ADDING_PLOT != -1){
+						if (first_point.y < get_candle_div_height(&mut *v)){
+							let touch_index = get_chart_index(&mut *v, first_point.clone());
+							if (touch_index >= (*v).m_first_visible_index && touch_index <= (*v).m_last_visible_index){
+								let mut plots:Vec<String> = Vec::new();
+								plots.push("Line".to_string());
+								plots.push("Segment".to_string());
+								plots.push("Ray".to_string());
+								plots.push("Triangle".to_string());
+								plots.push("Rect".to_string());
+								plots.push("Cycle".to_string());
+								plots.push("CircumCycle".to_string());
+								plots.push("Ellipse".to_string());
+								plots.push("AngleLine".to_string());
+								plots.push("ParalleGram".to_string());
+								plots.push("SpeedResist".to_string());
+								plots.push("FiboFanline".to_string());
+								plots.push("FiboTimezone".to_string());
+								plots.push("Percent".to_string());
+								plots.push("BoxLine".to_string());
+								plots.push("TironeLevels".to_string());
+								plots.push("Parallel".to_string());
+								plots.push("GoldenRatio".to_string());
+								plots.push("LRLine".to_string());
+								plots.push("LRChannel".to_string());
+								plots.push("LRBand".to_string());
+								
+								let str_plot = plots[M_ADDING_PLOT as usize].clone();
+								if(str_plot == "FiboTimezone"){
+									let f_index = touch_index;
+									let f_date = get_chart_date_by_index(&mut *v, f_index);
+									let y = get_candle_div_value(&mut *v, first_point.clone());
+									let mut new_plot:FCPlot = FCPlot::new();
+									new_plot.m_id = create_new_id();
+									if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+										new_plot.m_line_color = "rgb(0,0,0)".to_string();
+										new_plot.m_point_color = "rgba(0,0,0,0.5)".to_string();
+									}
+									new_plot.m_key1 = f_date;
+									new_plot.m_value1 = y;
+									new_plot.m_plot_type = str_plot;
+									(*v).m_plots.push(new_plot);
+									(*v).m_splot = select_plot(&mut *v, first_point.clone());
+								}
+								else if (str_plot == "Triangle" || str_plot == "CircumCycle" || str_plot == "ParalleGram" || str_plot == "AngleLine" || str_plot == "Parallel" || str_plot == "SymmetricTriangle"){
+									let e_index = touch_index;
+									let b_index = e_index - 5;
+									if (b_index >= 0) {
+										let f_date = get_chart_date_by_index(&mut *v, b_index);
+										let s_date = get_chart_date_by_index(&mut *v, e_index);
+										let y = get_candle_div_value(&mut *v, first_point.clone());
+										let mut new_plot:FCPlot = FCPlot::new();
+										new_plot.m_id = create_new_id();
+										if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+											new_plot.m_line_color = "rgb(0,0,0)".to_string();
+											new_plot.m_point_color = "rgba(0,0,0,0.5)".to_string();
+										}
+										new_plot.m_key1 = f_date;
+										new_plot.m_value1 = y;
+										new_plot.m_key2 = s_date;
+										new_plot.m_value2 = y;
+										new_plot.m_key3 = s_date;
+										new_plot.m_value3 = (*v).m_candle_min + ((*v).m_candle_max - (*v).m_candle_min) / 2.0;
+										new_plot.m_plot_type = str_plot;
+										(*v).m_plots.push(new_plot);
+										(*v).m_splot = select_plot(&mut *v, first_point.clone());
+									}
+								}else{
+									let e_index = touch_index;
+									let b_index = e_index - 5;
+									if (b_index >= 0) {
+										let f_date = get_chart_date_by_index(&mut *v, b_index);
+										let s_date = get_chart_date_by_index(&mut *v, e_index);
+										let y = get_candle_div_value(&mut *v, first_point.clone());
+										let mut new_plot:FCPlot = FCPlot::new();
+										new_plot.m_id = create_new_id();
+										if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+											new_plot.m_line_color = "rgb(0,0,0)".to_string();
+											new_plot.m_point_color = "rgba(0,0,0,0.5)".to_string();
+										}
+										new_plot.m_key1 = f_date;
+										new_plot.m_value1 = y;
+										new_plot.m_key2 = s_date;
+										new_plot.m_value2 = y;
+										new_plot.m_plot_type = str_plot;
+										(*v).m_plots.push(new_plot);
+										(*v).m_splot = select_plot(&mut *v, first_point.clone());
+									}
+								}
+							}
+						}
+						M_ADDING_PLOT = -1;
+					}else{
+						(*v).m_splot = select_plot(&mut *v, mp.clone());
+						if((*v).m_splot.m_id <= 0){
+							select_shape(&mut *v, mp.clone());
+						}
+					}
+				}
+				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
+				break;
+			}
+		}
+		invalidate_view(context, view.clone());
+    }
+	else if(view.m_type == "grid"){
+		let mut first_touch:bool = false;
+		let second_touch:bool = false;
+		let first_point = mp.clone();
+		let second_point = mp.clone();
+		if(buttons == 1){
+			first_touch = true;
+		}
+		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				mouse_down_grid(&mut *v, first_touch, second_touch, first_point.clone(), second_point.clone());
+				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
+				break;
+			}
+		}
+		invalidate_view(context, view.clone());
+	}
+	else if(view.m_type == "div" || view.m_type == "layout"){
+		let mut first_touch:bool = false;
+		let second_touch:bool = false;
+		let first_point = mp.clone();
+		let second_point = mp.clone();
+		if(buttons == 1){
+			first_touch = true;
+		}
+		let mut div = view.clone();
+		mouse_down_div(&mut div, first_touch, second_touch, first_point, second_point);
+		M_VIEW_MAP.lock().unwrap().insert(div.m_id, div.clone());
+		invalidate_view(context, view.clone());
+	}
+}
+
+pub fn on_mouse_move(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, mp:FCPoint, buttons:i32, clicks:i32, delta:i32){
+	if(view.m_type == "chart"){
+		let mut first_touch:bool = false;
+		let second_touch:bool = false;
+		let first_point = mp.clone();
+		let second_point = mp.clone();
+		if(buttons == 1){
+			first_touch = true;
+		}
+		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				(*v).m_mouse_position = mp.clone();
+				(*v).m_cross_stop_index = get_chart_index(&mut *v, mp.clone());
+				mouse_move_chart(&mut (*v), first_touch, second_touch, first_point.clone(), second_point.clone());
+				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
+				break;
+			}
+		}
+		invalidate_view(context, view.clone());
+    }else if(view.m_type == "grid"){
+		let mut first_touch:bool = false;
+		let second_touch:bool = false;
+		let first_point = mp.clone();
+		let second_point = mp.clone();
+		if(buttons == 1){
+			first_touch = true;
+		}
+		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				mouse_move_grid(&mut *v, first_touch, second_touch, first_point.clone(), second_point.clone());
+				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
+				break;
+			}
+		}
+		if(buttons == 1){
+			invalidate_view(context, view.clone());
+		}
+	}
+	else if(view.m_type == "div" || view.m_type == "layout"){
+		let mut first_touch:bool = false;
+		let second_touch:bool = false;
+		let first_point = mp.clone();
+		let second_point = mp.clone();
+		if(buttons == 1){
+			first_touch = true;
+		}
+		let mut div = view.clone();
+		mouse_move_div(&mut div, first_touch, second_touch, first_point, second_point);
+		M_VIEW_MAP.lock().unwrap().insert(div.m_id, div.clone());
+		if(buttons == 1){
+			invalidate_view(context, view.clone());
+		}
+	}
+}
+
+pub fn on_mouse_up(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, mp:FCPoint, buttons:i32, clicks:i32, delta:i32){
+	if(view.m_type == "chart"){
+		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				(*v).m_first_touch_index_cache = -1;
+				(*v).m_second_touch_index_cache = -1;
+				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
+				break;
+			}
+		}
+		invalidate_view(context, view.clone());
+    }else if(view.m_type == "grid"){
+		let mut first_touch:bool = false;
+		let second_touch:bool = false;
+		let first_point = mp.clone();
+		let second_point = mp.clone();
+		if(buttons == 1){
+			first_touch = true;
+		}
+		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				mouse_up_grid(&mut *v, first_touch, second_touch, first_point.clone(), second_point.clone());
+				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
+				break;
+			}
+		}
+		invalidate_view(context, view.clone());
+	}else if(view.m_type == "div" || view.m_type == "layout"){
+		let mut first_touch:bool = false;
+		let second_touch:bool = false;
+		let first_point = mp.clone();
+		let second_point = mp.clone();
+		if(buttons == 1){
+			first_touch = true;
+		}
+		let mut div = view.clone();
+		mouse_up_div(&mut div, first_touch, second_touch, first_point, second_point);
+		M_VIEW_MAP.lock().unwrap().insert(div.m_id, div.clone());
+		invalidate_view(context, view.clone());
+	}else{
+		invalidate_view(context, view.clone());
+	}
+}
+
+pub fn on_click(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, mp:FCPoint, buttons:i32, clicks:i32, delta:i32){
+	if(view.m_type == "plot"){
+		unsafe{
+			M_ADDING_PLOT = view.m_name.parse::<i32>().unwrap();
+		}
+	}
+	else if(view.m_type == "indicator"){
+		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
+			(*v).m_view = view.clone();
+			if (view.m_text == "BOLL" || view.m_text == "MA") {
+				(*v).m_main_indicator = view.m_text.clone();
+			} else {
+				(*v).m_show_indicator = view.m_text.clone();
+			}
+			calc_chart_indicator(&mut *v);
+			calculate_chart_max_min(&mut *v);
+			M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
+		}
+		invalidate(context);
+	}
+	else if(view.m_type == "checkbox"){
+		for (id, v) in M_CHECK_BOX_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				click_check_box(&mut *v, mp.clone());
+				break;
+			}
+		}
+		invalidate_view(context, view.clone());
+	}else if(view.m_type == "radiobutton"){
+		for (id, v) in M_RADIO_BUTTON_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				click_radio_button(&mut *v, mp.clone());
+				break;
+			}
+		}
+		invalidate_view(context, view.clone());
+	}
+	else if(view.m_type == "headerbutton"){
+		let mut is_this_tab:bool = false;
+		for (id, v) in M_TAB_MAP.lock().unwrap().iter_mut(){
+			for i in 0..(*v).m_tab_pages.len(){
+				let tp = (*v).m_tab_pages[i].clone();
+				if(tp.m_header_button.m_id == view.m_id){
+					is_this_tab = true;
+					break;
+				}
+			}
+			if(is_this_tab){
+				for j in 0..(*v).m_tab_pages.len(){
+					let mut tp = (*v).m_tab_pages[j].clone();
+					if(tp.m_header_button.m_id == view.m_id){
+						tp.m_view.m_visible = true;
+					}else{
+						tp.m_view.m_visible = false;
+					}
+					M_VIEW_MAP.lock().unwrap().insert(tp.m_view.m_id, tp.m_view.clone());
+					(*v).m_tab_pages[j] = tp;
+				}
+				update_tab_layout(&mut *v);
+				invalidate_view(context, (*v).m_view.clone());
+				break;
+			}
+		}
+	}
+}
+
+pub fn on_mouse_wheel(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, mp:FCPoint, buttons:i32, clicks:i32, delta:i32){
+	if(view.m_type == "chart"){
+		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				if(delta > 0){
+					zoom_out_chart(&mut *v);
+				}else if(delta < 0){
+					zoom_in_chart(&mut *v);
+				}
+				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
+				break;
+			}
+		}
+		invalidate_view(context, view.clone());
+    }else if(view.m_type == "grid"){
+		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				mouse_wheel_grid(&mut *v, delta);
+				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
+				break;
+			}
+		}
+		invalidate_view(context, view.clone());
+    }
+    else if(view.m_type == "div" || view.m_type == "layout"){
+		let mut div = view.clone();
+		mouse_wheel_div(&mut div, delta);
+		M_VIEW_MAP.lock().unwrap().insert(div.m_id, div.clone());
+		invalidate_view(context, view.clone());
+    }
+}
+
+pub fn on_touch_start(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, first_touch:bool, second_touch:bool, first_point:FCPoint, second_point:FCPoint){
+	if(view.m_type == "chart"){
+		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				(*v).m_mouse_position = first_point.clone();
+				(*v).m_mouse_down_position = first_point.clone();
+				(*v).m_cross_stop_index = get_chart_index(&mut *v, first_point.clone());
+				unsafe{
+					if(M_ADDING_PLOT != -1){
+						if (first_point.y < get_candle_div_height(&mut *v)){
+							let touch_index = get_chart_index(&mut *v, first_point.clone());
+							if (touch_index >= (*v).m_first_visible_index && touch_index <= (*v).m_last_visible_index){
+								let mut plots:Vec<String> = Vec::new();
+								plots.push("Line".to_string());
+								plots.push("Segment".to_string());
+								plots.push("Ray".to_string());
+								plots.push("Triangle".to_string());
+								plots.push("Rect".to_string());
+								plots.push("Cycle".to_string());
+								plots.push("CircumCycle".to_string());
+								plots.push("Ellipse".to_string());
+								plots.push("AngleLine".to_string());
+								plots.push("ParalleGram".to_string());
+								plots.push("SpeedResist".to_string());
+								plots.push("FiboFanline".to_string());
+								plots.push("FiboTimezone".to_string());
+								plots.push("Percent".to_string());
+								plots.push("BoxLine".to_string());
+								plots.push("TironeLevels".to_string());
+								plots.push("Parallel".to_string());
+								plots.push("GoldenRatio".to_string());
+								plots.push("LRLine".to_string());
+								plots.push("LRChannel".to_string());
+								plots.push("LRBand".to_string());
+								
+								let str_plot = plots[M_ADDING_PLOT as usize].clone();
+								if(str_plot == "FiboTimezone"){
+									let f_index = touch_index;
+									let f_date = get_chart_date_by_index(&mut *v, f_index);
+									let y = get_candle_div_value(&mut *v, first_point.clone());
+									let mut new_plot:FCPlot = FCPlot::new();
+									new_plot.m_id = create_new_id();
+									if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+										new_plot.m_line_color = "rgb(0,0,0)".to_string();
+										new_plot.m_point_color = "rgba(0,0,0,0.5)".to_string();
+									}
+									new_plot.m_key1 = f_date;
+									new_plot.m_value1 = y;
+									new_plot.m_plot_type = str_plot;
+									(*v).m_plots.push(new_plot);
+									(*v).m_splot = select_plot(&mut *v, first_point.clone());
+								}
+								else if (str_plot == "Triangle" || str_plot == "CircumCycle" || str_plot == "ParalleGram" || str_plot == "AngleLine" || str_plot == "Parallel" || str_plot == "SymmetricTriangle"){
+									let e_index = touch_index;
+									let b_index = e_index - 5;
+									if (b_index >= 0) {
+										let f_date = get_chart_date_by_index(&mut *v, b_index);
+										let s_date = get_chart_date_by_index(&mut *v, e_index);
+										let y = get_candle_div_value(&mut *v, first_point.clone());
+										let mut new_plot:FCPlot = FCPlot::new();
+										new_plot.m_id = create_new_id();
+										if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+											new_plot.m_line_color = "rgb(0,0,0)".to_string();
+											new_plot.m_point_color = "rgba(0,0,0,0.5)".to_string();
+										}
+										new_plot.m_key1 = f_date;
+										new_plot.m_value1 = y;
+										new_plot.m_key2 = s_date;
+										new_plot.m_value2 = y;
+										new_plot.m_key3 = s_date;
+										new_plot.m_value3 = (*v).m_candle_min + ((*v).m_candle_max - (*v).m_candle_min) / 2.0;
+										new_plot.m_plot_type = str_plot;
+										(*v).m_plots.push(new_plot);
+										(*v).m_splot = select_plot(&mut *v, first_point.clone());
+									}
+								}else{
+									let e_index = touch_index;
+									let b_index = e_index - 5;
+									if (b_index >= 0) {
+										let f_date = get_chart_date_by_index(&mut *v, b_index);
+										let s_date = get_chart_date_by_index(&mut *v, e_index);
+										let y = get_candle_div_value(&mut *v, first_point.clone());
+										let mut new_plot:FCPlot = FCPlot::new();
+										new_plot.m_id = create_new_id();
+										if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+											new_plot.m_line_color = "rgb(0,0,0)".to_string();
+											new_plot.m_point_color = "rgba(0,0,0,0.5)".to_string();
+										}
+										new_plot.m_key1 = f_date;
+										new_plot.m_value1 = y;
+										new_plot.m_key2 = s_date;
+										new_plot.m_value2 = y;
+										new_plot.m_plot_type = str_plot;
+										(*v).m_plots.push(new_plot);
+										(*v).m_splot = select_plot(&mut *v, first_point.clone());
+									}
+								}
+							}
+						}
+						M_ADDING_PLOT = -1;
+					}else{
+						(*v).m_splot = select_plot(&mut *v, first_point.clone());
+						if((*v).m_splot.m_id <= 0){
+							select_shape(&mut *v, first_point.clone());
+						}
+					}
+				}
+				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
+				break;
+			}
+		}
+		invalidate_view(context, view.clone());
+    }
+	else if(view.m_type == "grid"){
+		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				mouse_down_grid(&mut *v, first_touch, second_touch, first_point.clone(), second_point.clone());
+				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
+				break;
+			}
+		}
+		invalidate_view(context, view.clone());
+	}
+	else if(view.m_type == "div" || view.m_type == "layout"){
+		let mut div = view.clone();
+		mouse_down_div(&mut div, first_touch, second_touch, first_point.clone(), second_point.clone());
+		M_VIEW_MAP.lock().unwrap().insert(div.m_id, div.clone());
+		invalidate_view(context, view.clone());
+	}
+}
+
+pub fn on_touch_move(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, first_touch:bool, second_touch:bool, first_point:FCPoint, second_point:FCPoint){
+	if(view.m_type == "chart"){
+		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				(*v).m_mouse_position = first_point.clone();
+				(*v).m_cross_stop_index = get_chart_index(&mut *v, first_point.clone());
+				mouse_move_chart(&mut *v, first_touch, second_touch, first_point.clone(), second_point.clone());
+				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
+				break;
+			}
+		}
+		invalidate_view(context, view.clone());
+    }else if(view.m_type == "grid"){
+		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				mouse_move_grid(&mut *v, first_touch, second_touch, first_point.clone(), second_point.clone());
+				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
+				break;
+			}
+		}
+		invalidate_view(context, view.clone());
+	}
+	else if(view.m_type == "div" || view.m_type == "layout"){
+		let mut div = view.clone();
+		mouse_move_div(&mut div, first_touch, second_touch, first_point.clone(), second_point.clone());
+		M_VIEW_MAP.lock().unwrap().insert(div.m_id, div.clone());
+		invalidate_view(context, view.clone());
+	}
+}
+
+pub fn on_touch_end(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, first_touch:bool, second_touch:bool, first_point:FCPoint, second_point:FCPoint){
+	if(view.m_type == "chart"){
+		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				(*v).m_first_touch_index_cache = -1;
+				(*v).m_second_touch_index_cache = -1;
+				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
+				break;
+			}
+		}
+		invalidate_view(context, view.clone());
+    }else if(view.m_type == "grid"){;
+		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
+			if(view.m_id == *id){
+				(*v).m_view = view.clone();
+				mouse_up_grid(&mut *v, first_touch, second_touch, first_point.clone(), second_point.clone());
+				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
+				break;
+			}
+		}
+		invalidate_view(context, view.clone());
+	}else if(view.m_type == "div" || view.m_type == "layout"){
+		let mut div = view.clone();
+		mouse_up_div(&mut div, first_touch, second_touch, first_point.clone(), second_point.clone());
+		M_VIEW_MAP.lock().unwrap().insert(div.m_id, div.clone());
+		invalidate_view(context, view.clone());
+	}else{
+		invalidate_view(context, view.clone());
+	}
+}
 
 pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView){
 	let node_name = element.node_name().to_lowercase();
