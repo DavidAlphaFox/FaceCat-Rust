@@ -89,18 +89,22 @@ pub struct FCChart{
     m_vol_min : f64,
     m_ind_max : f64,
     m_ind_min : f64, 
+    m_ind_max2 : f64,
+    m_ind_min2 : f64, 
     m_cross_tip_color : String, 
     m_cross_line_color : String,
 	m_font : String, 
     m_candle_digit : i32, 
     m_vol_digit : i32,
     m_ind_digit : i32, 
+    m_ind_digit2 : i32, 
     m_last_record_is_visible : bool, 
     m_last_visible_key : f64, 
     m_auto_fill_hscale : bool, 
     m_candle_div_percent : f64,
     m_vol_div_percent : f64,
     m_ind_div_percent : f64, 
+    m_ind_div_percent2 : f64, 
     m_show_indicator : String,
     m_main_indicator: String,
     m_grid_color : String,
@@ -112,6 +116,8 @@ pub struct FCChart{
     m_vol_padding_bottom : f32,
     m_ind_padding_top : f32, 
     m_ind_padding_bottom : f32, 
+    m_ind_padding_top2 : f32, 
+    m_ind_padding_bottom2 : f32, 
     m_vscale_distance : f32,
     m_vscale_type : String,
 	m_indicator_colors : Vec<String>, 
@@ -237,18 +243,22 @@ impl FCChart{
 			m_vol_min : 0.0,
 			m_ind_max : 0.0,
 			m_ind_min : 0.0,
+            m_ind_max2 : 0.0,
+			m_ind_min2 : 0.0,
 			m_cross_tip_color : String::from("rgb(50,50,50)"), 
 			m_cross_line_color : String::from("rgb(100,100,100)"), 
 			m_font : String::from("12px Arial"), 
 			m_candle_digit : 2, 
 			m_vol_digit : 0,
 			m_ind_digit : 2, 
+            m_ind_digit2 : 2, 
 			m_last_record_is_visible : true, 
 			m_last_visible_key : 0.0, 
 			m_auto_fill_hscale : false, 
 			m_candle_div_percent : 0.5,
 			m_vol_div_percent : 0.2,
 			m_ind_div_percent : 0.3, 
+            m_ind_div_percent2 : 0.0, 
 			m_show_indicator : String::from("MACD"), 
 			m_main_indicator : String::from("MA"), 
 			m_grid_color : String::from("rgba(100,100,100,0.5)"), 
@@ -260,6 +270,8 @@ impl FCChart{
 			m_vol_padding_bottom : 0.0,
 			m_ind_padding_top : 20.0, 
 			m_ind_padding_bottom : 20.0, 
+            m_ind_padding_top2 : 20.0, 
+			m_ind_padding_bottom2 : 20.0, 
 			m_vscale_distance : 35.0,
 			m_vscale_type : String::from("standard"), 
 			m_indicator_colors : indicator_colors, 
@@ -653,6 +665,15 @@ pub fn get_ind_div_height(chart:&mut FCChart)->f32{
 	}
 }
 
+pub fn get_ind_div_height2(chart:&mut FCChart)->f32{
+	let height = chart.m_view.m_size.cy - chart.m_hscale_height;
+	if(height > 0.0){
+		return height * (chart.m_ind_div_percent2 as f32);
+	}else{
+		return 0.0;
+	}
+}
+
 pub fn get_chart_workarea_width(chart:&mut FCChart)->f32{
 	return chart.m_view.m_size.cx - chart.m_left_vscale_width - chart.m_right_vscale_width - chart.m_right_space;
 }
@@ -857,6 +878,18 @@ pub fn get_chart_y(chart:&mut FCChart, div_index:i32, value:f64)->f32{
             return 0.0;
         }
     }
+    else if(div_index == 3){
+        if(chart.m_ind_max2 > chart.m_ind_min2){
+            let rate = (value - chart.m_ind_min2) / (chart.m_ind_max2 - chart.m_ind_min2);
+            let candle_height = get_candle_div_height(chart);
+            let vol_height = get_vol_div_height(chart);
+            let ind_height = get_ind_div_height(chart);
+            let ind_height2 = get_ind_div_height2(chart);
+            return candle_height + vol_height + ind_height + ind_height2 - chart.m_ind_padding_bottom2 - (ind_height2 - chart.m_ind_padding_top2 - chart.m_ind_padding_bottom2) * (rate as f32);
+        }else{
+            return 0.0;
+        }
+    }
     return 0.0;
 }
 
@@ -864,6 +897,7 @@ pub fn get_chart_value(chart:&mut FCChart, point:FCPoint)->f64{
     let candle_height = get_candle_div_height(chart);
     let vol_height = get_vol_div_height(chart);
     let ind_height = get_ind_div_height(chart);
+    let ind_height2 = get_ind_div_height2(chart);
     if(point.y <= candle_height){
         let rate = (candle_height - chart.m_candle_padding_bottom - point.y) / (candle_height - chart.m_candle_padding_top - chart.m_candle_padding_bottom);
         let mut c_min = chart.m_candle_min;
@@ -894,6 +928,9 @@ pub fn get_chart_value(chart:&mut FCChart, point:FCPoint)->f64{
     }else if(point.y > candle_height + vol_height && point.y <= candle_height + vol_height + ind_height){
         let rate = (ind_height - chart.m_ind_padding_bottom - (point.y - candle_height - vol_height)) / (ind_height - chart.m_ind_padding_top - chart.m_ind_padding_bottom);
         return chart.m_ind_min + (chart.m_ind_max - chart.m_ind_min) * (rate as f64);
+    }else if(point.y > candle_height + vol_height + ind_height && point.y <= candle_height + vol_height + ind_height + ind_height2){
+        let rate = (ind_height2 - chart.m_ind_padding_bottom2 - (point.y - candle_height - vol_height - ind_height)) / (ind_height2 - chart.m_ind_padding_top2 - chart.m_ind_padding_bottom2);
+        return chart.m_ind_min2 + (chart.m_ind_max2 - chart.m_ind_min2) * (rate as f64);
     }
     return 0.0;
 }
