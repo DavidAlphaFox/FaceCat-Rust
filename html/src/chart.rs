@@ -3551,11 +3551,15 @@ pub fn draw_chart_scale(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
     let candle_div_height = get_candle_div_height(chart);
     let vol_div_height = get_vol_div_height(chart);
     let ind_div_height = get_ind_div_height(chart);
+    let ind_div_height2 = get_ind_div_height2(chart);
     if(vol_div_height > 0.0){
         M_PAINT.lock().unwrap().draw_line(&context, chart.m_scale_color.clone(), chart.m_line_width, Vec::new(), chart.m_left_vscale_width, candle_div_height, chart.m_view.m_size.cx - chart.m_right_vscale_width, candle_div_height);
     }
     if(ind_div_height > 0.0){
         M_PAINT.lock().unwrap().draw_line(&context, chart.m_scale_color.clone(), chart.m_line_width, Vec::new(), chart.m_left_vscale_width, candle_div_height + vol_div_height, chart.m_view.m_size.cx - chart.m_right_vscale_width, candle_div_height + vol_div_height);
+    }
+    if(ind_div_height2 > 0.0){
+        M_PAINT.lock().unwrap().draw_line(&context, chart.m_scale_color.clone(), chart.m_line_width, Vec::new(), chart.m_left_vscale_width, candle_div_height + vol_div_height + ind_div_height, chart.m_view.m_size.cx - chart.m_right_vscale_width, candle_div_height + vol_div_height + ind_div_height);
     }
     let data_len = chart.m_data.len() as i32;
     if(data_len > 0) {
