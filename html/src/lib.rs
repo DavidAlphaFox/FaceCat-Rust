@@ -725,6 +725,13 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 				else if(atr_value == "tabpage"){
 					view.m_type = "tabpage".to_string();
 				}
+				else if(atr_value == "radio"){
+					view.m_type = "radiobutton".to_string();
+				}else if(atr_value == "checkbox"){
+					view.m_type = "checkbox".to_string();
+				}else if(atr_value == "button"){
+					view.m_type = "button".to_string();
+				}
 				else{
 					view.m_type = "div".to_string();
 					view.m_show_vscrollbar = true;
@@ -732,7 +739,7 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 					view.m_allow_drag_scroll = true;
 				}
 			}
-		}else if(node_name == "input" || node_name == "text"){
+		}else if(node_name == "input"){
 			if(atr_name == "type"){
 				if(atr_value == "radio"){
 					view.m_type = "radiobutton".to_string();
