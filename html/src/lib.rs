@@ -708,7 +708,7 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 		let atr_name = attribute.name().to_lowercase();
 		let atr_value = attribute.value();
 		set_view_attribute(&mut view, atr_name.clone(), atr_value.clone());
-		if(node_name == "div"){
+		if(node_name == "div" || node_name == "view"){
 			if(atr_name == "type"){
 				if(atr_value == "splitlayout"){
 					view.m_type = "split".to_string();
@@ -732,7 +732,7 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 					view.m_allow_drag_scroll = true;
 				}
 			}
-		}else if(node_name == "input"){
+		}else if(node_name == "input" || node_name == "text"){
 			if(atr_name == "type"){
 				if(atr_value == "radio"){
 					view.m_type = "radiobutton".to_string();
