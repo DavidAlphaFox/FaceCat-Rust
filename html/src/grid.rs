@@ -135,7 +135,7 @@ pub fn get_grid_content_height(grid:&mut FCGrid)->f32{
 pub fn draw_grid_scroll_bar(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, grid:&mut FCGrid, clip_rect:FCRect){
 	if (grid.m_view.m_show_hscrollbar) {
 		let content_width = get_grid_content_width(grid);
-		if (content_width > grid.m_view.m_size.cx) {
+		if (content_width > grid.m_view.m_size.cx - grid.m_view.m_scroll_size) {
 			let s_left = grid.m_view.m_scroll_h / content_width * grid.m_view.m_size.cx;
 			let mut s_right = (grid.m_view.m_scroll_h + grid.m_view.m_size.cx) / content_width * grid.m_view.m_size.cx;
 			if (s_right - s_left < grid.m_view.m_scroll_size) {
@@ -146,7 +146,7 @@ pub fn draw_grid_scroll_bar(context:&std::rc::Rc<web_sys::CanvasRenderingContext
 	}
 	if(grid.m_view.m_show_vscrollbar){
 	    let content_height = get_grid_content_height(grid);
-		if (content_height > grid.m_view.m_size.cy) {
+		if (content_height > grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size) {
 			let s_top = grid.m_header_height + grid.m_view.m_scroll_v / content_height * (grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size);
 			let mut s_bottom  = s_top + ((grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size)) / content_height * (grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size);
 			if (s_bottom  - s_top < grid.m_view.m_scroll_size) {
@@ -341,7 +341,7 @@ pub fn mouse_move_grid(grid:&mut FCGrid, first_touch:bool, second_touch:bool, fi
 		}
 		if (grid.m_view.m_allow_drag_scroll) {
 			let content_width = get_grid_content_width(grid);
-			if (content_width > grid.m_view.m_size.cx) {
+			if (content_width > grid.m_view.m_size.cx - grid.m_view.m_scroll_size) {
 				let sub_x = grid.m_view.m_start_point.x - mp.x;
 				let mut new_scrollh = grid.m_view.m_start_scroll_h + sub_x;
 				if (new_scrollh < 0.0) {
@@ -357,7 +357,7 @@ pub fn mouse_move_grid(grid:&mut FCGrid, first_touch:bool, second_touch:bool, fi
 				}
 			}
 			let content_height = get_grid_content_height(grid);
-			if (content_height > grid.m_view.m_size.cy) {
+			if (content_height > grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size) {
 				let sub_y = grid.m_view.m_start_point.y - mp.y;
 				let mut new_scroll_v = grid.m_view.m_start_scroll_v + sub_y;
 				if (new_scroll_v < 0.0) {
@@ -383,7 +383,7 @@ pub fn mouse_down_grid(grid:&mut FCGrid, first_touch:bool, second_touch:bool, fi
 	grid.m_view.m_down_scroll_vbutton = false;
 	if (grid.m_view.m_show_hscrollbar){
 		let content_width = get_grid_content_width(grid);
-		if (content_width > grid.m_view.m_size.cx) {
+		if (content_width > grid.m_view.m_size.cx - grid.m_view.m_scroll_size) {
 		    let s_left = grid.m_view.m_scroll_h / content_width * grid.m_view.m_size.cx;
 		    let mut s_right = (grid.m_view.m_scroll_h + grid.m_view.m_size.cx) / content_width * grid.m_view.m_size.cx;
 		    if (s_right - s_left < grid.m_view.m_scroll_size) {
@@ -398,7 +398,7 @@ pub fn mouse_down_grid(grid:&mut FCGrid, first_touch:bool, second_touch:bool, fi
 	}
 	if(grid.m_view.m_show_vscrollbar){
 	    let content_height = get_grid_content_height(grid);
-		if (content_height > grid.m_view.m_size.cy) {
+		if (content_height > grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size) {
 			let s_top = grid.m_header_height + grid.m_view.m_scroll_v / content_height * (grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size);
 			let mut s_bottom  = (grid.m_view.m_scroll_v + (grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size)) / content_height * (grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size);
 			if (s_bottom  - s_top < grid.m_view.m_scroll_size) {
@@ -575,7 +575,7 @@ pub fn mouse_wheel_grid(grid:&mut FCGrid, delta:i32){
 	    old_scroll_v = old_scroll_v + grid.m_row_height;
     }
     let content_height = get_grid_content_height(grid);
-    if (content_height < grid.m_view.m_size.cy) {
+    if (content_height < grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size) {
         grid.m_view.m_scroll_v = 0.0;
     } else {
         if (old_scroll_v < 0.0) {
