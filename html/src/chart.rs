@@ -2794,6 +2794,7 @@ pub fn draw_chart_stock(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
     let data_len = chart.m_data.len() as i32;
     if(data_len > 0) {
 		let candle_height = get_candle_div_height(chart);
+        let vol_height = get_vol_div_height(chart);
         let ind_height = get_ind_div_height(chart);
         let mut c_width = (((chart.m_hscale_pixel - 3.0) / 2.0) as i32) as f32;
         let working_area_width = get_chart_workarea_width(chart);
@@ -2831,16 +2832,22 @@ pub fn draw_chart_stock(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
             let close = chart.m_data[iu].m_close;
             let high = chart.m_data[iu].m_high;
             let low = chart.m_data[iu].m_low;
-            let volume = chart.m_data[iu].m_volume;
             let open_y = get_chart_y(chart, 0, open);
             let close_y = get_chart_y(chart, 0, close);
             let high_y = get_chart_y(chart, 0, high);
             let low_y = get_chart_y(chart, 0, low);
-            let vol_y = get_chart_y(chart, 1, volume);
-            let zero_y = get_chart_y(chart, 1, 0.0);
+            let mut vol_y = 0.0;
+            let mut zero_y = 0.0;
+            if(vol_height > 0.0){
+                let volume = chart.m_data[iu].m_volume;
+                vol_y = get_chart_y(chart, 1, volume);
+                zero_y = get_chart_y(chart, 1, 0.0);
+            }
             if(close >= open){
                 if(is_trend){
-                    M_PAINT.lock().unwrap().draw_line(&context, chart.m_indicator_colors[6].clone(), chart.m_line_width, Vec::new(), x, vol_y, x, zero_y);
+                    if(vol_height > 0.0){
+                        M_PAINT.lock().unwrap().draw_line(&context, chart.m_indicator_colors[6].clone(), chart.m_line_width, Vec::new(), x, vol_y, x, zero_y);
+                    }
                 }else{
                     M_PAINT.lock().unwrap().draw_line(&context, chart.m_up_color.clone(), chart.m_line_width, Vec::new(), x, high_y, x, low_y);
                     if(c_width > 0.0){
@@ -2850,23 +2857,33 @@ pub fn draw_chart_stock(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
                         else{
                             M_PAINT.lock().unwrap().fill_rect(&context, chart.m_up_color.clone(), x - c_width, close_y, x + c_width, open_y);
                         }
-                        M_PAINT.lock().unwrap().fill_rect(&context, chart.m_up_color.clone(), x - c_width, vol_y, x + c_width, zero_y);
+                        if(vol_height > 0.0){
+                            M_PAINT.lock().unwrap().fill_rect(&context, chart.m_up_color.clone(), x - c_width, vol_y, x + c_width, zero_y);
+                        }
          
                     }else
                     {
-                        M_PAINT.lock().unwrap().draw_line(&context, chart.m_up_color.clone(), chart.m_line_width, Vec::new(), x - c_width, vol_y, x + c_width, zero_y);
+                        if(vol_height > 0.0){
+                            M_PAINT.lock().unwrap().draw_line(&context, chart.m_up_color.clone(), chart.m_line_width, Vec::new(), x - c_width, vol_y, x + c_width, zero_y);
+                        }
                     }
                 }
             }else{
                 if(is_trend){
-                    M_PAINT.lock().unwrap().draw_line(&context, chart.m_indicator_colors[6].clone(), chart.m_line_width, Vec::new(), x, vol_y, x, zero_y);
+                    if(vol_height > 0.0){
+                        M_PAINT.lock().unwrap().draw_line(&context, chart.m_indicator_colors[6].clone(), chart.m_line_width, Vec::new(), x, vol_y, x, zero_y);
+                    }
                 }else{
                     M_PAINT.lock().unwrap().draw_line(&context, chart.m_down_color.clone(), chart.m_line_width, Vec::new(), x, high_y, x, low_y);
                     if(c_width > 0.0){
                         M_PAINT.lock().unwrap().fill_rect(&context, chart.m_down_color.clone(), x - c_width, open_y, x + c_width, close_y);
-                        M_PAINT.lock().unwrap().fill_rect(&context, chart.m_down_color.clone(), x - c_width, vol_y, x + c_width, zero_y);
+                        if(vol_height > 0.0){
+                            M_PAINT.lock().unwrap().fill_rect(&context, chart.m_down_color.clone(), x - c_width, vol_y, x + c_width, zero_y);
+                        }
                     }else{
-                        M_PAINT.lock().unwrap().draw_line(&context, chart.m_down_color.clone(), chart.m_line_width, Vec::new(), x - c_width, vol_y, x + c_width, zero_y);
+                        if(vol_height > 0.0){
+                            M_PAINT.lock().unwrap().draw_line(&context, chart.m_down_color.clone(), chart.m_line_width, Vec::new(), x - c_width, vol_y, x + c_width, zero_y);
+                        }
                     }
                 }
             }

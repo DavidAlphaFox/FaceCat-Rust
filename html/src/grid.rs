@@ -135,7 +135,7 @@ pub fn get_grid_content_height(grid:&mut FCGrid)->f32{
 pub fn draw_grid_scroll_bar(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, grid:&mut FCGrid, clip_rect:FCRect){
 	if (grid.m_view.m_show_hscrollbar) {
 		let content_width = get_grid_content_width(grid);
-		if (content_width > grid.m_view.m_size.cx - grid.m_view.m_scroll_size) {
+		if (content_width > grid.m_view.m_size.cx) {
 			let s_left = grid.m_view.m_scroll_h / content_width * grid.m_view.m_size.cx;
 			let mut s_right = (grid.m_view.m_scroll_h + grid.m_view.m_size.cx) / content_width * grid.m_view.m_size.cx;
 			if (s_right - s_left < grid.m_view.m_scroll_size) {
@@ -146,7 +146,7 @@ pub fn draw_grid_scroll_bar(context:&std::rc::Rc<web_sys::CanvasRenderingContext
 	}
 	if(grid.m_view.m_show_vscrollbar){
 	    let content_height = get_grid_content_height(grid);
-		if (content_height > grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size) {
+		if (content_height > grid.m_view.m_size.cy - grid.m_header_height) {
 			let s_top = grid.m_header_height + grid.m_view.m_scroll_v / content_height * (grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size);
 			let mut s_bottom  = s_top + ((grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size)) / content_height * (grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size);
 			if (s_bottom  - s_top < grid.m_view.m_scroll_size) {
