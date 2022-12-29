@@ -667,6 +667,13 @@ pub fn touch_move(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pres
 					}
 					if(find){
 						let parentView = M_VIEW_MAP.lock().unwrap()[&p_id].clone();
+						if(parentView.m_type == "split"){
+							for (id, v) in M_SPLIT_MAP.lock().unwrap().iter_mut(){
+								if(parentView.m_id == *id){
+									reset_split_layout_div(&mut *v);
+								}
+							}
+						}
 						invalidate_view(&context, parentView.clone());
 					}else{
 						invalidate(&context);
@@ -799,6 +806,13 @@ pub fn mouse_move(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pres
 					}
 					if(find){
 						let parentView = M_VIEW_MAP.lock().unwrap()[&p_id].clone();
+						if(parentView.m_type == "split"){
+							for (id, v) in M_SPLIT_MAP.lock().unwrap().iter_mut(){
+								if(parentView.m_id == *id){
+									reset_split_layout_div(&mut *v);
+								}
+							}
+						}
 						invalidate_view(&context, parentView.clone());
 					}else{
 						invalidate(&context);
