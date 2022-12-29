@@ -27,7 +27,7 @@ pub fn reset_layout_div(layout:&mut FCLayoutDiv)->bool{
     let sub_views = get_sub_views(layout.m_view.clone());
     for i in 0..sub_views.len(){
         let mut view = (&sub_views[i]).clone();
-        if(view.m_visible){
+        if view.m_visible{
             let size = view.m_size.clone();
             let margin = view.m_margin.clone();
             let c_left = view.m_location.x;
@@ -38,16 +38,16 @@ pub fn reset_layout_div(layout:&mut FCLayoutDiv)->bool{
             let mut n_top = c_top;
             let mut n_width = c_width;
             let mut n_height = c_height;
-            if(layout.m_layout_style == "bottomtotop"){
-                if (i == 0){
+            if layout.m_layout_style == "bottomtotop"{
+                if i == 0{
                     top = height - padding.top;
                 }
                 let mut l_width:f32 = 0.0;
-                if (layout.m_auto_wrap){
+                if layout.m_auto_wrap{
                     l_width = size.cx;
                     let l_top = top - margin.top - c_height - margin.bottom;
-                    if (l_top < padding.top){
-                        if(v_pos != 0){
+                    if l_top < padding.top{
+                        if v_pos != 0{
                             left += c_width + margin.left;
                         }
                         top = height - padding.top;
@@ -60,14 +60,14 @@ pub fn reset_layout_div(layout:&mut FCLayoutDiv)->bool{
                 n_left = left + margin.left;
                 n_width = l_width;
                 n_top = top;
-            }else if(layout.m_layout_style == "lefttoright"){
+            }else if layout.m_layout_style == "lefttoright"{
                 let mut l_height:f32 = 0.0;
-                if (layout.m_auto_wrap){
+                if layout.m_auto_wrap{
                     l_height = size.cy;
                     let l_right = left + margin.left + c_width + margin.right;
-                    if (l_right > width){
+                    if l_right > width{
                         left = padding.left;
-                        if(v_pos != 0){
+                        if v_pos != 0{
                             top += c_height + margin.top;
                         }
                     }
@@ -80,17 +80,17 @@ pub fn reset_layout_div(layout:&mut FCLayoutDiv)->bool{
                 n_top = top + margin.top;
                 n_height = l_height;
                 left += c_width + margin.right;
-            }else if(layout.m_layout_style == "righttoleft"){
-                if (i == 0){
+            }else if layout.m_layout_style == "righttoleft"{
+                if i == 0{
                     left = width - padding.left;
                 }
                 let mut l_height:f32 = 0.0;
-                if (layout.m_auto_wrap){
+                if layout.m_auto_wrap{
                     l_height = size.cy;
                     let l_left = left - margin.left - c_width - margin.right;
-                    if (l_left < padding.left){
+                    if l_left < padding.left{
                         left = width - padding.left;
-                        if(v_pos != 0){
+                        if v_pos != 0 {
                             top += c_height + margin.top;
                         }
                     }
@@ -102,13 +102,13 @@ pub fn reset_layout_div(layout:&mut FCLayoutDiv)->bool{
                 n_left = left;
                 n_top = top + margin.top;
                 n_height = l_height;
-            }else if(layout.m_layout_style == "toptobottom"){
+            }else if layout.m_layout_style == "toptobottom"{
                 let mut l_width:f32 = 0.0;
-                if (layout.m_auto_wrap){
+                if layout.m_auto_wrap{
                     l_width = size.cx;
                     let l_bottom = top + margin.top + c_height + margin.bottom;
-                    if (l_bottom > height){
-                        if(v_pos != 0){
+                    if l_bottom > height{
+                        if v_pos != 0{
                             left += c_width + margin.left + margin.right;
                         }
                         top = padding.top;
@@ -123,7 +123,7 @@ pub fn reset_layout_div(layout:&mut FCLayoutDiv)->bool{
                 n_width = l_width;
                 top += c_height + margin.bottom;
             }
-            if (c_left != n_left || c_top != n_top || c_width != n_width || c_height != n_height){
+            if c_left != n_left || c_top != n_top || c_width != n_width || c_height != n_height{
                 view.m_location = FCPoint{x:n_left, y:n_top};
                 view.m_size = FCSize{cx:n_width, cy:n_height};
 				M_VIEW_MAP.lock().unwrap().insert(view.m_id, view.clone());

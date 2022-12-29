@@ -51,10 +51,10 @@ extern {
 }
 
 pub fn on_paint(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, clip_rect:FCRect){
-	if(view.m_type == "chart"){
+	if view.m_type == "chart"{
 		M_PAINT.lock().unwrap().fill_rect(&context, view.m_back_color.clone(), 0.0, 0.0, view.m_size.cx, view.m_size.cy);
 		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				reset_chart_visible_record(&mut *v);
 				check_chart_last_visible_index(&mut *v);
@@ -66,40 +66,40 @@ pub fn on_paint(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FC
 				break;
 			}
 		}
-	}else if(view.m_type == "grid"){
+	}else if view.m_type == "grid"{
 		M_PAINT.lock().unwrap().fill_rect(&context, view.m_back_color.clone(), 0.0, 0.0, view.m_size.cx, view.m_size.cy);
 		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				draw_grid(&context, &mut *v, clip_rect.clone());
 				break;
 			}
 		}		
 	}
-	else if(view.m_type == "radiobutton"){
+	else if view.m_type == "radiobutton"{
 		for (id, v) in M_RADIO_BUTTON_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				draw_radio_button(&context, &mut *v, clip_rect.clone());
 				break;
 			}
 		}		
 	}
-	else if(view.m_type == "checkbox"){
+	else if view.m_type == "checkbox"{
 		for (id, v) in M_CHECK_BOX_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				draw_check_box(&context, &mut *v, clip_rect.clone());
 				break;
 			}
 		}	
 	}
-	else if(view.m_type == "tab" || view.m_type == "tabpage" || view.m_type == "layout"){
+	else if view.m_type == "tab" || view.m_type == "tabpage" || view.m_type == "layout"{
 		let mut cview = view.clone();
 		draw_div(&context, &mut cview, clip_rect.clone());
 	}
-	else if(view.m_type == "label"){
-		if(view.m_text_color != "none"){
+	else if view.m_type == "label"{
+		if view.m_text_color != "none"{
 			M_PAINT.lock().unwrap().draw_text(&context, view.m_text.clone(), view.m_text_color.clone(), view.m_font.clone(), 1.0, view.m_size.cy / 2.0 + 1.0);
 		}
 	}
@@ -110,46 +110,46 @@ pub fn on_paint(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FC
 }
 
 pub fn on_paint_border(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, clip_rect:FCRect){
-	if(view.m_type == "grid"){
+	if view.m_type == "grid"{
 		M_PAINT.lock().unwrap().draw_rect(&context, view.m_border_color.clone(), 1.0, Vec::new(), 0.0, 0.0, view.m_size.cx, view.m_size.cy);
 		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				draw_grid_scroll_bar(&context, &mut *v, clip_rect.clone());
 				break;
 			}
 		}
 		
-	}else if(view.m_type == "div" || view.m_type == "layout"){
+	}else if view.m_type == "div" || view.m_type == "layout"{
 		let mut div = view.clone();
 		draw_div_border(&context, &mut div, clip_rect.clone());
 		draw_div_scroll_bar(&context, &mut div, clip_rect.clone());
-	}else if(view.m_type == "tab" || view.m_type == "tabpage"){
+	}else if view.m_type == "tab" || view.m_type == "tabpage"{
 		let mut cview = view.clone();
 		draw_div_border(&context, &mut cview, clip_rect.clone());
 	}
 }
 
 pub fn on_mouse_down(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, mp:FCPoint, buttons:i32, clicks:i32, delta:i32){
-	if(view.m_type == "chart"){
+	if view.m_type == "chart"{
 		let mut first_touch:bool = false;
 		let second_touch:bool = false;
 		let first_point = mp.clone();
 		let second_point = mp.clone();
-		if(buttons == 1){
+		if buttons == 1{
 			first_touch = true;
 		}
 		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				(*v).m_mouse_position = first_point.clone();
 				(*v).m_mouse_down_position = first_point.clone();
 				(*v).m_cross_stop_index = get_chart_index(&mut *v, first_point.clone());
 				unsafe{
-					if(M_ADDING_PLOT != -1){
-						if (first_point.y < get_candle_div_height(&mut *v)){
+					if M_ADDING_PLOT != -1{
+						if first_point.y < get_candle_div_height(&mut *v){
 							let touch_index = get_chart_index(&mut *v, first_point.clone());
-							if (touch_index >= (*v).m_first_visible_index && touch_index <= (*v).m_last_visible_index){
+							if touch_index >= (*v).m_first_visible_index && touch_index <= (*v).m_last_visible_index{
 								let mut plots:Vec<String> = Vec::new();
 								plots.push("Line".to_string());
 								plots.push("Segment".to_string());
@@ -174,13 +174,13 @@ pub fn on_mouse_down(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vi
 								plots.push("LRBand".to_string());
 								
 								let str_plot = plots[M_ADDING_PLOT as usize].clone();
-								if(str_plot == "FiboTimezone"){
+								if str_plot == "FiboTimezone"{
 									let f_index = touch_index;
 									let f_date = get_chart_date_by_index(&mut *v, f_index);
 									let y = get_candle_div_value(&mut *v, first_point.clone());
 									let mut new_plot:FCPlot = FCPlot::new();
 									new_plot.m_id = create_new_id();
-									if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+									if M_PAINT.lock().unwrap().m_default_ui_style == "light"{
 										new_plot.m_line_color = "rgb(0,0,0)".to_string();
 										new_plot.m_point_color = "rgba(0,0,0,0.5)".to_string();
 									}
@@ -190,16 +190,16 @@ pub fn on_mouse_down(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vi
 									(*v).m_plots.push(new_plot);
 									(*v).m_splot = select_plot(&mut *v, first_point.clone());
 								}
-								else if (str_plot == "Triangle" || str_plot == "CircumCycle" || str_plot == "ParalleGram" || str_plot == "AngleLine" || str_plot == "Parallel" || str_plot == "SymmetricTriangle"){
+								else if str_plot == "Triangle" || str_plot == "CircumCycle" || str_plot == "ParalleGram" || str_plot == "AngleLine" || str_plot == "Parallel" || str_plot == "SymmetricTriangle"{
 									let e_index = touch_index;
 									let b_index = e_index - 5;
-									if (b_index >= 0) {
+									if b_index >= 0 {
 										let f_date = get_chart_date_by_index(&mut *v, b_index);
 										let s_date = get_chart_date_by_index(&mut *v, e_index);
 										let y = get_candle_div_value(&mut *v, first_point.clone());
 										let mut new_plot:FCPlot = FCPlot::new();
 										new_plot.m_id = create_new_id();
-										if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+										if M_PAINT.lock().unwrap().m_default_ui_style == "light"{
 											new_plot.m_line_color = "rgb(0,0,0)".to_string();
 											new_plot.m_point_color = "rgba(0,0,0,0.5)".to_string();
 										}
@@ -216,13 +216,13 @@ pub fn on_mouse_down(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vi
 								}else{
 									let e_index = touch_index;
 									let b_index = e_index - 5;
-									if (b_index >= 0) {
+									if b_index >= 0 {
 										let f_date = get_chart_date_by_index(&mut *v, b_index);
 										let s_date = get_chart_date_by_index(&mut *v, e_index);
 										let y = get_candle_div_value(&mut *v, first_point.clone());
 										let mut new_plot:FCPlot = FCPlot::new();
 										new_plot.m_id = create_new_id();
-										if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+										if M_PAINT.lock().unwrap().m_default_ui_style == "light"{
 											new_plot.m_line_color = "rgb(0,0,0)".to_string();
 											new_plot.m_point_color = "rgba(0,0,0,0.5)".to_string();
 										}
@@ -240,7 +240,7 @@ pub fn on_mouse_down(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vi
 						M_ADDING_PLOT = -1;
 					}else{
 						(*v).m_splot = select_plot(&mut *v, mp.clone());
-						if((*v).m_splot.m_id <= 0){
+						if (*v).m_splot.m_id <= 0{
 							select_shape(&mut *v, mp.clone());
 						}
 					}
@@ -251,16 +251,16 @@ pub fn on_mouse_down(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vi
 		}
 		invalidate_view(context, view.clone());
     }
-	else if(view.m_type == "grid"){
+	else if view.m_type == "grid"{
 		let mut first_touch:bool = false;
 		let second_touch:bool = false;
 		let first_point = mp.clone();
 		let second_point = mp.clone();
-		if(buttons == 1){
+		if buttons == 1{
 			first_touch = true;
 		}
 		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				mouse_down_grid(&mut *v, first_touch, second_touch, first_point.clone(), second_point.clone());
 				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
@@ -269,12 +269,12 @@ pub fn on_mouse_down(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vi
 		}
 		invalidate_view(context, view.clone());
 	}
-	else if(view.m_type == "div" || view.m_type == "layout"){
+	else if view.m_type == "div" || view.m_type == "layout"{
 		let mut first_touch:bool = false;
 		let second_touch:bool = false;
 		let first_point = mp.clone();
 		let second_point = mp.clone();
-		if(buttons == 1){
+		if buttons == 1{
 			first_touch = true;
 		}
 		let mut div = view.clone();
@@ -285,16 +285,16 @@ pub fn on_mouse_down(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vi
 }
 
 pub fn on_mouse_move(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, mp:FCPoint, buttons:i32, clicks:i32, delta:i32){
-	if(view.m_type == "chart"){
+	if view.m_type == "chart"{
 		let mut first_touch:bool = false;
 		let second_touch:bool = false;
 		let first_point = mp.clone();
 		let second_point = mp.clone();
-		if(buttons == 1){
+		if buttons == 1{
 			first_touch = true;
 		}
 		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				(*v).m_mouse_position = mp.clone();
 				(*v).m_cross_stop_index = get_chart_index(&mut *v, mp.clone());
@@ -304,47 +304,47 @@ pub fn on_mouse_move(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vi
 			}
 		}
 		invalidate_view(context, view.clone());
-    }else if(view.m_type == "grid"){
+    }else if view.m_type == "grid"{
 		let mut first_touch:bool = false;
 		let second_touch:bool = false;
 		let first_point = mp.clone();
 		let second_point = mp.clone();
-		if(buttons == 1){
+		if buttons == 1{
 			first_touch = true;
 		}
 		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				mouse_move_grid(&mut *v, first_touch, second_touch, first_point.clone(), second_point.clone());
 				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
 				break;
 			}
 		}
-		if(buttons == 1){
+		if buttons == 1{
 			invalidate_view(context, view.clone());
 		}
 	}
-	else if(view.m_type == "div" || view.m_type == "layout"){
+	else if view.m_type == "div" || view.m_type == "layout"{
 		let mut first_touch:bool = false;
 		let second_touch:bool = false;
 		let first_point = mp.clone();
 		let second_point = mp.clone();
-		if(buttons == 1){
+		if buttons == 1{
 			first_touch = true;
 		}
 		let mut div = view.clone();
 		mouse_move_div(&mut div, first_touch, second_touch, first_point, second_point);
 		M_VIEW_MAP.lock().unwrap().insert(div.m_id, div.clone());
-		if(buttons == 1){
+		if buttons == 1{
 			invalidate_view(context, view.clone());
 		}
 	}
 }
 
 pub fn on_mouse_up(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, mp:FCPoint, buttons:i32, clicks:i32, delta:i32){
-	if(view.m_type == "chart"){
+	if view.m_type == "chart"{
 		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				(*v).m_first_touch_index_cache = -1;
 				(*v).m_second_touch_index_cache = -1;
@@ -353,16 +353,16 @@ pub fn on_mouse_up(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view
 			}
 		}
 		invalidate_view(context, view.clone());
-    }else if(view.m_type == "grid"){
+    }else if view.m_type == "grid"{
 		let mut first_touch:bool = false;
 		let second_touch:bool = false;
 		let first_point = mp.clone();
 		let second_point = mp.clone();
-		if(buttons == 1){
+		if buttons == 1{
 			first_touch = true;
 		}
 		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				mouse_up_grid(&mut *v, first_touch, second_touch, first_point.clone(), second_point.clone());
 				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
@@ -370,12 +370,12 @@ pub fn on_mouse_up(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view
 			}
 		}
 		invalidate_view(context, view.clone());
-	}else if(view.m_type == "div" || view.m_type == "layout"){
+	}else if view.m_type == "div" || view.m_type == "layout"{
 		let mut first_touch:bool = false;
 		let second_touch:bool = false;
 		let first_point = mp.clone();
 		let second_point = mp.clone();
-		if(buttons == 1){
+		if buttons == 1 {
 			first_touch = true;
 		}
 		let mut div = view.clone();
@@ -388,15 +388,15 @@ pub fn on_mouse_up(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view
 }
 
 pub fn on_click(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, mp:FCPoint, buttons:i32, clicks:i32, delta:i32){
-	if(view.m_type == "plot"){
+	if view.m_type == "plot"{
 		unsafe{
 			M_ADDING_PLOT = view.m_name.parse::<i32>().unwrap();
 		}
 	}
-	else if(view.m_type == "indicator"){
+	else if view.m_type == "indicator"{
 		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
 			(*v).m_view = view.clone();
-			if (view.m_text == "BOLL" || view.m_text == "MA") {
+			if view.m_text == "BOLL" || view.m_text == "MA" {
 				(*v).m_main_indicator = view.m_text.clone();
 			} else {
 				(*v).m_show_indicator = view.m_text.clone();
@@ -407,37 +407,37 @@ pub fn on_click(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FC
 		}
 		invalidate(context);
 	}
-	else if(view.m_type == "checkbox"){
+	else if view.m_type == "checkbox"{
 		for (id, v) in M_CHECK_BOX_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				click_check_box(&mut *v, mp.clone());
 				break;
 			}
 		}
 		invalidate_view(context, view.clone());
-	}else if(view.m_type == "radiobutton"){
+	}else if view.m_type == "radiobutton"{
 		for (id, v) in M_RADIO_BUTTON_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				click_radio_button(&mut *v, mp.clone());
 				break;
 			}
 		}
 		invalidate_view(context, view.clone());
 	}
-	else if(view.m_type == "headerbutton"){
+	else if view.m_type == "headerbutton"{
 		let mut is_this_tab:bool = false;
 		for (id, v) in M_TAB_MAP.lock().unwrap().iter_mut(){
 			for i in 0..(*v).m_tab_pages.len(){
 				let tp = (*v).m_tab_pages[i].clone();
-				if(tp.m_header_button.m_id == view.m_id){
+				if tp.m_header_button.m_id == view.m_id{
 					is_this_tab = true;
 					break;
 				}
 			}
-			if(is_this_tab){
+			if is_this_tab{
 				for j in 0..(*v).m_tab_pages.len(){
 					let mut tp = (*v).m_tab_pages[j].clone();
-					if(tp.m_header_button.m_id == view.m_id){
+					if tp.m_header_button.m_id == view.m_id{
 						tp.m_view.m_visible = true;
 					}else{
 						tp.m_view.m_visible = false;
@@ -454,13 +454,13 @@ pub fn on_click(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FC
 }
 
 pub fn on_mouse_wheel(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, mp:FCPoint, buttons:i32, clicks:i32, delta:i32){
-	if(view.m_type == "chart"){
+	if view.m_type == "chart"{
 		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
-				if(delta > 0){
+				if delta > 0{
 					zoom_out_chart(&mut *v);
-				}else if(delta < 0){
+				}else if delta < 0{
 					zoom_in_chart(&mut *v);
 				}
 				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
@@ -468,9 +468,9 @@ pub fn on_mouse_wheel(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, v
 			}
 		}
 		invalidate_view(context, view.clone());
-    }else if(view.m_type == "grid"){
+    }else if view.m_type == "grid"{
 		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				mouse_wheel_grid(&mut *v, delta);
 				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
@@ -479,7 +479,7 @@ pub fn on_mouse_wheel(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, v
 		}
 		invalidate_view(context, view.clone());
     }
-    else if(view.m_type == "div" || view.m_type == "layout"){
+    else if view.m_type == "div" || view.m_type == "layout"{
 		let mut div = view.clone();
 		mouse_wheel_div(&mut div, delta);
 		M_VIEW_MAP.lock().unwrap().insert(div.m_id, div.clone());
@@ -488,18 +488,18 @@ pub fn on_mouse_wheel(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, v
 }
 
 pub fn on_touch_start(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, first_touch:bool, second_touch:bool, first_point:FCPoint, second_point:FCPoint){
-	if(view.m_type == "chart"){
+	if view.m_type == "chart"{
 		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				(*v).m_mouse_position = first_point.clone();
 				(*v).m_mouse_down_position = first_point.clone();
 				(*v).m_cross_stop_index = get_chart_index(&mut *v, first_point.clone());
 				unsafe{
-					if(M_ADDING_PLOT != -1){
-						if (first_point.y < get_candle_div_height(&mut *v)){
+					if M_ADDING_PLOT != -1{
+						if first_point.y < get_candle_div_height(&mut *v){
 							let touch_index = get_chart_index(&mut *v, first_point.clone());
-							if (touch_index >= (*v).m_first_visible_index && touch_index <= (*v).m_last_visible_index){
+							if touch_index >= (*v).m_first_visible_index && touch_index <= (*v).m_last_visible_index{
 								let mut plots:Vec<String> = Vec::new();
 								plots.push("Line".to_string());
 								plots.push("Segment".to_string());
@@ -524,13 +524,13 @@ pub fn on_touch_start(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, v
 								plots.push("LRBand".to_string());
 								
 								let str_plot = plots[M_ADDING_PLOT as usize].clone();
-								if(str_plot == "FiboTimezone"){
+								if str_plot == "FiboTimezone"{
 									let f_index = touch_index;
 									let f_date = get_chart_date_by_index(&mut *v, f_index);
 									let y = get_candle_div_value(&mut *v, first_point.clone());
 									let mut new_plot:FCPlot = FCPlot::new();
 									new_plot.m_id = create_new_id();
-									if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+									if M_PAINT.lock().unwrap().m_default_ui_style == "light"{
 										new_plot.m_line_color = "rgb(0,0,0)".to_string();
 										new_plot.m_point_color = "rgba(0,0,0,0.5)".to_string();
 									}
@@ -540,16 +540,16 @@ pub fn on_touch_start(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, v
 									(*v).m_plots.push(new_plot);
 									(*v).m_splot = select_plot(&mut *v, first_point.clone());
 								}
-								else if (str_plot == "Triangle" || str_plot == "CircumCycle" || str_plot == "ParalleGram" || str_plot == "AngleLine" || str_plot == "Parallel" || str_plot == "SymmetricTriangle"){
+								else if str_plot == "Triangle" || str_plot == "CircumCycle" || str_plot == "ParalleGram" || str_plot == "AngleLine" || str_plot == "Parallel" || str_plot == "SymmetricTriangle"{
 									let e_index = touch_index;
 									let b_index = e_index - 5;
-									if (b_index >= 0) {
+									if b_index >= 0 {
 										let f_date = get_chart_date_by_index(&mut *v, b_index);
 										let s_date = get_chart_date_by_index(&mut *v, e_index);
 										let y = get_candle_div_value(&mut *v, first_point.clone());
 										let mut new_plot:FCPlot = FCPlot::new();
 										new_plot.m_id = create_new_id();
-										if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+										if M_PAINT.lock().unwrap().m_default_ui_style == "light"{
 											new_plot.m_line_color = "rgb(0,0,0)".to_string();
 											new_plot.m_point_color = "rgba(0,0,0,0.5)".to_string();
 										}
@@ -566,13 +566,13 @@ pub fn on_touch_start(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, v
 								}else{
 									let e_index = touch_index;
 									let b_index = e_index - 5;
-									if (b_index >= 0) {
+									if b_index >= 0{
 										let f_date = get_chart_date_by_index(&mut *v, b_index);
 										let s_date = get_chart_date_by_index(&mut *v, e_index);
 										let y = get_candle_div_value(&mut *v, first_point.clone());
 										let mut new_plot:FCPlot = FCPlot::new();
 										new_plot.m_id = create_new_id();
-										if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+										if M_PAINT.lock().unwrap().m_default_ui_style == "light"{
 											new_plot.m_line_color = "rgb(0,0,0)".to_string();
 											new_plot.m_point_color = "rgba(0,0,0,0.5)".to_string();
 										}
@@ -590,7 +590,7 @@ pub fn on_touch_start(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, v
 						M_ADDING_PLOT = -1;
 					}else{
 						(*v).m_splot = select_plot(&mut *v, first_point.clone());
-						if((*v).m_splot.m_id <= 0){
+						if (*v).m_splot.m_id <= 0{
 							select_shape(&mut *v, first_point.clone());
 						}
 					}
@@ -601,9 +601,9 @@ pub fn on_touch_start(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, v
 		}
 		invalidate_view(context, view.clone());
     }
-	else if(view.m_type == "grid"){
+	else if view.m_type == "grid"{
 		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				mouse_down_grid(&mut *v, first_touch, second_touch, first_point.clone(), second_point.clone());
 				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
@@ -612,7 +612,7 @@ pub fn on_touch_start(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, v
 		}
 		invalidate_view(context, view.clone());
 	}
-	else if(view.m_type == "div" || view.m_type == "layout"){
+	else if view.m_type == "div" || view.m_type == "layout"{
 		let mut div = view.clone();
 		mouse_down_div(&mut div, first_touch, second_touch, first_point.clone(), second_point.clone());
 		M_VIEW_MAP.lock().unwrap().insert(div.m_id, div.clone());
@@ -621,9 +621,9 @@ pub fn on_touch_start(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, v
 }
 
 pub fn on_touch_move(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, first_touch:bool, second_touch:bool, first_point:FCPoint, second_point:FCPoint){
-	if(view.m_type == "chart"){
+	if view.m_type == "chart"{
 		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				(*v).m_mouse_position = first_point.clone();
 				(*v).m_cross_stop_index = get_chart_index(&mut *v, first_point.clone());
@@ -633,9 +633,9 @@ pub fn on_touch_move(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vi
 			}
 		}
 		invalidate_view(context, view.clone());
-    }else if(view.m_type == "grid"){
+    }else if view.m_type == "grid"{
 		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				mouse_move_grid(&mut *v, first_touch, second_touch, first_point.clone(), second_point.clone());
 				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
@@ -644,7 +644,7 @@ pub fn on_touch_move(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vi
 		}
 		invalidate_view(context, view.clone());
 	}
-	else if(view.m_type == "div" || view.m_type == "layout"){
+	else if view.m_type == "div" || view.m_type == "layout"{
 		let mut div = view.clone();
 		mouse_move_div(&mut div, first_touch, second_touch, first_point.clone(), second_point.clone());
 		M_VIEW_MAP.lock().unwrap().insert(div.m_id, div.clone());
@@ -653,9 +653,9 @@ pub fn on_touch_move(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vi
 }
 
 pub fn on_touch_end(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView, first_touch:bool, second_touch:bool, first_point:FCPoint, second_point:FCPoint){
-	if(view.m_type == "chart"){
+	if view.m_type == "chart"{
 		for (id, v) in M_CHART_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				(*v).m_first_touch_index_cache = -1;
 				(*v).m_second_touch_index_cache = -1;
@@ -664,9 +664,9 @@ pub fn on_touch_end(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vie
 			}
 		}
 		invalidate_view(context, view.clone());
-    }else if(view.m_type == "grid"){;
+    }else if view.m_type == "grid"{;
 		for (id, v) in M_GRID_MAP.lock().unwrap().iter_mut(){
-			if(view.m_id == *id){
+			if view.m_id == *id{
 				(*v).m_view = view.clone();
 				mouse_up_grid(&mut *v, first_touch, second_touch, first_point.clone(), second_point.clone());
 				M_VIEW_MAP.lock().unwrap().insert((*v).m_view.m_id, (*v).m_view.clone());
@@ -674,7 +674,7 @@ pub fn on_touch_end(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vie
 			}
 		}
 		invalidate_view(context, view.clone());
-	}else if(view.m_type == "div" || view.m_type == "layout"){
+	}else if view.m_type == "div" || view.m_type == "layout"{
 		let mut div = view.clone();
 		mouse_up_div(&mut div, first_touch, second_touch, first_point.clone(), second_point.clone());
 		M_VIEW_MAP.lock().unwrap().insert(div.m_id, div.clone());
@@ -687,16 +687,16 @@ pub fn on_touch_end(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vie
 pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView){
 	let node_name = element.node_name().to_lowercase();
 	let mut view = FCView::new();
-	if(M_PAINT.lock().unwrap().m_default_ui_style == "dark"){
+	if M_PAINT.lock().unwrap().m_default_ui_style == "dark"{
 		view.m_back_color = "rgb(0,0,0)".to_string();
         view.m_border_color = "rgb(100,100,100)".to_string();
         view.m_text_color = "rgb(255,255,255)".to_string();
-	}else if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+	}else if M_PAINT.lock().unwrap().m_default_ui_style == "light"{
 		view.m_back_color = "rgb(255,255,255)".to_string();
         view.m_border_color = "rgb(150,150,150)".to_string();
         view.m_text_color = "rgb(0,0,0)".to_string();
 	}
-	if(parent.m_id == -1){
+	if parent.m_id == -1{
 		view.m_id = add_view(view.clone());
 	}else{
 		view.m_id = add_view_to_parent(view.clone(), parent.clone());
@@ -708,28 +708,28 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 		let atr_name = attribute.name().to_lowercase();
 		let atr_value = attribute.value();
 		set_view_attribute(&mut view, atr_name.clone(), atr_value.clone());
-		if(node_name == "div" || node_name == "view"){
-			if(atr_name == "type"){
-				if(atr_value == "splitlayout"){
+		if node_name == "div" || node_name == "view"{
+			if atr_name == "type"{
+				if atr_value == "splitlayout"{
 					view.m_type = "split".to_string();
 				}
-				else if(atr_value == "layout"){
+				else if atr_value == "layout"{
 					view.m_type = "layout".to_string();
 					view.m_show_vscrollbar = true;
 					view.m_show_hscrollbar = true;
 					view.m_allow_drag_scroll = true;
 				}
-				else if(atr_value == "tab"){
+				else if atr_value == "tab"{
 					view.m_type = "tabview".to_string();
 				}
-				else if(atr_value == "tabpage"){
+				else if atr_value == "tabpage"{
 					view.m_type = "tabpage".to_string();
 				}
-				else if(atr_value == "radio"){
+				else if atr_value == "radio"{
 					view.m_type = "radiobutton".to_string();
-				}else if(atr_value == "checkbox"){
+				}else if atr_value == "checkbox"{
 					view.m_type = "checkbox".to_string();
-				}else if(atr_value == "button"){
+				}else if atr_value == "button"{
 					view.m_type = "button".to_string();
 				}
 				else{
@@ -739,30 +739,30 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 					view.m_allow_drag_scroll = true;
 				}
 			}
-		}else if(node_name == "input"){
-			if(atr_name == "type"){
-				if(atr_value == "radio"){
+		}else if node_name == "input"{
+			if atr_name == "type"{
+				if atr_value == "radio"{
 					view.m_type = "radiobutton".to_string();
-				}else if(atr_value == "checkbox"){
+				}else if atr_value == "checkbox"{
 					view.m_type = "checkbox".to_string();
-				}else if(atr_value == "button"){
+				}else if atr_value == "button"{
 					view.m_type = "button".to_string();
 				}
 			}
 		}
 	}
-	if(node_name == "chart"){
+	if node_name == "chart"{
 		view.m_type = "chart".to_string();
-	}else if(node_name == "label"){
+	}else if node_name == "label"{
 		view.m_type = "label".to_string();
-	}else if(node_name == "table"){
+	}else if node_name == "table"{
 		view.m_type = "grid".to_string();
 		view.m_show_vscrollbar = true;
 		view.m_show_hscrollbar = true;
 		view.m_allow_drag_scroll = true;
 	}
 	M_VIEW_MAP.lock().unwrap().insert(view.m_id, view.clone());
-	if(view.m_type == "split"){
+	if view.m_type == "split"{
 		let mut split:FCSplitLayoutDiv = FCSplitLayoutDiv::new();
 		let mut splitterposition : String = String::from("");
 		let mut can_drag_splitter : bool = false;
@@ -771,29 +771,29 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 			let atr_name = attribute.name().to_lowercase();
 			let atr_value = attribute.value();
 			set_split_attribute(&mut split, atr_name.clone(), atr_value.clone());
-			if(atr_name == "datumsize"){
+			if atr_name == "datumsize"{
 				let str_split:Vec<&str> = atr_value.split(",").collect();
 				let cx : f32 = str_split[0].parse::<f32>().unwrap();
 				let cy : f32 =  str_split[1].parse::<f32>().unwrap();
 				view.m_size = FCSize{cx:cx, cy:cy};	
-			}else if(atr_name == "splitterposition"){
+			}else if atr_name == "splitterposition"{
 				splitterposition = atr_value;
-			}else if(atr_name == "candragsplitter"){
-				if(atr_value == "true"){
+			}else if atr_name == "candragsplitter"{
+				if atr_value == "true"{
 					can_drag_splitter = true;
 				}
 			}
 		}
 		M_VIEW_MAP.lock().unwrap().insert(view.m_id, view.clone());
 		let mut splitter:FCView = FCView::new();
-		if(M_PAINT.lock().unwrap().m_default_ui_style == "dark"){
+		if M_PAINT.lock().unwrap().m_default_ui_style == "dark"{
 			splitter.m_back_color = "rgb(100,100,100)".to_string();
-		}else if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+		}else if M_PAINT.lock().unwrap().m_default_ui_style == "light"{
 			splitter.m_back_color = "rgb(150,150,150)".to_string();
 		}
 		splitter.m_allow_drag = can_drag_splitter;
 		let str_split:Vec<&str> = splitterposition.split(",").collect();
-		if(str_split.len() >= 4){
+		if str_split.len() >= 4{
 			let left : f32 = str_split[0].parse::<f32>().unwrap();
 			let top : f32 =  str_split[1].parse::<f32>().unwrap();
 			let right : f32 = str_split[2].parse::<f32>().unwrap();
@@ -803,7 +803,7 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 		}else{
 			let s_position : f32 = str_split[0].parse::<f32>().unwrap();
 			let s_size : f32 =  str_split[1].parse::<f32>().unwrap();
-			if(split.m_layout_style == "lefttoright" || split.m_layout_style == "righttoleft"){
+			if split.m_layout_style == "lefttoright" || split.m_layout_style == "righttoleft"{
                 splitter.m_location = FCPoint{x:s_position, y:0.0};
                 splitter.m_size = FCSize{cx:s_size, cy:view.m_size.cy};
             }else{
@@ -820,7 +820,7 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 		let sub_views = get_sub_views(view.clone());
 		let first_view = (&sub_views[0]).clone();
 		let second_view = (&sub_views[1]).clone();
-		if(first_view.m_id >= second_view.m_id){
+		if first_view.m_id >= second_view.m_id{
 			split.m_first_view = second_view;
 			split.m_second_view = first_view;
 		}else{
@@ -834,12 +834,12 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 		reset_split_layout_div(&mut split);
 		M_SPLIT_MAP.lock().unwrap().insert(view.m_id, split.clone());
 	}
-	else if(view.m_type == "chart"){
+	else if view.m_type == "chart"{
 		let mut chart:FCChart = FCChart::new();
 		chart.m_view = view.clone();
 		M_CHART_MAP.lock().unwrap().insert(view.m_id, chart.clone());
 	}
-	else if(view.m_type == "checkbox"){
+	else if view.m_type == "checkbox"{
 		let mut check_box:FCCheckBox = FCCheckBox::new();
 		for i in 0..node_attributes.length(){
 			let attribute = node_attributes.item(i).expect("REASON");
@@ -850,7 +850,7 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 		check_box.m_view = view.clone();
 		M_CHECK_BOX_MAP.lock().unwrap().insert(view.m_id, check_box.clone());
 	}
-	else if(view.m_type == "radiobutton"){
+	else if view.m_type == "radiobutton"{
 		let mut radio_button:FCRadioButton = FCRadioButton::new();
 		for i in 0..node_attributes.length(){
 			let attribute = node_attributes.item(i).expect("REASON");
@@ -861,7 +861,7 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 		radio_button.m_view = view.clone();
 		M_RADIO_BUTTON_MAP.lock().unwrap().insert(view.m_id, radio_button.clone());
 	}
-	else if(view.m_type == "grid"){
+	else if view.m_type == "grid"{
 		let mut grid:FCGrid = FCGrid::new();
 		for i in 0..node_attributes.length(){
 			let attribute = node_attributes.item(i).expect("REASON");
@@ -874,18 +874,18 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 		for i in 0..child_elements.length(){
 			let sub_node = child_elements.item(i).expect("REASON");
 			let sub_node_name = sub_node.node_name().to_lowercase();
-			if(sub_node_name == "tr"){
+			if sub_node_name == "tr"{
 				let sun_elements = sub_node.children();
 				for j in 0..sun_elements.length(){
 					let sun_node = sun_elements.item(j).expect("REASON");
 					let sun_node_name = sun_node.node_name().to_lowercase();
-					if(sun_node_name == "th"){
+					if sun_node_name == "th"{
 						let mut grid_column:FCGridColumn = FCGridColumn::new();
-						if(M_PAINT.lock().unwrap().m_default_ui_style == "dark"){
+						if M_PAINT.lock().unwrap().m_default_ui_style == "dark"{
 							grid_column.m_back_color = "rgb(0,0,0)".to_string();
 							grid_column.m_border_color = "rgb(100,100,100)".to_string();
 							grid_column.m_text_color = "rgb(255,255,255)".to_string();
-						}else if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+						}else if M_PAINT.lock().unwrap().m_default_ui_style == "light"{
 							grid_column.m_back_color = "rgb(255,255,255)".to_string();
 							grid_column.m_border_color = "rgb(150,150,150)".to_string();
 							grid_column.m_text_color = "rgb(0,0,0)".to_string();
@@ -895,7 +895,7 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 							let sun_attr = sun_node_attributes.item(k).expect("REASON");
 							let sun_atr_name = sun_attr.name().to_lowercase();
 							let sun_atr_value = sun_attr.value();
-							if(sun_atr_name == "text"){
+							if sun_atr_name == "text"{
 								grid_column.m_text = sun_atr_value;
 								break;
 							}
@@ -908,7 +908,7 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 		M_GRID_MAP.lock().unwrap().insert(view.m_id, grid.clone());
 	}
 	else{
-		if(view.m_type == "layout"){
+		if view.m_type == "layout"{
 			let mut layout:FCLayoutDiv = FCLayoutDiv::new();
 			for i in 0..node_attributes.length(){
 				let attribute = node_attributes.item(i).expect("REASON");
@@ -919,11 +919,11 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 			layout.m_view = view.clone();
 			M_LAYOUT_MAP.lock().unwrap().insert(view.m_id, layout.clone());
 		}
-		else if(view.m_type == "tabview"){
+		else if view.m_type == "tabview"{
 			let mut tab:FCTabView = FCTabView::new();
 			tab.m_view = view.clone();
 			M_TAB_MAP.lock().unwrap().insert(view.m_id, tab.clone());
-		}else if(view.m_type == "tabpage"){
+		}else if view.m_type == "tabpage"{
 			let mut tab = M_TAB_MAP.lock().unwrap()[&parent.m_id].clone();
 			let mut header_button_view:FCView = FCView::new();
 			header_button_view.m_size = FCSize{cx:100.0, cy:20.0};
@@ -932,26 +932,26 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 				let attribute = node_attributes.item(i).expect("REASON");
 				let atr_name = attribute.name().to_lowercase();
 				let atr_value = attribute.value();
-				if(atr_name == "text"){
+				if atr_name == "text"{
 					header_button_view.m_text = atr_value;
-				}else if(atr_name == "headersize"){
+				}else if atr_name == "headersize"{
 					let str_split:Vec<&str> = atr_value.split(",").collect();
 					let cx : f32 = str_split[0].parse::<f32>().unwrap();
 					let cy : f32 =  str_split[1].parse::<f32>().unwrap();
 					header_button_view.m_size = FCSize{cx:cx, cy:cy};
 				}
 			}
-			if(M_PAINT.lock().unwrap().m_default_ui_style == "dark"){
+			if M_PAINT.lock().unwrap().m_default_ui_style == "dark"{
 				header_button_view.m_back_color = "rgb(0,0,0)".to_string();
 				header_button_view.m_border_color = "rgb(100,100,100)".to_string();
 				header_button_view.m_text_color = "rgb(255,255,255)".to_string();
-			}else if(M_PAINT.lock().unwrap().m_default_ui_style == "light"){
+			}else if M_PAINT.lock().unwrap().m_default_ui_style == "light"{
 				header_button_view.m_back_color = "rgb(255,255,255)".to_string();
 				header_button_view.m_border_color = "rgb(150,150,150)".to_string();
 				header_button_view.m_text_color = "rgb(0,0,0)".to_string();
 			}
 			header_button_view.m_id = add_view_to_parent(header_button_view.clone(), parent.clone());
-			if(tab.m_tab_pages.len() > 0){
+			if tab.m_tab_pages.len() > 0{
 				view.m_visible = false;
 				M_VIEW_MAP.lock().unwrap().insert(view.m_id, view.clone());
 			}
@@ -971,19 +971,19 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 }
 
 pub fn set_grid_attribute(grid:&mut FCGrid, name:String, value:String){
-	if(name == "headerheight"){
+	if name == "headerheight"{
 		grid.m_header_height = value.parse::<f32>().unwrap();
 	}
 }
 
 pub fn set_check_box_attribute(check_box:&mut FCCheckBox, name:String, value:String){
-	if(name == "checked"){
-		if(value == "true"){
+	if name == "checked"{
+		if value == "true"{
 			check_box.m_checked = true;
 		}else{
 			check_box.m_checked = false;
 		}
-	}else if(name == "buttonsize"){
+	}else if name == "buttonsize"{
 		let str_split:Vec<&str> = value.split(",").collect();
 		let cx : f32 = str_split[0].parse::<f32>().unwrap();
 		let cy : f32 =  str_split[1].parse::<f32>().unwrap();
@@ -992,13 +992,13 @@ pub fn set_check_box_attribute(check_box:&mut FCCheckBox, name:String, value:Str
 }
 
 pub fn set_radio_button_attribute(radio_button:&mut FCRadioButton, name:String, value:String){
-	if(name == "checked"){
-		if(value == "true"){
+	if name == "checked"{
+		if value == "true"{
 			radio_button.m_checked = true;
 		}else{
 			radio_button.m_checked = false;
 		}
-	}else if(name == "buttonsize"){
+	}else if name == "buttonsize"{
 		let str_split:Vec<&str> = value.split(",").collect();
 		let cx : f32 = str_split[0].parse::<f32>().unwrap();
 		let cy : f32 =  str_split[1].parse::<f32>().unwrap();
@@ -1007,18 +1007,18 @@ pub fn set_radio_button_attribute(radio_button:&mut FCRadioButton, name:String, 
 }
 
 pub fn set_split_attribute(split:&mut FCSplitLayoutDiv, name:String, value:String){
-	if(name == "layoutstyle"){
+	if name == "layoutstyle"{
 		split.m_layout_style = value.to_lowercase();
-	}else if(name == "splitmode"){
+	}else if name == "splitmode"{
 		split.m_split_mode = value;
 	}
 }
 
 pub fn set_layout_attribute(layout:&mut FCLayoutDiv, name:String, value:String){
-	if(name == "layoutstyle"){
+	if name == "layoutstyle"{
 		layout.m_layout_style = value.to_lowercase();
-	}else if(name == "autowrap"){
-		if(value == "true"){
+	}else if name == "autowrap"{
+		if value == "true"{
 			layout.m_auto_wrap = true;
 		}else{
 			layout.m_auto_wrap = false;
@@ -1027,75 +1027,75 @@ pub fn set_layout_attribute(layout:&mut FCLayoutDiv, name:String, value:String){
 }
 
 pub fn set_view_attribute(view:&mut FCView, name:String, value:String){
-	if(name == "location"){
+	if name == "location"{
 		let str_split:Vec<&str> = value.split(",").collect();
 		let x : f32 = str_split[0].parse::<f32>().unwrap();
 		let y : f32 =  str_split[1].parse::<f32>().unwrap();
 		view.m_location = FCPoint{x:x, y:y};
 	}
-	else if(name == "size"){
+	else if name == "size"{
 		let str_split:Vec<&str> = value.split(",").collect();
 		let cx : f32 = str_split[0].parse::<f32>().unwrap();
 		let cy : f32 =  str_split[1].parse::<f32>().unwrap();
 		view.m_size = FCSize{cx:cx, cy:cy};
-	}else if(name == "text"){
+	}else if name == "text"{
 		view.m_text = value;
-	}else if(name == "backcolor"){ 
-		if(value.find("rgb") == Some(0)){
+	}else if name == "backcolor"{ 
+		if value.find("rgb") == Some(0){
 			view.m_back_color = value;
 		}else{
 			view.m_back_color = "none".to_string();
 		}
-	}else if(name == "bordercolor"){
-		if(value.find("rgb") == Some(0)){
+	}else if name == "bordercolor"{
+		if value.find("rgb") == Some(0){
 			view.m_border_color = value;
 		}else{
 			view.m_border_color = "none".to_string();
 		}
-	}else if(name == "textcolor"){
-		if(value.find("rgb") == Some(0)){
+	}else if name == "textcolor"{
+		if value.find("rgb") == Some(0){
 			view.m_text_color = value;
 		}else{
 			view.m_text_color = "none".to_string();
 		}
-	}else if(name == "dock"){
+	}else if name == "dock"{
 		view.m_dock = value.to_lowercase();
-	}else if(name == "font"){
+	}else if name == "font"{
 		view.m_font = value.replace("Default", "Arial");
-	}else if(name == "name"){
+	}else if name == "name"{
 		view.m_name = value;
-	}else if(name == "showvscrollbar"){
-		if(value.to_lowercase() == "true"){
+	}else if name == "showvscrollbar"{
+		if value.to_lowercase() == "true"{
 			view.m_show_vscrollbar = true;
 		}else{
 			view.m_show_vscrollbar = false;
 		}
-	}else if(name == "showhscrollbar"){
-		if(value.to_lowercase() == "true"){
+	}else if name == "showhscrollbar"{
+		if value.to_lowercase() == "true"{
 			view.m_show_hscrollbar = true;
 		}else{
 			view.m_show_hscrollbar = false;
 		}
-	}else if(name == "visible"){
-		if(value.to_lowercase() == "true"){
+	}else if name == "visible"{
+		if value.to_lowercase() == "true"{
 			view.m_visible = true;
 		}else{
 			view.m_visible = false;
 		}
-	}else if(name == "displayoffset"){
-		if(value.to_lowercase() == "true"){
+	}else if name == "displayoffset"{
+		if value.to_lowercase() == "true"{
 			view.m_display_offset = true;
 		}else{
 			view.m_display_offset = false;
 		}
-	}else if(name == "topmost"){
-		if(value.to_lowercase() == "true"){
+	}else if name == "topmost"{
+		if value.to_lowercase() == "true"{
 			view.m_top_most = true;
 		}else{
 			view.m_top_most = false;
 		}
-	}else if(name == "allowdrag"){
-		if(value.to_lowercase() == "true"){
+	}else if name == "allowdrag"{
+		if value.to_lowercase() == "true"{
 			view.m_allow_drag = true;
 		}else{
 			view.m_allow_drag = false;
@@ -1119,31 +1119,31 @@ pub fn update_views(views:Vec<FCView>){
 					find = false;
 				}
 			}
-			if(find && view.m_dock == "fill"){
+			if find && view.m_dock == "fill"{
 				let parent = M_VIEW_MAP.lock().unwrap()[&p_id].clone();
-				if(parent.m_type != "split"){
+				if parent.m_type != "split"{
 					view.m_location = FCPoint{x:0.0, y:0.0};
 					view.m_size = FCSize{cx:parent.m_size.cx, cy:parent.m_size.cy};
 				}
 			}
 			M_VIEW_MAP.lock().unwrap().insert(view.m_id, view.clone());
-			if(view.m_type == "split"){
+			if view.m_type == "split"{
 				for (id, v) in M_SPLIT_MAP.lock().unwrap().iter_mut(){
-					if(view.m_id == *id){
+					if view.m_id == *id{
 						(*v).m_view = view.clone();
 						reset_split_layout_div(&mut *v);
 					}
 				}
-            }else if(view.m_type == "tabview"){
+            }else if view.m_type == "tabview"{
 				for (id, v) in M_TAB_MAP.lock().unwrap().iter_mut(){
-					if(view.m_id == *id){
+					if view.m_id == *id{
 						(*v).m_view = view.clone();
 						update_tab_layout(&mut *v);
 					}
 				}
-            }else if(view.m_type == "layout"){
+            }else if view.m_type == "layout"{
 				for (id, v) in M_LAYOUT_MAP.lock().unwrap().iter_mut(){
-					if(view.m_id == *id){
+					if view.m_id == *id{
 						(*v).m_view = view.clone();
 						reset_layout_div(&mut *v);
 					}
@@ -1151,7 +1151,7 @@ pub fn update_views(views:Vec<FCView>){
             }
 			let sub_views = get_sub_views(view.clone());
 			let sub_views_size = sub_views.len();
-			if(sub_views_size > 0) {
+			if sub_views_size > 0 {
 				update_views(sub_views);
 			}
 		 }
@@ -1204,7 +1204,7 @@ pub fn start() -> Result<(), JsValue> {
     }*/
     
     let rustMode:i32 = 0;
-    if(rustMode == 0){
+    if rustMode == 0{
 		let mut chart_view:FCView = FCView::new();
 		chart_view.m_location = FCPoint{x:0.0, y:0.0};
 		chart_view.m_size = FCSize{cx:900.0, cy:500.0};
@@ -1402,19 +1402,19 @@ pub fn start() -> Result<(), JsValue> {
 		for i in 0..4{
 			let mut tab_page_view:FCView = FCView::new();
 			tab_page_view.m_size = FCSize{cx:100.0, cy:20.0};
-			if(i == 0){
+			if i == 0{
 				tab_page_view.m_back_color = "rgb(255,0,255)".to_string();
-			}else if(i == 1){
+			}else if i == 1{
 				tab_page_view.m_back_color = "rgb(0,255,0)".to_string();
-			}else if(i == 2){
+			}else if i == 2{
 				tab_page_view.m_back_color = "rgb(0,0,255)".to_string();
-			}else if(i == 3){
+			}else if i == 3{
 				tab_page_view.m_back_color = "rgb(255,0,0)".to_string();
 			}
 			tab_page_view.m_border_color = "rgb(100,100,100)".to_string();
 			tab_page_view.m_text_color = "rgb(255,255,255)".to_string();
 			tab_page_view.m_type = "tabpage".to_string();
-			if(i != 0){
+			if i != 0{
 				tab_page_view.m_visible = false;
 			}
 			tab_page_view.m_id = add_view_to_parent(tab_page_view.clone(), tab_view.clone());
@@ -2292,7 +2292,7 @@ pub fn start() -> Result<(), JsValue> {
 		chart.m_data = security_datas;
 		calc_chart_indicator(&mut chart);
 		M_CHART_MAP.lock().unwrap().insert(chart_view.m_id, chart.clone());
-	}else if(rustMode == 1){
+	}else if rustMode == 1{
 		let xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<html xmlns=\"facecat\">\r\n  <head>\r\n  </head>\r\n  <body>\r\n    <div type=\"splitlayout\" layoutstyle=\"lefttoright\" bordercolor=\"none\" dock=\"fill\" size=\"400,400\" candragsplitter=\"true\" splitmode=\"percentsize\" splittervisible=\"true\" splitter-bordercolor=\"-200000000105\" splitterposition=\"200,10\">\r\n      <div name=\"div1\" backcolor=\"rgb(59,174,218)\" />\r\n      <div name=\"div2\" backcolor=\"rgb(150,123,220)\" />\r\n    </div>\r\n  </body>\r\n</html>".to_string();
 		let dom_parse = DomParser::new();
 		let s_type = SupportedType::TextXml;
@@ -2308,7 +2308,7 @@ pub fn start() -> Result<(), JsValue> {
 		let top_views2 = get_top_views();
 		for i in 0..top_views2.len(){
 			let mut t_view = (&top_views2[i]).clone();
-			if(t_view.m_dock == "fill"){
+			if t_view.m_dock == "fill"{
 				unsafe{
 					t_view.m_size = FCSize{cx:M_CANVAS_WIDTH, cy:M_CANVAS_HEIGHT};
 				}

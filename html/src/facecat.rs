@@ -69,7 +69,7 @@ impl FCPaint{
 		}
 	}
 	fn add_line(&mut self, context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, x1:f32, y1:f32, x2:f32, y2:f32){
-		if(!self.m_move_to) {
+		if !self.m_move_to {
 			self.m_move_to = true;
 			context.move_to(((x1 + self.m_offset_x) * self.m_scale_factor_x) as f64, ((y1 + self.m_offset_y) * self.m_scale_factor_y) as f64);
 		}
@@ -95,10 +95,10 @@ impl FCPaint{
 	}
 
 	fn draw_line(&mut self, context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, color:String, width:f32, style:Vec<f32>, x1:f32, y1:f32, x2:f32, y2:f32){
-		if(color != "none"){
+		if color != "none"{
 			let mut l_width = self.m_scale_factor_x.min(self.m_scale_factor_y) * width;
 			context.begin_path();
-			if(l_width < 1.0){
+			if l_width < 1.0{
 				l_width = 1.0;
 			}
 			context.set_line_width(l_width as f64);
@@ -112,9 +112,9 @@ impl FCPaint{
 	}
 
 	fn draw_path(&mut self, context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, color:String, width:f32, style:Vec<f32>){
-		if(color != "none"){
+		if color != "none"{
 			let mut l_width = self.m_scale_factor_x.min(self.m_scale_factor_y) * width;
-			if(l_width < 1.0){
+			if l_width < 1.0{
 				l_width = 1.0;
 			}
 			context.set_line_width(l_width as f64);
@@ -125,12 +125,12 @@ impl FCPaint{
 	}
 
 	fn draw_rect(&mut self, context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, color:String, width:f32, style:Vec<f32>, left:f32, top:f32, right:f32, bottom:f32){
-		if(color != "none"){
+		if color != "none"{
 			let mut l_width = self.m_scale_factor_x.min(self.m_scale_factor_y) * width;
 			let w = right - left;
 			let h = bottom - top;
 			context.begin_path();
-			if(l_width < 1.0){
+			if l_width < 1.0{
 				l_width = 1.0;
 			}
 			context.set_line_width(l_width as f64);
@@ -141,12 +141,12 @@ impl FCPaint{
 	}
 
 	fn draw_ellipse(&mut self, context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, color:String, width:f32, style:Vec<f32>, left:f32, top:f32, right:f32, bottom:f32){
-		if(color != "none"){
+		if color != "none"{
 			let mut l_width = self.m_scale_factor_x.min(self.m_scale_factor_y) * width;
 			let w = right - left;
 			let h = bottom - top;
 			context.begin_path();
-			if(l_width < 1.0){
+			if l_width < 1.0{
 				l_width = 1.0;
 			}
 			context.set_line_width(l_width as f64);
@@ -160,7 +160,7 @@ impl FCPaint{
 	}
 
 	fn draw_text(&mut self, context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, text:String, color:String, font:String, x:f32, y:f32){
-		if(color != "none"){
+		if color != "none"{
 			context.set_font(&font);
 			let c = JsValue::from(String::from(color));
 			context.set_fill_style(&c);  
@@ -171,7 +171,7 @@ impl FCPaint{
 	}
 	
 	fn draw_text_auto_ellipsis(&mut self, context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, text:String, color:String, font:String, left:f32, top:f32, right:f32, bottom:f32){
-		if(color != "none"){
+		if color != "none"{
 			context.set_font(&font);
 			let c = JsValue::from(String::from(color));
 			context.set_fill_style(&c);  
@@ -185,7 +185,7 @@ impl FCPaint{
 	}
 
 	fn fill_path(&mut self, context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, color:String){
-		if(color != "none"){
+		if color != "none"{
 			let c = JsValue::from(String::from(color));
 			context.set_fill_style(&c);  
 			context.fill();
@@ -193,7 +193,7 @@ impl FCPaint{
 	}
 
 	fn fill_rect(&mut self, context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, color:String, left:f32, top:f32, right:f32, bottom:f32){
-		if(color != "none"){
+		if color != "none"{
 			let c = JsValue::from(String::from(color));
 			context.set_fill_style(&c);
 			let w = right - left;
@@ -203,7 +203,7 @@ impl FCPaint{
 	}
 
 	fn fill_ellipse(&mut self, context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, color:String, left:f32, top:f32, right:f32, bottom:f32){
-		if(color != "none"){
+		if color != "none"{
 			let c = JsValue::from(String::from(color));
 			context.set_fill_style(&c);
 			let w = right - left;
@@ -228,7 +228,7 @@ impl FCPaint{
 	}
 
 	fn text_size(&mut self, context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, text:String, font:String)->FCSize{
-		if(text.len() > 0) {
+		if text.len() > 0 {
 		    context.set_font(&font);
 		    let metrics = context.measure_text(&text).expect("REASON");
 		    let actual_height = metrics.actual_bounding_box_ascent() + metrics.actual_bounding_box_descent(); 
@@ -331,23 +331,23 @@ impl FCView{
 }
 
 pub fn to_fixed(value:f64, digit:i32)->String{
-	if(digit == 1){
+	if digit == 1{
 		return format!("{:.1}", value);
-	}else if(digit == 2){
+	}else if digit == 2{
 		return format!("{:.2}", value);
-	}else if(digit == 3){
+	}else if digit == 3{
 		return format!("{:.3}", value);
-	}else if(digit == 4){
+	}else if digit == 4{
 		return format!("{:.4}", value);
-	}else if(digit == 5){
+	}else if digit == 5{
 		return format!("{:.5}", value);
-	}else if(digit == 6){
+	}else if digit == 6{
 		return format!("{:.6}", value);
-	}else if(digit == 7){
+	}else if digit == 7{
 		return format!("{:.7}", value);
-	}else if(digit == 8){
+	}else if digit == 8{
 		return format!("{:.8}", value);
-	}else if(digit == 9){
+	}else if digit == 9{
 		return format!("{:.9}", value);
 	}else{
 		return (value as i64).to_string();
@@ -386,7 +386,7 @@ pub fn get_sub_views(parent:FCView)->Vec<FCView>{
 	for (k, v) in &*M_VIEW_MAP.lock().unwrap() {
 		match M_PARENT_VIEW_MAP.lock().unwrap().get(&k) {
 			Some(x) => {
-				if(x == &parent.m_id){
+				if x == &parent.m_id{
 					sub_views.push(v.clone());
 				}
 			},
@@ -412,7 +412,7 @@ pub fn get_top_views()->Vec<FCView>{
 }
 
 pub fn client_x(view:FCView)->f32{
-	if(view.m_id != -1){
+	if view.m_id != -1{
 		let c_left = view.m_location.x;
 		let mut find = false;
 		match M_PARENT_VIEW_MAP.lock().unwrap().get(&view.m_id) {
@@ -423,10 +423,10 @@ pub fn client_x(view:FCView)->f32{
 				find = false;
 			}
 		}
-		if(find){
+		if find{
 			let p_id = M_PARENT_VIEW_MAP.lock().unwrap()[&view.m_id];
 			let parent = M_VIEW_MAP.lock().unwrap()[&p_id].clone();
-			if(parent.m_display_offset){
+			if parent.m_display_offset {
 				return c_left - parent.m_scroll_h + client_x(parent);
 			}else{
 				return c_left + client_x(parent);
@@ -440,7 +440,7 @@ pub fn client_x(view:FCView)->f32{
 }
 
 pub fn client_y(view:FCView)->f32{
-	if(view.m_id != -1){
+	if view.m_id != -1 {
 		let c_top = view.m_location.y;
 		let mut find = false;
 		match M_PARENT_VIEW_MAP.lock().unwrap().get(&view.m_id) {
@@ -452,10 +452,10 @@ pub fn client_y(view:FCView)->f32{
 				
 			}
 		}
-		if(find){
+		if find {
 			let p_id = M_PARENT_VIEW_MAP.lock().unwrap()[&view.m_id];
 			let parent = M_VIEW_MAP.lock().unwrap()[&p_id].clone();
-			if(parent.m_display_offset){
+			if parent.m_display_offset{
 				return c_top - parent.m_scroll_v + client_y(parent);
 			}else{
 				return c_top + client_y(parent);
@@ -473,8 +473,8 @@ pub fn contains_point(view:FCView, mp:FCPoint)->bool{
 	let cly = client_y(view.clone());
 	let size = view.m_size;
 	let cp = FCPoint{x:mp.x - clx, y:mp.y - cly};
-	if(cp.x >= 0.0 && cp.x <= size.cx &&
-		cp.y >= 0.0 && cp.y <= size.cy) {
+	if cp.x >= 0.0 && cp.x <= size.cx &&
+		cp.y >= 0.0 && cp.y <= size.cy {
 		return true;
 	} else {
 		return false;
@@ -486,13 +486,13 @@ pub fn find_view_by_name(name:String, views:Vec<FCView>)->FCView{
 	let copy_name = name.clone();
 	 for i in 0..views.len(){
 		let view = &views[i];
-		if(view.m_name == copy_name){
+		if view.m_name == copy_name{
 		    return view.clone();
 		}else{
 			let sub_views = get_sub_views(view.clone());
-			if(sub_views.len() > 0){
+			if sub_views.len() > 0{
 				let sub_view = find_view_by_name(name.clone(), sub_views);
-				if(sub_view.m_id != -1) {
+				if sub_view.m_id != -1 {
 					return sub_view;
 				}
 			}
@@ -502,7 +502,7 @@ pub fn find_view_by_name(name:String, views:Vec<FCView>)->FCView{
 }
 
 pub fn is_paint_visible(view:FCView)->bool{
-	if(view.m_visible){
+	if view.m_visible{
 		let mut find = false;
         match M_PARENT_VIEW_MAP.lock().unwrap().get(&view.m_id) {
 			Some(x) => {
@@ -512,10 +512,10 @@ pub fn is_paint_visible(view:FCView)->bool{
 				find = false;
 			}
 		}
-		if(find){
+		if find{
 			let p_id = M_PARENT_VIEW_MAP.lock().unwrap()[&view.m_id];
 			let parent = M_VIEW_MAP.lock().unwrap()[&p_id].clone();
-			if(parent.m_visible){
+			if parent.m_visible {
 				return is_paint_visible(parent);
 			}else{
 				return false;
@@ -533,7 +533,7 @@ pub fn get_intersect_rect(lp_dest_rect:&mut FCRect, lp_src1_rect:FCRect, lp_src2
     lp_dest_rect.right = lp_src1_rect.right.min(lp_src2_rect.right);
     lp_dest_rect.top = lp_src1_rect.top.max(lp_src2_rect.top);
     lp_dest_rect.bottom = lp_src1_rect.bottom.min(lp_src2_rect.bottom);
-    if(lp_dest_rect.right > lp_dest_rect.left && lp_dest_rect.bottom > lp_dest_rect.top){
+    if lp_dest_rect.right > lp_dest_rect.left && lp_dest_rect.bottom > lp_dest_rect.top{
         return 1;
     }
     else{
@@ -561,7 +561,7 @@ pub fn touch_start(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pre
     let closure = Closure::wrap(Box::new(move |event: web_sys::TouchEvent| {
         unsafe{
 			M_IS_MOBILE = true;
-			if(M_IS_MOBILE){
+			if M_IS_MOBILE {
 				let touches = event.touches();
 				let touch1 = touches.get(0).expect("REASON");
 				let mp = FCPoint{x:touch1.client_x() as f32, y:touch1.client_y() as f32};
@@ -570,7 +570,7 @@ pub fn touch_start(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pre
 				let top_views = get_top_views();
 				let mouse_down_view = find_view(M_MOUSE_DOWN_POINT.clone(), top_views);
 				M_MOUSE_DOWN_VIEW = mouse_down_view.m_id;
-				if(M_MOUSE_DOWN_VIEW != -1){
+				if M_MOUSE_DOWN_VIEW != -1{
 					M_FOCUSED_VIEW = M_MOUSE_DOWN_VIEW;
 					M_FIRST_TOUCH = false;
 					M_SECOND_TOUCH = false;
@@ -578,14 +578,14 @@ pub fn touch_start(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pre
 					M_TOUCH_SECOND_POINT = FCPoint{x:0.0, y:0.0};
 					let clx = client_x(mouse_down_view.clone());
 					let cly = client_y(mouse_down_view.clone());
-					if (touches.length() >= 1) {
+					if touches.length() >= 1 {
 						M_FIRST_TOUCH = true;
 						M_MOUSE_DOWN_POINT = FCPoint{x:touch1.client_x() as f32, y:touch1.client_y() as f32};
 						M_TOUCH_FIRST_POINT = FCPoint{x:mp.x, y:mp.y};
 						M_TOUCH_FIRST_POINT.x = M_TOUCH_FIRST_POINT.x - clx;
 						M_TOUCH_FIRST_POINT.y = M_TOUCH_FIRST_POINT.y - cly;
 					}
-					if (touches.length() >= 2) {
+					if touches.length() >= 2 {
 						let touch2 = touches.get(1).expect("REASON");
 						M_SECOND_TOUCH = true;
 						M_TOUCH_SECOND_POINT = FCPoint{x:touch2.client_x() as f32, y:touch2.client_y() as f32};
@@ -606,8 +606,8 @@ pub fn touch_move(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pres
     let pressed = pressed.clone();
     let closure = Closure::wrap(Box::new(move |event: web_sys::TouchEvent| {
         unsafe{
-			if(M_IS_MOBILE){
-				if(M_MOUSE_DOWN_VIEW != -1){
+			if M_IS_MOBILE{
+				if M_MOUSE_DOWN_VIEW != -1{
 					let mouse_down_view = M_VIEW_MAP.lock().unwrap()[&M_MOUSE_DOWN_VIEW].clone();
 					let touches = event.touches();
 					let touch1 = touches.get(0).expect("REASON");
@@ -618,14 +618,14 @@ pub fn touch_move(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pres
 					let clx = client_x(mouse_down_view.clone());
 					let cly = client_y(mouse_down_view.clone());
 					let mp = FCPoint{x:touch1.client_x() as f32, y:touch1.client_y() as f32};
-					if (touches.length() >= 1) {
+					if touches.length() >= 1 {
 						M_FIRST_TOUCH = true;
 						M_TOUCH_FIRST_POINT = FCPoint{x:touch1.client_x() as f32, y:touch1.client_y() as f32};
 						M_TOUCH_POINT = M_TOUCH_FIRST_POINT.clone();
 						M_TOUCH_FIRST_POINT.x = M_TOUCH_FIRST_POINT.x - clx;
 						M_TOUCH_FIRST_POINT.y = M_TOUCH_FIRST_POINT.y - cly;
 					}
-					if (touches.length() >= 2) {
+					if touches.length() >= 2 {
 						let touch2 = touches.get(1).expect("REASON");
 						M_SECOND_TOUCH = true;
 						M_TOUCH_SECOND_POINT = FCPoint{x:touch2.client_x() as f32, y:touch2.client_y() as f32};
@@ -633,8 +633,8 @@ pub fn touch_move(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pres
 						M_TOUCH_SECOND_POINT.y = M_TOUCH_SECOND_POINT.y - cly;
 					}
 					on_touch_move(&context, mouse_down_view.clone(), M_FIRST_TOUCH, M_SECOND_TOUCH, M_TOUCH_FIRST_POINT.clone(), M_TOUCH_SECOND_POINT.clone());
-					if(mouse_down_view.m_allow_drag){
-						if ((mp.x - M_MOUSE_DOWN_POINT.x).abs() > 5.0 || (mp.y - M_MOUSE_DOWN_POINT.y).abs() > 5.0) {
+					if mouse_down_view.m_allow_drag{
+						if (mp.x - M_MOUSE_DOWN_POINT.x).abs() > 5.0 || (mp.y - M_MOUSE_DOWN_POINT.y).abs() > 5.0 {
 							M_DRAG_BEGIN_POINT = FCPoint{x:M_MOUSE_DOWN_POINT.x, y:M_MOUSE_DOWN_POINT.y};
 							M_DRAGGING_VIEW = M_MOUSE_DOWN_VIEW;
 							M_DRAG_BEGIN_RECT = FCRect{left:mouse_down_view.m_location.x, top:mouse_down_view.m_location.y,
@@ -643,7 +643,7 @@ pub fn touch_move(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pres
 							M_MOUSE_DOWN_VIEW = -1;
 						}
 					}
-				} else if(M_DRAGGING_VIEW != -1){
+				} else if M_DRAGGING_VIEW != -1{
 					let touches = event.touches();
 					let touch1 = touches.get(0).expect("REASON");
 					let mp = FCPoint{x:touch1.client_x() as f32, y:touch1.client_y() as f32};
@@ -665,11 +665,11 @@ pub fn touch_move(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pres
 							find = false;
 						}
 					}
-					if(find){
+					if find{
 						let parentView = M_VIEW_MAP.lock().unwrap()[&p_id].clone();
-						if(parentView.m_type == "split"){
+						if parentView.m_type == "split"{
 							for (id, v) in M_SPLIT_MAP.lock().unwrap().iter_mut(){
-								if(parentView.m_id == *id){
+								if parentView.m_id == *id{
 									reset_split_layout_div(&mut *v);
 								}
 							}
@@ -691,12 +691,12 @@ pub fn touch_end(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, press
     let pressed = pressed.clone();
     let closure = Closure::wrap(Box::new(move |event: web_sys::TouchEvent| {
         unsafe{
-			if(M_IS_MOBILE){
-				if(M_MOUSE_DOWN_VIEW != -1){
+			if M_IS_MOBILE{
+				if M_MOUSE_DOWN_VIEW != -1{
 					let mouse_down_view = M_VIEW_MAP.lock().unwrap()[&M_MOUSE_DOWN_VIEW].clone();
 					let top_views = get_top_views();
 					let view = find_view(M_TOUCH_POINT.clone(), top_views);
-					if(view.m_id == M_MOUSE_DOWN_VIEW){
+					if view.m_id == M_MOUSE_DOWN_VIEW{
 						on_click(&context, mouse_down_view.clone(), M_TOUCH_FIRST_POINT.clone(), 1, 1, 0);
 					}
 					on_touch_end(&context, mouse_down_view.clone(), M_FIRST_TOUCH, M_SECOND_TOUCH, M_TOUCH_FIRST_POINT.clone(), M_TOUCH_SECOND_POINT.clone());
@@ -715,16 +715,16 @@ pub fn mouse_wheel(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pre
     let pressed = pressed.clone();
     let closure = Closure::wrap(Box::new(move |event: web_sys::WheelEvent| {
         unsafe{
-			if(!M_IS_MOBILE){
+			if !M_IS_MOBILE{
 				let mp = FCPoint{x:event.offset_x() as f32, y:event.offset_y() as f32};
 				let top_views = get_top_views();
 				let find_view = find_view(mp.clone(), top_views);
 				let cmp  = FCPoint{x:mp.x - client_x(find_view.clone()), y:mp.y - client_y(find_view.clone())};
 				let delta_y = event.delta_y();
 				let mut delta:i32 = 0;
-				if(delta_y > 0.0){
+				if delta_y > 0.0{
 					delta = -1;
-				}else if(delta_y < 0.0){
+				}else if delta_y < 0.0{
 					delta = 1;
 				}
 				on_mouse_wheel(&context, find_view.clone(), cmp.clone(), 0, 0, delta);
@@ -741,14 +741,14 @@ pub fn mouse_up(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, presse
     let closure = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
         pressed.set(false);
         unsafe{
-			if(!M_IS_MOBILE){
-				if(M_MOUSE_DOWN_VIEW != -1){
+			if !M_IS_MOBILE{
+				if M_MOUSE_DOWN_VIEW != -1{
 					let mp = FCPoint{x:event.offset_x() as f32, y:event.offset_y() as f32};
 					let mouse_down_view = M_VIEW_MAP.lock().unwrap()[&M_MOUSE_DOWN_VIEW].clone();
 					let cmp  = FCPoint{x:mp.x - client_x(mouse_down_view.clone()), y:mp.y - client_y(mouse_down_view.clone())};
 					let top_views = get_top_views();
 					let find_view = find_view(mp.clone(), top_views);
-					if(find_view.m_id == M_MOUSE_DOWN_VIEW){
+					if find_view.m_id == M_MOUSE_DOWN_VIEW{
 						on_click(&context, mouse_down_view.clone(), cmp.clone(), 1, 1, 0);
 					}
 					M_MOUSE_DOWN_VIEW = -1;
@@ -767,14 +767,14 @@ pub fn mouse_move(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pres
     let pressed = pressed.clone();
     let closure = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
         unsafe{
-			if(!M_IS_MOBILE){
+			if !M_IS_MOBILE{
 				let mp = FCPoint{x:event.offset_x() as f32, y:event.offset_y() as f32};
-				if(M_MOUSE_DOWN_VIEW != -1){
+				if M_MOUSE_DOWN_VIEW != -1{
 					let mouse_down_view = M_VIEW_MAP.lock().unwrap()[&M_MOUSE_DOWN_VIEW].clone();
 					M_MOUSE_MOVE_VIEW = mouse_down_view.m_id;
 					let cmp = FCPoint{x:mp.x - client_x(mouse_down_view.clone()), y:mp.y - client_y(mouse_down_view.clone())};
 					on_mouse_move(&context, mouse_down_view.clone(), cmp.clone(), 1, 1, 0);
-					if(mouse_down_view.m_allow_drag){
+					if mouse_down_view.m_allow_drag{
 						if ((mp.x - M_MOUSE_DOWN_POINT.x).abs() > 5.0 || (mp.y - M_MOUSE_DOWN_POINT.y).abs() > 5.0) {
 							M_DRAG_BEGIN_POINT = FCPoint{x:M_MOUSE_DOWN_POINT.x, y:M_MOUSE_DOWN_POINT.y};
 							M_DRAGGING_VIEW = M_MOUSE_DOWN_VIEW;
@@ -785,7 +785,7 @@ pub fn mouse_move(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pres
 						}
 					}
 				}
-				else if(M_DRAGGING_VIEW != -1){
+				else if M_DRAGGING_VIEW != -1{
 					let offsetX:f32 = mp.x - M_DRAG_BEGIN_POINT.x;
 					let offsetY:f32 = mp.y - M_DRAG_BEGIN_POINT.y;
 					let newBounds = FCRect{left:M_DRAG_BEGIN_RECT.left + offsetX, top:M_DRAG_BEGIN_RECT.top + offsetY,
@@ -804,11 +804,11 @@ pub fn mouse_move(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pres
 							find = false;
 						}
 					}
-					if(find){
+					if find {
 						let parentView = M_VIEW_MAP.lock().unwrap()[&p_id].clone();
-						if(parentView.m_type == "split"){
+						if parentView.m_type == "split"{
 							for (id, v) in M_SPLIT_MAP.lock().unwrap().iter_mut(){
-								if(parentView.m_id == *id){
+								if parentView.m_id == *id{
 									reset_split_layout_div(&mut *v);
 								}
 							}
@@ -837,13 +837,13 @@ pub fn mouse_down(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pres
     let context = context.clone();
     let closure = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
         unsafe{
-			if(!M_IS_MOBILE){
+			if !M_IS_MOBILE{
 				M_CANCEL_CLICK = false;
 				M_MOUSE_DOWN_POINT = FCPoint{x:event.offset_x() as f32, y:event.offset_y() as f32};
 				let top_views = get_top_views();
 				let mouse_down_view = find_view(M_MOUSE_DOWN_POINT.clone(), top_views);
 				M_MOUSE_DOWN_VIEW = mouse_down_view.m_id;
-				if(M_MOUSE_DOWN_VIEW != -1){
+				if M_MOUSE_DOWN_VIEW != -1{
 					M_FOCUSED_VIEW = M_MOUSE_DOWN_VIEW;
 					let cmp  = FCPoint{x:M_MOUSE_DOWN_POINT.x - client_x(mouse_down_view.clone()), y:M_MOUSE_DOWN_POINT.y - client_y(mouse_down_view.clone())};
 					on_mouse_down(&context, mouse_down_view.clone(), cmp.clone(), 1, 1, 0);
@@ -910,11 +910,11 @@ pub fn render_views(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vie
 	 for i in 0..views_size{
 		let view = &views[i];
 		let v_id = view.m_id;
-		if(!has_rect){
+		if !has_rect{
 			let sub_views = get_sub_views(view.clone());
 			let sub_views_size = sub_views.len();
-		    if(sub_views_size > 0) {
-		        if(sub_views_size > 0) {
+		    if sub_views_size > 0 {
+		        if sub_views_size > 0 {
 			        render_views(context, sub_views, rect.clone(), false);
 		        }
 	        }
@@ -923,13 +923,13 @@ pub fn render_views(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vie
 		    M_VIEW_MAP.lock().unwrap().insert(v_id, change_view);
 		    continue;
 		}
-		if(!view.m_top_most && is_paint_visible(view.clone())) {
+		if !view.m_top_most && is_paint_visible(view.clone()){
 			let clx = client_x(view.clone());
 			let cly = client_y(view.clone());
 			let draw_rect = FCRect{left:0.0, top:0.0, right:view.m_size.cx, bottom:view.m_size.cy};
 			let clip_rect = FCRect{left:clx, top:cly, right:clx + view.m_size.cx, bottom:cly + view.m_size.cy};
 			let mut dest_rect = FCRect{left:0.0, top:0.0, right:0.0, bottom:0.0};
-			if(get_intersect_rect(&mut dest_rect, rect.clone(), clip_rect.clone()) > 0){
+			if get_intersect_rect(&mut dest_rect, rect.clone(), clip_rect.clone()) > 0{
 				M_PAINT.lock().unwrap().save(context);
 			    M_PAINT.lock().unwrap().set_offset(context, 0.0, 0.0);
 			    M_PAINT.lock().unwrap().set_clip(context, dest_rect.left, dest_rect.top, dest_rect.right, dest_rect.bottom);
@@ -942,7 +942,7 @@ pub fn render_views(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vie
 			    on_paint(context, view.clone(), draw_rect.clone());
 			    let sub_views = get_sub_views(view.clone());
 				let sub_views_size = sub_views.len();
-				if(sub_views_size > 0) {
+				if sub_views_size > 0 {
 					render_views(context, sub_views, dest_rect.clone(), true);
 				}
 			    M_PAINT.lock().unwrap().set_offset(context, clx, cly);
@@ -951,7 +951,7 @@ pub fn render_views(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vie
 			}else{
 				let sub_views = get_sub_views(view.clone());
 				let sub_views_size = sub_views.len();
-				if(sub_views_size > 0) {
+				if sub_views_size > 0 {
 					render_views(context, sub_views, rect.clone(), false);
 				}
 				let mut change_view = M_VIEW_MAP.lock().unwrap()[&v_id].clone();
@@ -963,16 +963,16 @@ pub fn render_views(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vie
 	for i in 0..views_size{
 		let view = &views[i];
 		let v_id = view.m_id;
-		if(!has_rect){
+		if !has_rect{
 		    continue;
 		}
-		if(view.m_top_most && is_paint_visible(view.clone())) {
+		if view.m_top_most && is_paint_visible(view.clone()) {
 			let clx = client_x(view.clone());
 			let cly = client_y(view.clone());
 			let draw_rect = FCRect{left:0.0, top:0.0, right:view.m_size.cx, bottom:view.m_size.cy};
 			let clip_rect = FCRect{left:clx, top:cly, right:clx + view.m_size.cx, bottom:cly + view.m_size.cy};
 			let mut dest_rect = FCRect{left:0.0, top:0.0, right:0.0, bottom:0.0};
-			if(get_intersect_rect(&mut dest_rect, rect.clone(), clip_rect.clone()) > 0){
+			if get_intersect_rect(&mut dest_rect, rect.clone(), clip_rect.clone()) > 0{
 				M_PAINT.lock().unwrap().save(context);
 			    M_PAINT.lock().unwrap().set_offset(context, 0.0, 0.0);
 			    M_PAINT.lock().unwrap().set_clip(context, dest_rect.left, dest_rect.top, dest_rect.right, dest_rect.bottom);
@@ -985,7 +985,7 @@ pub fn render_views(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vie
 			    on_paint(context, view.clone(), draw_rect.clone());
 			    let sub_views = get_sub_views(view.clone());
 				let sub_views_size = sub_views.len();
-				if(sub_views_size > 0) {
+				if sub_views_size > 0 {
 					render_views(context, sub_views, dest_rect.clone(), true);
 				}
 			    
@@ -995,7 +995,7 @@ pub fn render_views(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, vie
 			}else{
 				let sub_views = get_sub_views(view.clone());
 				let sub_views_size = sub_views.len();
-				if(sub_views_size > 0) {
+				if sub_views_size > 0 {
 					render_views(context, sub_views, rect.clone(), false);
 				}
 				let mut change_view = M_VIEW_MAP.lock().unwrap()[&v_id].clone();
@@ -1011,25 +1011,25 @@ pub fn find_view(mp:FCPoint, views:Vec<FCView>)->FCView{
 	let views_size = views.len();
 	for i in 0..views_size{
 		let view = &views[views_size - i - 1];
-		if(view.m_visible && view.m_top_most) {
-			if(contains_point(view.clone(), mp.clone())) {
-			    if(view.m_show_hscrollbar && view.m_scroll_size > 0.0){
+		if view.m_visible && view.m_top_most {
+			if contains_point(view.clone(), mp.clone()) {
+			    if view.m_show_hscrollbar && view.m_scroll_size > 0.0{
 			        let clx = client_x(view.clone());
-	                if(mp.x >= clx + view.m_size.cx - view.m_scroll_size){
+	                if mp.x >= clx + view.m_size.cx - view.m_scroll_size{
 	                    return view.clone();
 	                }
 			    }
-			    if(view.m_show_vscrollbar && view.m_scroll_size > 0.0){
+			    if view.m_show_vscrollbar && view.m_scroll_size > 0.0{
 			        let cly = client_y(view.clone());
-	                if(mp.y >= cly + view.m_size.cy - view.m_scroll_size){
+	                if mp.y >= cly + view.m_size.cy - view.m_scroll_size{
 	                    return view.clone();
 	                }
 			    }
 			    let sub_views = get_sub_views(view.clone());
 				let sub_views_size = sub_views.len();
-				if(sub_views_size > 0) {
+				if sub_views_size > 0 {
 					let sub_view = find_view(mp.clone(), sub_views);
-					if(sub_view.m_id != -1) {
+					if sub_view.m_id != -1 {
 						return sub_view.clone();
 					}
 				}
@@ -1039,25 +1039,25 @@ pub fn find_view(mp:FCPoint, views:Vec<FCView>)->FCView{
 	}
 	for i in 0..views_size{
 		let view = &views[views_size - i - 1];
-		if(view.m_visible && !view.m_top_most) {
-			if(contains_point(view.clone(), mp.clone())) {
-			    if(view.m_show_hscrollbar && view.m_scroll_size > 0.0){
+		if view.m_visible && !view.m_top_most {
+			if contains_point(view.clone(), mp.clone()){
+			    if view.m_show_hscrollbar && view.m_scroll_size > 0.0{
 			        let clx = client_x(view.clone());
-	                if(mp.x >= clx + view.m_size.cx - view.m_scroll_size){
+	                if mp.x >= clx + view.m_size.cx - view.m_scroll_size{
 	                    return view.clone();
 	                }
 			    }
-			    if(view.m_show_vscrollbar && view.m_scroll_size > 0.0){
+			    if view.m_show_vscrollbar && view.m_scroll_size > 0.0{
 			        let cly = client_y(view.clone());
-	                if(mp.y >= cly + view.m_size.cy - view.m_scroll_size){
+	                if mp.y >= cly + view.m_size.cy - view.m_scroll_size{
 	                    return view.clone();
 	                }
 			    }
 			    let sub_views = get_sub_views(view.clone());
 				let sub_views_size = sub_views.len();
-				if(sub_views_size > 0) {
+				if sub_views_size > 0 {
 					let sub_view = find_view(mp.clone(), sub_views);
-					if(sub_view.m_id != -1) {
+					if sub_view.m_id != -1 {
 						return sub_view.clone();
 					}
 				}
@@ -1078,7 +1078,7 @@ pub fn invalidate(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>){
 
 pub fn invalidate_view(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FCView){
 	unsafe{
-		if(is_paint_visible(view.clone())){
+		if is_paint_visible(view.clone()){
 			let top_views2 = get_top_views();
 			let cl_x = client_x(view.clone());
 	        let cl_y = client_y(view.clone());

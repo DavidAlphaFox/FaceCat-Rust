@@ -37,21 +37,21 @@ pub fn reset_split_layout_div(split:&mut FCSplitLayoutDiv)->bool{
     let mut f_rect = FCRect{left:0.0, top:0.0, right:0.0, bottom:0.0};
     let mut s_rect = FCRect{left:0.0, top:0.0, right:0.0, bottom:0.0};
     let mut splitter_size = FCSize{cx:0.0, cy:0.0};
-    if(split.m_splitter.m_visible){
+    if split.m_splitter.m_visible{
         splitter_size.cx = split.m_splitter.m_size.cx;
         splitter_size.cy = split.m_splitter.m_size.cy;
     }
     let layout_style = split.m_layout_style.clone();
-    if(layout_style == "bottomtotop"){
-        if (split.m_split_mode == "absolutesize" || split.m_old_size.cy == 0.0){
+    if layout_style == "bottomtotop"{
+        if split.m_split_mode == "absolutesize" || split.m_old_size.cy == 0.0{
             split_rect.left = 0.0;
             split_rect.top = height - (split.m_old_size.cy - split.m_splitter.m_location.y);
             split_rect.right = width;
             split_rect.bottom = split_rect.top + splitter_size.cy;
         }
-        else if (split.m_split_mode == "percentsize"){
+        else if split.m_split_mode == "percentsize"{
             split_rect.left = 0.0;
-            if(split.m_split_percent == -1.0){
+            if split.m_split_percent == -1.0{
                 split.m_split_percent = split.m_splitter.m_location.y / split.m_old_size.cy;
             }
             split_rect.top = height * split.m_split_percent;
@@ -67,15 +67,15 @@ pub fn reset_split_layout_div(split:&mut FCSplitLayoutDiv)->bool{
         s_rect.right = width;
         s_rect.bottom = split_rect.top;
     }
-    else if(layout_style == "lefttoright"){
-        if (split.m_split_mode == "absolutesize" || split.m_old_size.cx == 0.0){
+    else if layout_style == "lefttoright"{
+        if split.m_split_mode == "absolutesize" || split.m_old_size.cx == 0.0{
             split_rect.left = split.m_splitter.m_location.x;
             split_rect.top = 0.0;
             split_rect.right = split_rect.left + splitter_size.cx;
             split_rect.bottom = height;
         }
-        else if (split.m_split_mode == "percentsize"){
-            if(split.m_split_percent == -1.0){
+        else if split.m_split_mode == "percentsize"{
+            if split.m_split_percent == -1.0{
                 split.m_split_percent = split.m_splitter.m_location.x / split.m_old_size.cx;
             }
             split_rect.left = width * split.m_split_percent;
@@ -92,15 +92,15 @@ pub fn reset_split_layout_div(split:&mut FCSplitLayoutDiv)->bool{
         s_rect.right = width;
         s_rect.bottom = height;
     }
-    else if(layout_style == "righttoleft"){
-        if (split.m_split_mode == "absolutesize" || split.m_old_size.cx == 0.0){
+    else if layout_style == "righttoleft"{
+        if split.m_split_mode == "absolutesize" || split.m_old_size.cx == 0.0{
             split_rect.left = width - (split.m_old_size.cx - split.m_splitter.m_location.x);
             split_rect.top = 0.0;
             split_rect.right = split_rect.left + splitter_size.cx;
             split_rect.bottom = height;
         }
-        else if (split.m_split_mode == "percentsize"){
-            if(split.m_split_percent == -1.0){
+        else if split.m_split_mode == "percentsize"{
+            if split.m_split_percent == -1.0{
                 split.m_split_percent = split.m_splitter.m_location.x / split.m_old_size.cx;
             }
             split_rect.left = width * split.m_split_percent;
@@ -117,16 +117,16 @@ pub fn reset_split_layout_div(split:&mut FCSplitLayoutDiv)->bool{
         s_rect.right = split_rect.left;
         s_rect.bottom = height;
     }
-    else if(layout_style == "toptobottom"){
-        if (split.m_split_mode == "absolutesize" || split.m_old_size.cy == 0.0){
+    else if layout_style == "toptobottom"{
+        if split.m_split_mode == "absolutesize" || split.m_old_size.cy == 0.0{
             split_rect.left = 0.0;
             split_rect.top = split.m_splitter.m_location.y;
             split_rect.right = width;
             split_rect.bottom = split_rect.top + splitter_size.cy;
         }
-        else if (split.m_split_mode == "percentsize"){
+        else if split.m_split_mode == "percentsize"{
             split_rect.left = 0.0;
-            if(split.m_split_percent == -1.0){
+            if split.m_split_percent == -1.0{
                 split.m_split_percent = split.m_splitter.m_location.y / split.m_old_size.cy;
             }
             split_rect.top = height * split.m_split_percent;
@@ -142,9 +142,9 @@ pub fn reset_split_layout_div(split:&mut FCSplitLayoutDiv)->bool{
         s_rect.right = width;
         s_rect.bottom = height;
     }
-    if(split.m_splitter.m_visible){
+    if split.m_splitter.m_visible{
         let sp_rect = FCRect{left:split.m_splitter.m_location.x,  top:split.m_splitter.m_location.y, right:split.m_splitter.m_location.x + split.m_splitter.m_size.cx, bottom:split.m_splitter.m_location.y + split.m_splitter.m_size.cy};
-        if (sp_rect.left != split_rect.left || sp_rect.top != split_rect.top || sp_rect.right != split_rect.right || sp_rect.bottom != split_rect.bottom){
+        if sp_rect.left != split_rect.left || sp_rect.top != split_rect.top || sp_rect.right != split_rect.right || sp_rect.bottom != split_rect.bottom{
             split.m_splitter.m_location = FCPoint{x:split_rect.left, y:split_rect.top};
             split.m_splitter.m_size = FCSize{cx:split_rect.right - split_rect.left, cy:split_rect.bottom - split_rect.top};
             M_VIEW_MAP.lock().unwrap().insert(split.m_splitter.m_id, split.m_splitter.clone());
@@ -152,14 +152,14 @@ pub fn reset_split_layout_div(split:&mut FCSplitLayoutDiv)->bool{
         }
     }
     let fc_rect = FCRect{left:split.m_first_view.m_location.x,  top:split.m_first_view.m_location.y, right:split.m_first_view.m_location.x + split.m_first_view.m_size.cx, bottom:split.m_first_view.m_location.y + split.m_first_view.m_size.cy};
-    if (fc_rect.left != f_rect.left || fc_rect.top != f_rect.top || fc_rect.right != f_rect.right || fc_rect.bottom != f_rect.bottom){
+    if fc_rect.left != f_rect.left || fc_rect.top != f_rect.top || fc_rect.right != f_rect.right || fc_rect.bottom != f_rect.bottom{
         reset = true;
         split.m_first_view.m_location = FCPoint{x:f_rect.left, y:f_rect.top};
         split.m_first_view.m_size = FCSize{cx:f_rect.right - f_rect.left, cy:f_rect.bottom - f_rect.top};
         M_VIEW_MAP.lock().unwrap().insert(split.m_first_view.m_id, split.m_first_view.clone());
     }
     let sc_rect = FCRect{left:split.m_second_view.m_location.x,  top:split.m_second_view.m_location.y, right:split.m_second_view.m_location.x + split.m_second_view.m_size.cx, bottom:split.m_second_view.m_location.y + split.m_second_view.m_size.cy};
-    if (sc_rect.left != s_rect.left || sc_rect.top != s_rect.top || sc_rect.right != s_rect.right || sc_rect.bottom != s_rect.bottom){
+    if sc_rect.left != s_rect.left || sc_rect.top != s_rect.top || sc_rect.right != s_rect.right || sc_rect.bottom != s_rect.bottom{
         reset = true;
         split.m_second_view.m_location = FCPoint{x:s_rect.left, y:s_rect.top};
         split.m_second_view.m_size = FCSize{cx:s_rect.right - s_rect.left, cy:s_rect.bottom - s_rect.top};

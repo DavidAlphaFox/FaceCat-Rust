@@ -350,22 +350,22 @@ pub fn chart_grid_scale(min : f64, max : f64, y_len : f32, max_span : f32, min_s
 		let b:f64 = 10.0;
 		divisor = b.powf(i as f64);
 		n_temp = (log_step / divisor).floor() as i32;
-		if (start) {
-            if (n_temp < 4) {
-                if (*grid_digit > 0) {
+		if start {
+            if n_temp < 4 {
+                if *grid_digit > 0 {
                     *grid_digit = *grid_digit - 1;
                 }
-            } else if (n_temp >= 4 && n_temp <= 6) {
+            } else if n_temp >= 4 && n_temp <= 6 {
                 n_temp = 5;
                 *grid_step = *grid_step + (n_temp as f64) * divisor;
             } else {
                 *grid_step = *grid_step + 10.0 * divisor;
-                if (*grid_digit > 0) {
+                if *grid_digit > 0 {
                     *grid_digit = *grid_digit - 1;
                 }
             }
             break;
-        } else if (n_temp > 0) {
+        } else if n_temp > 0 {
             *grid_step = (n_temp as f64) * divisor + *grid_step;
             log_step = log_step - *grid_step;
             start = true;
@@ -392,11 +392,11 @@ pub fn avg_value(list:Vec<f64>)->f64{
 pub fn max_value(list:Vec<f64>)->f64{
 	let mut max:f64 = 0.0;
 	let len = list.len();
-	if(len > 0){
+	if len > 0{
 		max = list[0];
 	}
 	for num in list{
-		if(max < num){
+		if max < num{
 			max = num;
 		}
 	}
@@ -406,11 +406,11 @@ pub fn max_value(list:Vec<f64>)->f64{
 pub fn min_value(list:Vec<f64>)->f64{
 	let mut min:f64 = 0.0;
 	let len = list.len();
-	if(len > 0){
+	if len > 0{
 		min = list[0];
 	}
 	for num in list{
-		if(min > num){
+		if min > num{
 			min = num;
 		}
 	}
@@ -426,7 +426,7 @@ pub fn ellipse_or(x1:f32, y1:f32, x2:f32, y2:f32, x3:f32, y3:f32, o_x:&mut f32, 
 }
 
 pub fn line_xy(x1:f32, y1:f32, x2:f32, y2:f32, o_x:f32, o_y:f32, k:&mut f32, b:&mut f32){
-	if ((x1 - o_x) != (x2 - o_x)) {
+	if (x1 - o_x) != (x2 - o_x) {
         *k = ((y2 - o_y) - (y1 - o_y)) / ((x2 - o_x) - (x1 - o_x));
         *b = (y1 - o_y) - *k * (x1 - o_x);
     }
@@ -437,42 +437,42 @@ pub fn ellipse_has_point(x:f32, y: f32, o_x:f32, o_y:f32, a:f32, b:f32)->bool{
 	let mut new_y = y;
 	new_x = x - o_x;
     new_y = y - o_y;
-    if (a == 0.0 && b == 0.0 && new_x == 0.0 && new_y == 0.0) {
+    if a == 0.0 && b == 0.0 && new_x == 0.0 && new_y == 0.0 {
         return true;
     }
-    if (a == 0.0) {
-        if (new_x == 0.0 && new_y >= -b && new_y <= b) {
+    if a == 0.0 {
+        if new_x == 0.0 && new_y >= -b && new_y <= b {
             return false;
         }
     }
-    if (b == 0.0) {
-        if (y == 0.0 && new_x >= -a && new_x <= a) {
+    if b == 0.0 {
+        if y == 0.0 && new_x >= -a && new_x <= a {
             return true;
         }
     }
-    if ((new_x * new_x) / (a * a) + (new_y * new_y) / (b * b) >= 0.8 && (new_x * new_x) / (a * a) + (new_y * new_y) / (b * b) <= 1.2) {
+    if (new_x * new_x) / (a * a) + (new_y * new_y) / (b * b) >= 0.8 && (new_x * new_x) / (a * a) + (new_y * new_y) / (b * b) <= 1.2 {
         return true;
     }
     return false;
 }
 
 pub fn rectangle_xywh(x1:f32, y1:f32, x2:f32, y2:f32, x:&mut f32, y:&mut f32, w:&mut f32, h:&mut f32){
-	if(x1 < x2){
+	if x1 < x2{
 		*x = x1;
 	}else{
 		*x = x2;
 	}
-	if(y1 < y2){
+	if y1 < y2{
 		*y = y1;
 	}else{
 		*y = y2;
 	}
     *w = (x1 - x2).abs();
     *h = (y1 - y2).abs();
-    if (*w <= 0.0) {
+    if *w <= 0.0 {
         *w = 4.0;
     }
-    if (*h <= 0.0) {
+    if *h <= 0.0 {
         *h = 4.0;
     }
 }
@@ -483,12 +483,12 @@ pub fn select_line(mp:FCPoint, x1:f32, y1:f32, x2:f32, y2:f32)->bool{
 	let f32_x = mp.x as f32;
 	let f32_y = mp.y as f32;
 	line_xy(x1, y1, x2, y2, 0.0, 0.0, &mut k, &mut b);
-	if (!(k == 0.0 && b == 0.0)) {
-        if (f32_y / (f32_x * k + b) >= 0.9 && f32_y / (f32_x * k + b) <= 1.1) {
+	if !(k == 0.0 && b == 0.0) {
+        if f32_y / (f32_x * k + b) >= 0.9 && f32_y / (f32_x * k + b) <= 1.1 {
             return true;
         }
     } else {
-        if (f32_x >= x1 - 5.0 && f32_x <= x1 + 5.0) {
+        if f32_x >= x1 - 5.0 && f32_x <= x1 + 5.0 {
             return true;
         }
     }
@@ -501,27 +501,27 @@ pub fn select_ray(mp:FCPoint, x1:f32, y1:f32, x2:f32, y2:f32)->bool{
 	let f32_x = mp.x as f32;
 	let f32_y = mp.y as f32;
 	line_xy(x1, y1, x2, y2, 0.0, 0.0, &mut k, &mut b);
-	if (!(k == 0.0 && b == 0.0)) {
-        if (f32_y / (f32_x * k + b) >= 0.9 && f32_y / (f32_x * k + b) <= 1.1) {
-            if (x1 >= x2) {
-                if (f32_x > x1 + 5.0) {
+	if !(k == 0.0 && b == 0.0) {
+        if f32_y / (f32_x * k + b) >= 0.9 && f32_y / (f32_x * k + b) <= 1.1 {
+            if x1 >= x2{
+                if f32_x > x1 + 5.0 {
 					return false;
 				}
-            } else if (x1 < x2) {
-                if (f32_x < x1 - 5.0){
+            } else if x1 < x2 {
+                if f32_x < x1 - 5.0{
 					return false;
 				}
             }
             return true;
         }
     } else {
-        if (f32_x>= x1 - 5.0 && f32_x <= x1 + 5.0){
-            if (y1 >= y2) {
-                if (f32_y <= y1 - 5.0) {
+        if f32_x>= x1 - 5.0 && f32_x <= x1 + 5.0{
+            if y1 >= y2 {
+                if f32_y <= y1 - 5.0 {
                     return true;
                 }
             } else {
-                if (f32_y >= y1 - 5.0) {
+                if f32_y >= y1 - 5.0 {
                     return true;
                 }
             }
@@ -540,33 +540,33 @@ pub fn select_segment(mp:FCPoint, x1:f32, y1:f32, x2:f32, y2:f32)->bool{
 	let mut small_y:f32 = 0.0;
 	let mut big_x:f32 = 0.0;
 	let mut big_y:f32 = 0.0;
-	if(x1 <= x2){
+	if x1 <= x2{
 		small_x = x1;
 	}else{
 		small_x = x2;
 	}
-	if(y1 <= y2){
+	if y1 <= y2{
 		small_y = y1;
 	}else{
 		small_y = y2;
 	}
-	if(x1 > x2){
+	if x1 > x2{
 		big_x = x1;
 	}else{
 		big_x = x2;
 	}
-	if(y1 > y2){
+	if y1 > y2{
 		big_y = y1;
 	}else{
 		big_y = y2;
 	}
-    if (f32_x >= small_x - 2.0 && f32_x <= big_x + 2.0 && f32_y >= small_y - 2.0 && f32_y <= big_y + 2.0) {
-        if (k != 0.0 || b != 0.0) {
-            if (f32_y / (f32_x * k + b) >= 0.9 && f32_y / (f32_x * k + b) <= 1.1) {
+    if f32_x >= small_x - 2.0 && f32_x <= big_x + 2.0 && f32_y >= small_y - 2.0 && f32_y <= big_y + 2.0 {
+        if k != 0.0 || b != 0.0 {
+            if f32_y / (f32_x * k + b) >= 0.9 && f32_y / (f32_x * k + b) <= 1.1 {
                 return true;
             }
         } else {
-            if (f32_x >= x1 - 5.0 && f32_x <= x1 + 5.0){
+            if f32_x >= x1 - 5.0 && f32_x <= x1 + 5.0{
                 return true;
             }
         }
@@ -582,7 +582,7 @@ pub fn linear_regression_equation(list:Vec<f64>, rk:&mut f32, rb:&mut f32){
     let mut x_avg:f64 = 0.0;
     let mut y_avg:f64 = 0.0;
     let length = list.len();
-    if(length > 1){
+    if length > 1{
 		for i in 0..length{
 			sum_x = sum_x + (i as f64) + 1.0;
             sum_y = sum_y + list[i];
@@ -609,7 +609,7 @@ pub fn standard_deviation_sum(list:Vec<f64>, avg_value:f64, param:f64)->f64{
 }
 
 pub fn fibonacci_value(index:i32)->i32{
-	if (index < 1){
+	if index < 1{
         return 0;
     }
     else{
@@ -619,7 +619,7 @@ pub fn fibonacci_value(index:i32)->i32{
 		}
         let mut result:i32 = 0;
 		for i in 0..index{
-			if(i == 0 || i == 1){
+			if i == 0 || i == 1{
 				vlist[i as usize] = 1;
 			}else{
 				vlist[i as usize] = vlist[(i - 1)  as usize] + vlist[(i - 2) as usize];
@@ -632,7 +632,7 @@ pub fn fibonacci_value(index:i32)->i32{
 
 pub fn get_max_visible_count(chart:&mut FCChart, h_scale_pixel:f32, pure_h:f32)->i32{
 	let mut count = ((pure_h - h_scale_pixel) / h_scale_pixel) as i32;
-    if(count < 0){
+    if count < 0{
         count = 0;
     }
     return count;
@@ -640,7 +640,7 @@ pub fn get_max_visible_count(chart:&mut FCChart, h_scale_pixel:f32, pure_h:f32)-
 
 pub fn get_candle_div_height(chart:&mut FCChart)->f32{
 	let height = chart.m_view.m_size.cy - chart.m_hscale_height;
-	if(height > 0.0){
+	if height > 0.0{
 		return height * (chart.m_candle_div_percent as f32);
 	}else{
 		return 0.0;
@@ -649,7 +649,7 @@ pub fn get_candle_div_height(chart:&mut FCChart)->f32{
 
 pub fn get_vol_div_height(chart:&mut FCChart)->f32{
 	let height = chart.m_view.m_size.cy - chart.m_hscale_height;
-	if(height > 0.0){
+	if height > 0.0{
 		return height * (chart.m_vol_div_percent as f32);
 	}else{
 		return 0.0;
@@ -658,7 +658,7 @@ pub fn get_vol_div_height(chart:&mut FCChart)->f32{
 
 pub fn get_ind_div_height(chart:&mut FCChart)->f32{
 	let height = chart.m_view.m_size.cy - chart.m_hscale_height;
-	if(height > 0.0){
+	if height > 0.0{
 		return height * (chart.m_ind_div_percent as f32);
 	}else{
 		return 0.0;
@@ -667,7 +667,7 @@ pub fn get_ind_div_height(chart:&mut FCChart)->f32{
 
 pub fn get_ind_div_height2(chart:&mut FCChart)->f32{
 	let height = chart.m_view.m_size.cy - chart.m_hscale_height;
-	if(height > 0.0){
+	if height > 0.0{
 		return height * (chart.m_ind_div_percent2 as f32);
 	}else{
 		return 0.0;
@@ -684,21 +684,21 @@ pub fn get_chart_x(chart:&mut FCChart, index:i32)->f32{
 
 pub fn get_chart_index(chart:&mut FCChart, mp:FCPoint)->i32{
 	let data_len = chart.m_data.len() as i32;
-	if(data_len == 0){
+	if data_len == 0{
 		return -1;
 	}
-	if(mp.x <= 0.0) {
+	if mp.x <= 0.0 {
 		return 0;
 	}
 	let width = chart.m_view.m_size.cx - chart.m_left_vscale_width - chart.m_right_vscale_width;
 	let int_x = mp.x - chart.m_left_vscale_width - chart.m_hscale_pixel;
 	let mut index = (chart.m_first_visible_index as f32 + int_x / chart.m_hscale_pixel) as i32;
-	if((int_x as i32) % (chart.m_hscale_pixel as i32) != 0){
+	if (int_x as i32) % (chart.m_hscale_pixel as i32) != 0{
 		index = index + 1;
 	}
-	if(index < 0){
+	if index < 0{
 		 index = 0;
-	}else if(index > data_len - 1){
+	}else if index > data_len - 1{
 		 index = data_len - 1;
 	}	
 	return index;
@@ -710,7 +710,7 @@ pub fn get_chart_index_by_date(chart:&mut FCChart,date:f64)->i32{
 	let mut pos : i32 = 0;
 	let vecter_iterator = chart.m_data.iter();
 	for data in vecter_iterator{
-		if(data.m_date == date){
+		if data.m_date == date{
 			index = pos;
 			break;
 		}
@@ -722,7 +722,7 @@ pub fn get_chart_index_by_date(chart:&mut FCChart,date:f64)->i32{
 pub fn get_chart_date_by_index(chart:&mut FCChart, index:i32)->f64{
 	let mut date : f64 = 0.0;
 	let data_len = chart.m_data.len() as i32;
-    if(index >= 0 && index < data_len){
+    if index >= 0 && index < data_len{
         date = chart.m_data[index as usize].m_date;
     }
     return date;
@@ -730,12 +730,12 @@ pub fn get_chart_date_by_index(chart:&mut FCChart, index:i32)->f64{
 
 pub fn check_chart_last_visible_index(chart:&mut FCChart){
 	let data_len = chart.m_data.len() as i32;
-    if (chart.m_last_visible_index > data_len - 1) {
+    if chart.m_last_visible_index > data_len - 1 {
         chart.m_last_visible_index = data_len - 1;
     }
-    if (data_len > 0) {
+    if data_len > 0 {
         chart.m_last_visible_key = chart.m_data[chart.m_last_visible_index as usize].m_date;
-        if (chart.m_last_visible_index == data_len - 1) {
+        if chart.m_last_visible_index == data_len - 1 {
             chart.m_last_record_is_visible = true;
         } else {
             chart.m_last_record_is_visible = false;
@@ -748,13 +748,13 @@ pub fn check_chart_last_visible_index(chart:&mut FCChart){
 
 pub fn set_chart_visible_index(chart:&mut FCChart, first_visible_index : i32, last_visible_index : i32){
     let xscale_pixel = get_chart_workarea_width(chart) / ((last_visible_index - first_visible_index + 1) as f32);
-    if (xscale_pixel < 1000000.0) {
+    if xscale_pixel < 1000000.0 {
         chart.m_first_visible_index = first_visible_index;
         chart.m_last_visible_index = last_visible_index;
-	let data_len = chart.m_data.len() as i32;
-        if (last_visible_index != data_len - 1) {
-            chart.m_last_record_is_visible = false;
-        } else {
+	    let data_len = chart.m_data.len() as i32;
+        if last_visible_index != data_len - 1{
+                chart.m_last_record_is_visible = false;
+        }else {
             chart.m_last_record_is_visible = true;
         }
         chart.m_hscale_pixel = xscale_pixel;
@@ -765,30 +765,30 @@ pub fn set_chart_visible_index(chart:&mut FCChart, first_visible_index : i32, la
 pub fn reset_chart_visible_record(chart:&mut FCChart){
     let rows_count = chart.m_data.len() as i32;
     let working_area_width = get_chart_workarea_width(chart);
-    if (chart.m_auto_fill_hscale) {
-        if (working_area_width > 0.0 && rows_count > 0) {
+    if chart.m_auto_fill_hscale {
+        if working_area_width > 0.0 && rows_count > 0 {
             chart.m_hscale_pixel = working_area_width / (rows_count as f32);
             chart.m_first_visible_index = 0;
             chart.m_last_visible_index = rows_count - 1;
         }
     } else {
         let max_visible_record = get_max_visible_count(chart, chart.m_hscale_pixel, working_area_width);
-        if (rows_count == 0) {
+        if rows_count == 0 {
             chart.m_first_visible_index = -1;
             chart.m_last_visible_index = -1;
         } else {
-            if (rows_count < max_visible_record) {
+            if rows_count < max_visible_record {
                 chart.m_last_visible_index = rows_count - 1;
                 chart.m_first_visible_index = 0;
             }
             else {
-                if (chart.m_first_visible_index != -1 && chart.m_last_visible_index != -1 && !chart.m_last_record_is_visible) {
+                if chart.m_first_visible_index != -1 && chart.m_last_visible_index != -1 && !chart.m_last_record_is_visible{
                     let index = get_chart_index_by_date(chart, chart.m_last_visible_key);
-                    if (index != -1) {
+                    if index != -1 {
                         chart.m_last_visible_index = index;
                     }
                     chart.m_first_visible_index = chart.m_last_visible_index - max_visible_record + 1;
-                    if (chart.m_first_visible_index < 0) {
+                    if chart.m_first_visible_index < 0 {
                         chart.m_first_visible_index = 0;
                         chart.m_last_visible_index = chart.m_first_visible_index + max_visible_record;
                         check_chart_last_visible_index(chart);
@@ -796,7 +796,7 @@ pub fn reset_chart_visible_record(chart:&mut FCChart){
                 } else {
                     chart.m_last_visible_index = rows_count - 1;
                     chart.m_first_visible_index = chart.m_last_visible_index - max_visible_record + 1;
-                    if (chart.m_first_visible_index > chart.m_last_visible_index) {
+                    if chart.m_first_visible_index > chart.m_last_visible_index {
                         chart.m_first_visible_index = chart.m_last_visible_index;
                     }
                 }
@@ -810,7 +810,7 @@ pub fn get_candle_range(chart:&mut FCChart, plot:&mut FCPlot, n_high:&mut f64, n
     let mut eindex = get_chart_index_by_date(chart, plot.m_key2);
     let mut temp_bindex : i32 = 0;
 	let mut temp_eindex : i32 = 0;
-	if(bindex > eindex){
+	if bindex > eindex{
 		temp_bindex = eindex;
 		temp_eindex = bindex;
 	}else{
@@ -830,25 +830,25 @@ pub fn get_candle_range(chart:&mut FCChart, plot:&mut FCPlot, n_high:&mut f64, n
 }
 
 pub fn get_chart_y(chart:&mut FCChart, div_index:i32, value:f64)->f32{
-    if(div_index == 0){
-        if(chart.m_candle_max > chart.m_candle_min){
+    if div_index == 0{
+        if chart.m_candle_max > chart.m_candle_min{
             let mut c_value = value;
             let mut c_max = chart.m_candle_max;
             let mut c_min = chart.m_candle_min;
-            if(chart.m_vscale_type != "standard"){
-                if (c_value > 0.0) {
+            if chart.m_vscale_type != "standard"{
+                if c_value > 0.0 {
                     c_value = c_value.log10();
-                } else if (c_value < 0.0) {
+                } else if c_value < 0.0 {
                     c_value = -c_value.abs().log10();
                 }
-                if (c_max > 0.0) {
+                if c_max > 0.0 {
                     c_max = c_max.log10();
-                } else if (c_max < 0.0) {
+                } else if c_max < 0.0 {
                     c_max = -c_max.abs().log10();
                 }
-                if (c_min > 0.0) {
+                if c_min > 0.0 {
                     c_min = c_min.log10();
-                } else if (c_min < 0.0) {
+                } else if c_min < 0.0 {
                     c_min = -c_min.abs().log10();
                 }
             }
@@ -858,8 +858,8 @@ pub fn get_chart_y(chart:&mut FCChart, div_index:i32, value:f64)->f32{
         }else{
             return 0.0;
         }
-    }else if(div_index == 1){
-        if(chart.m_vol_max > chart.m_vol_min){
+    }else if div_index == 1{
+        if chart.m_vol_max > chart.m_vol_min{
             let rate = (value - chart.m_vol_min) / (chart.m_vol_max - chart.m_vol_min);
             let candle_height = get_candle_div_height(chart);
             let vol_height = get_vol_div_height(chart);
@@ -867,8 +867,8 @@ pub fn get_chart_y(chart:&mut FCChart, div_index:i32, value:f64)->f32{
         }else{
             return 0.0;
         }
-    }else if(div_index == 2){
-        if(chart.m_ind_max > chart.m_ind_min){
+    }else if div_index == 2{
+        if chart.m_ind_max > chart.m_ind_min{
             let rate = (value - chart.m_ind_min) / (chart.m_ind_max - chart.m_ind_min);
             let candle_height = get_candle_div_height(chart);
             let vol_height = get_vol_div_height(chart);
@@ -878,8 +878,8 @@ pub fn get_chart_y(chart:&mut FCChart, div_index:i32, value:f64)->f32{
             return 0.0;
         }
     }
-    else if(div_index == 3){
-        if(chart.m_ind_max2 > chart.m_ind_min2){
+    else if div_index == 3{
+        if chart.m_ind_max2 > chart.m_ind_min2{
             let rate = (value - chart.m_ind_min2) / (chart.m_ind_max2 - chart.m_ind_min2);
             let candle_height = get_candle_div_height(chart);
             let vol_height = get_vol_div_height(chart);
@@ -898,37 +898,37 @@ pub fn get_chart_value(chart:&mut FCChart, point:FCPoint)->f64{
     let vol_height = get_vol_div_height(chart);
     let ind_height = get_ind_div_height(chart);
     let ind_height2 = get_ind_div_height2(chart);
-    if(point.y <= candle_height){
+    if point.y <= candle_height{
         let rate = (candle_height - chart.m_candle_padding_bottom - point.y) / (candle_height - chart.m_candle_padding_top - chart.m_candle_padding_bottom);
         let mut c_min = chart.m_candle_min;
         let mut c_max = chart.m_candle_max;
-        if(chart.m_vscale_type != "standard"){
-            if (c_max > 0.0) {
+        if chart.m_vscale_type != "standard"{
+            if c_max > 0.0 {
                 c_max = c_max.log10();
-            } else if (c_max < 0.0) {
+            } else if c_max < 0.0 {
                 c_max = -c_max.abs().log10();
             }
-            if (c_min > 0.0) {
+            if c_min > 0.0 {
                 c_min = c_min.log10();
-            } else if (c_min < 0.0) {
+            } else if c_min < 0.0 {
                 c_min = -c_min.abs().log10();
             }
         }
         let result = c_min + (c_max - c_min) * (rate as f64);;
-        if(chart.m_vscale_type != "standard"){
+        if chart.m_vscale_type != "standard"{
             let b:f64 = 10.0;
             return b.powf(result as f64);
         }else{
             return result;
         }
     }
-    else if(point.y > candle_height && point.y <= candle_height + vol_height){
+    else if point.y > candle_height && point.y <= candle_height + vol_height{
         let rate = (vol_height - chart.m_vol_padding_bottom - (point.y - candle_height)) / (vol_height - chart.m_vol_padding_top - chart.m_vol_padding_bottom);
         return chart.m_vol_min + (chart.m_vol_max - chart.m_vol_min) * (rate as f64);
-    }else if(point.y > candle_height + vol_height && point.y <= candle_height + vol_height + ind_height){
+    }else if point.y > candle_height + vol_height && point.y <= candle_height + vol_height + ind_height{
         let rate = (ind_height - chart.m_ind_padding_bottom - (point.y - candle_height - vol_height)) / (ind_height - chart.m_ind_padding_top - chart.m_ind_padding_bottom);
         return chart.m_ind_min + (chart.m_ind_max - chart.m_ind_min) * (rate as f64);
-    }else if(point.y > candle_height + vol_height + ind_height && point.y <= candle_height + vol_height + ind_height + ind_height2){
+    }else if point.y > candle_height + vol_height + ind_height && point.y <= candle_height + vol_height + ind_height + ind_height2{
         let rate = (ind_height2 - chart.m_ind_padding_bottom2 - (point.y - candle_height - vol_height - ind_height)) / (ind_height2 - chart.m_ind_padding_top2 - chart.m_ind_padding_bottom2);
         return chart.m_ind_min2 + (chart.m_ind_max2 - chart.m_ind_min2) * (rate as f64);
     }
@@ -940,20 +940,20 @@ pub fn get_candle_div_value(chart:&mut FCChart, point:FCPoint)->f64{
     let rate = (candle_height - chart.m_candle_padding_bottom - point.y) / (candle_height - chart.m_candle_padding_top - chart.m_candle_padding_bottom);
     let mut c_min = chart.m_candle_min;
     let mut c_max = chart.m_candle_max;
-    if(chart.m_vscale_type != "standard"){
-        if (c_max > 0.0) {
+    if chart.m_vscale_type != "standard"{
+        if c_max > 0.0{
             c_max = c_max.log10();
-        } else if (c_max < 0.0) {
+        } else if c_max < 0.0 {
             c_max = -c_max.abs().log10();
         }
-        if (c_min > 0.0) {
+        if c_min > 0.0 {
             c_min = c_min.log10();
-        } else if (c_min < 0.0) {
+        } else if c_min < 0.0 {
             c_min = -c_min.abs().log10();
         }
     }
     let result = c_min + (c_max - c_min) * (rate as f64);;
-    if(chart.m_vscale_type != "standard"){
+    if chart.m_vscale_type != "standard"{
         let b:f64 = 10.0;
         return b.powf(result as f64);
     }else{
@@ -963,8 +963,8 @@ pub fn get_candle_div_value(chart:&mut FCChart, point:FCPoint)->f64{
 
 pub fn select_lines(chart:&mut FCChart, mp:FCPoint, div_index:i32, datas:Vec<f64>, cur_index:i32)->bool{
 	let top_y = get_chart_y(chart, div_index, datas[cur_index as usize]);
-    if (chart.m_hscale_pixel <= 1.0) {
-        if(mp.y >= top_y - 8.0 && mp.y <= top_y + 8.0) {
+    if chart.m_hscale_pixel <= 1.0 {
+        if mp.y >= top_y - 8.0 && mp.y <= top_y + 8.0 {
             return true;
         }
     } else {
@@ -972,9 +972,9 @@ pub fn select_lines(chart:&mut FCChart, mp:FCPoint, div_index:i32, datas:Vec<f64
         let scale_x = get_chart_x(chart, index);
         let mut judge_top = 0.0;
         let mut judge_scale_x = scale_x;
-        if (mp.x >= scale_x) {
+        if mp.x >= scale_x {
             let left_index = cur_index + 1;
-            if (cur_index < chart.m_last_visible_index) {
+            if cur_index < chart.m_last_visible_index {
                 let right_value = datas[left_index as usize];
                 judge_top = get_chart_y(chart, div_index, right_value);
             }
@@ -985,7 +985,7 @@ pub fn select_lines(chart:&mut FCChart, mp:FCPoint, div_index:i32, datas:Vec<f64
         else {
             judge_scale_x = scale_x - chart.m_hscale_pixel;
             let right_index = cur_index - 1;
-            if (cur_index > 0) {
+            if cur_index > 0 {
                 let left_value = datas[right_index as usize];
                 judge_top = get_chart_y(chart, div_index, left_value);
             }else {
@@ -997,11 +997,11 @@ pub fn select_lines(chart:&mut FCChart, mp:FCPoint, div_index:i32, datas:Vec<f64
         let mut judge_y : f32 = 0.0;
         let mut judge_w : f32 = 0.0;
         let mut judge_h : f32 = 0.0;
-        if (judge_top >= top_y) {
+        if judge_top >= top_y {
             judge_x = judge_scale_x;
             judge_y = top_y - 2.0 - line_width;
             judge_w = chart.m_hscale_pixel;
-            if(judge_top - top_y + line_width < 4.0){
+            if judge_top - top_y + line_width < 4.0{
 				judge_h = 4.0;
             }else{
 				judge_h = judge_top - top_y + 4.0 + line_width;
@@ -1011,14 +1011,14 @@ pub fn select_lines(chart:&mut FCChart, mp:FCPoint, div_index:i32, datas:Vec<f64
             judge_x = judge_scale_x;
             judge_y = judge_top - 2.0 - line_width / 2.0;
             judge_w = chart.m_hscale_pixel;
-            if(top_y - judge_top + line_width < 4.0){
+            if top_y - judge_top + line_width < 4.0{
 				judge_h = 4.0;
             }else{
 				judge_h = top_y - judge_top + 4.0 + line_width;
             }
         }
        
-        if (mp.x >= judge_x && mp.x <= judge_x + judge_w && mp.y >= judge_y && mp.y <= judge_y + judge_h) {
+        if mp.x >= judge_x && mp.x <= judge_x + judge_w && mp.y >= judge_y && mp.y <= judge_y + judge_h {
            
             return true;
         }
@@ -1033,159 +1033,159 @@ pub fn select_shape(chart:&mut FCChart, mp:FCPoint){
     let vol_height = get_vol_div_height(chart);
     let ind_height = get_ind_div_height(chart);
     let index = get_chart_index(chart, mp.clone());
-    if (mp.y >= candle_height + vol_height && mp.y <= candle_height + vol_height + ind_height) {
-        if (chart.m_show_indicator == "MACD") {
+    if mp.y >= candle_height + vol_height && mp.y <= candle_height + vol_height + ind_height {
+        if chart.m_show_indicator == "MACD" {
             let macd_y = get_chart_y(chart, 2, chart.m_allmacdarr[index as usize]);
             let zero_y = get_chart_y(chart, 2, 0.0);
-            if (select_lines(chart, mp.clone(), 2, chart.m_allmacdarr.clone(), index)) {
+            if select_lines(chart, mp.clone(), 2, chart.m_allmacdarr.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "MACD".to_string();
             }
-            if (select_lines(chart, mp.clone(), 2, chart.m_alldifarr.clone(), index)) {
+            if select_lines(chart, mp.clone(), 2, chart.m_alldifarr.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "DIF".to_string();
             }
-            else if (select_lines(chart, mp.clone(), 2, chart.m_alldeaarr.clone(), index)) {
+            else if select_lines(chart, mp.clone(), 2, chart.m_alldeaarr.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "DEA".to_string();
             }
-        } else if (chart.m_show_indicator == "KDJ") {
-            if (select_lines(chart, mp.clone(), 2, chart.m_kdj_k.clone(), index)) {
+        } else if chart.m_show_indicator == "KDJ" {
+            if select_lines(chart, mp.clone(), 2, chart.m_kdj_k.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "K".to_string();
             }
-            else if (select_lines(chart, mp.clone(), 2, chart.m_kdj_d.clone(), index)) {
+            else if select_lines(chart, mp.clone(), 2, chart.m_kdj_d.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "D".to_string();
-            } else if (select_lines(chart, mp.clone(), 2, chart.m_kdj_j.clone(), index)) {
+            } else if select_lines(chart, mp.clone(), 2, chart.m_kdj_j.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "J".to_string();
             }
-        } else if (chart.m_show_indicator == "RSI") {
-            if (select_lines(chart, mp.clone(), 2, chart.m_rsi1.clone(), index)) {
+        } else if chart.m_show_indicator == "RSI" {
+            if select_lines(chart, mp.clone(), 2, chart.m_rsi1.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "6".to_string();
             }
-            else if (select_lines(chart, mp.clone(), 2, chart.m_rsi2.clone(), index)) {
+            else if select_lines(chart, mp.clone(), 2, chart.m_rsi2.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "12".to_string();
-            } else if (select_lines(chart, mp.clone(), 2, chart.m_rsi3.clone(), index)) {
+            } else if select_lines(chart, mp.clone(), 2, chart.m_rsi3.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "24".to_string();
             }
         }
-        else if (chart.m_show_indicator == "BIAS") {
-            if (select_lines(chart, mp.clone(), 2, chart.m_bias1.clone(), index)) {
+        else if chart.m_show_indicator == "BIAS" {
+            if select_lines(chart, mp.clone(), 2, chart.m_bias1.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "1".to_string();
             }
-            else if (select_lines(chart, mp.clone(), 2, chart.m_bias2.clone(), index)) {
+            else if select_lines(chart, mp.clone(), 2, chart.m_bias2.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "2".to_string();
-            } else if (select_lines(chart, mp.clone(), 2, chart.m_bias3.clone(), index)) {
+            } else if select_lines(chart, mp.clone(), 2, chart.m_bias3.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "3".to_string();
             }
         }
-        else if (chart.m_show_indicator == "ROC") {
-            if (select_lines(chart, mp.clone(), 2, chart.m_roc.clone(), index)) {
+        else if chart.m_show_indicator == "ROC" {
+            if select_lines(chart, mp.clone(), 2, chart.m_roc.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "ROC".to_string();
             }
-            else if (select_lines(chart, mp.clone(), 2, chart.m_roc_ma.clone(), index)) {
+            else if select_lines(chart, mp.clone(), 2, chart.m_roc_ma.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "ROCMA".to_string();
             }
-        } else if (chart.m_show_indicator == "WR") {
-            if (select_lines(chart, mp.clone(), 2, chart.m_wr1.clone(), index)) {
+        } else if chart.m_show_indicator == "WR" {
+            if select_lines(chart, mp.clone(), 2, chart.m_wr1.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "1".to_string();
             }
-            else if (select_lines(chart, mp.clone(), 2, chart.m_wr2.clone(), index)) {
+            else if select_lines(chart, mp.clone(), 2, chart.m_wr2.clone(), index) {
                 chart.m_select_shape = "WR".to_string();
                 chart.m_select_shape_ex = "2".to_string();
             }
-        } else if (chart.m_show_indicator == "CCI") {
-            if (select_lines(chart, mp.clone(), 2, chart.m_cci.clone(), index)) {
+        } else if chart.m_show_indicator == "CCI" {
+            if select_lines(chart, mp.clone(), 2, chart.m_cci.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
             }
-        } else if (chart.m_show_indicator == "BBI") {
-            if (select_lines(chart, mp.clone(), 2, chart.m_bbi.clone(), index)) {
+        } else if chart.m_show_indicator == "BBI" {
+            if select_lines(chart, mp.clone(), 2, chart.m_bbi.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
             }
-        } else if (chart.m_show_indicator == "TRIX") {
-            if (select_lines(chart, mp.clone(), 2, chart.m_trix.clone(), index)) {
+        } else if chart.m_show_indicator == "TRIX" {
+            if select_lines(chart, mp.clone(), 2, chart.m_trix.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "TRIX".to_string();
             }
-            else if (select_lines(chart, mp.clone(), 2, chart.m_trix_ma.clone(), index)) {
+            else if select_lines(chart, mp.clone(), 2, chart.m_trix_ma.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "TRIXMA".to_string();
             }
-        } else if (chart.m_show_indicator == "DMA") {
-            if (select_lines(chart, mp.clone(), 2, chart.m_dma1.clone(), index)) {
+        } else if chart.m_show_indicator == "DMA" {
+            if select_lines(chart, mp.clone(), 2, chart.m_dma1.clone(), index) {
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "DIF".to_string();
             }
-            else if (select_lines(chart, mp.clone(), 2, chart.m_dma2.clone(), index)) {
+            else if select_lines(chart, mp.clone(), 2, chart.m_dma2.clone(), index){
                 chart.m_select_shape = chart.m_show_indicator.clone();
                 chart.m_select_shape_ex = "DIFMA".to_string();
             }
         }
     }
-    else if (mp.y >= candle_height && mp.y <= candle_height + vol_height) {
+    else if mp.y >= candle_height && mp.y <= candle_height + vol_height {
         let vol_y = get_chart_y(chart, 1, chart.m_data[index as usize].m_volume);
         let zero_y = get_chart_y(chart, 1, 0.0); 
-        if (mp.y >= vol_y.min(zero_y) && mp.y <= vol_y.max(zero_y)) {
+        if mp.y >= vol_y.min(zero_y) && mp.y <= vol_y.max(zero_y) {
             chart.m_select_shape = "VOL".to_string();
         }
     }
-    else if (mp.y >= 0.0 && mp.y <= candle_height) {
+    else if mp.y >= 0.0 && mp.y <= candle_height {
         let is_trend:bool = false;
-        if (!is_trend) {
-            if (chart.m_main_indicator == "BOLL") {
-                if (select_lines(chart, mp.clone(), 0, chart.m_boll_mid.clone(), index)) {
+        if !is_trend {
+            if chart.m_main_indicator == "BOLL" {
+                if select_lines(chart, mp.clone(), 0, chart.m_boll_mid.clone(), index) {
                     chart.m_select_shape = chart.m_main_indicator.clone();
                     chart.m_select_shape_ex = "MID".to_string();
                 }
-                else if (select_lines(chart, mp.clone(), 0, chart.m_boll_up.clone(), index)) {
+                else if select_lines(chart, mp.clone(), 0, chart.m_boll_up.clone(), index) {
                     chart.m_select_shape = chart.m_main_indicator.clone();
                     chart.m_select_shape_ex = "UP".to_string();
-                } else if (select_lines(chart, mp.clone(), 0, chart.m_boll_down.clone(), index)) {
+                } else if select_lines(chart, mp.clone(), 0, chart.m_boll_down.clone(), index) {
                     chart.m_select_shape = chart.m_main_indicator.clone();
                     chart.m_select_shape_ex = "DOWN".to_string();
                 }
-            } else if (chart.m_main_indicator == "MA") {
-                if (select_lines(chart, mp.clone(), 0, chart.m_ma5.clone(), index)) {
+            } else if chart.m_main_indicator == "MA" {
+                if select_lines(chart, mp.clone(), 0, chart.m_ma5.clone(), index) {
                     chart.m_select_shape = chart.m_main_indicator.clone();
                     chart.m_select_shape_ex = "5".to_string();
                 }
-                else if (select_lines(chart, mp.clone(), 0, chart.m_ma10.clone(), index)) {
+                else if select_lines(chart, mp.clone(), 0, chart.m_ma10.clone(), index) {
                     chart.m_select_shape = chart.m_main_indicator.clone();
                     chart.m_select_shape_ex = "10".to_string();
                 }
-                else if (select_lines(chart, mp.clone(), 0, chart.m_ma20.clone(), index)) {
+                else if select_lines(chart, mp.clone(), 0, chart.m_ma20.clone(), index) {
                     chart.m_select_shape = chart.m_main_indicator.clone();
                     chart.m_select_shape_ex = "20".to_string();
                 }
-                else if (select_lines(chart, mp.clone(), 0, chart.m_ma30.clone(), index)) {
+                else if select_lines(chart, mp.clone(), 0, chart.m_ma30.clone(), index) {
                     chart.m_select_shape = chart.m_main_indicator.clone();
                     chart.m_select_shape_ex = "30".to_string();
                 }
-                else if (select_lines(chart, mp.clone(), 0, chart.m_ma120.clone(), index)) {
+                else if select_lines(chart, mp.clone(), 0, chart.m_ma120.clone(), index) {
                     chart.m_select_shape = chart.m_main_indicator.clone();
                     chart.m_select_shape_ex = "120".to_string();
                 }
-                else if (select_lines(chart, mp.clone(), 0, chart.m_ma250.clone(), index)) {
+                else if select_lines(chart, mp.clone(), 0, chart.m_ma250.clone(), index) {
                     chart.m_select_shape = chart.m_main_indicator.clone();
                     chart.m_select_shape_ex = "250".to_string();
                 }
             }
         }
-        if (chart.m_select_shape == "") {
+        if chart.m_select_shape == "" {
             let high_y = get_chart_y(chart, 0, chart.m_data[index as usize].m_high);
             let low_y = get_chart_y(chart, 0, chart.m_data[index as usize].m_low);
-			if (mp.y >= low_y.min(high_y) && mp.y <= low_y.max(high_y)) {
+			if mp.y >= low_y.min(high_y) && mp.y <= low_y.max(high_y) {
                 chart.m_select_shape = "CANDLE".to_string();
             }
         }
@@ -1275,9 +1275,9 @@ pub fn calc_chart_indicator(chart:&mut FCChart){
         high_arr.push(high);
         low_arr.push(low);
     }
-    if (chart.m_main_indicator == "BOLL") {
+    if chart.m_main_indicator == "BOLL" {
 		get_boll_data(close_arr.clone(), &mut chart.m_boll_up, &mut chart.m_boll_mid, &mut chart.m_boll_down);
-    } else if (chart.m_main_indicator == "MA") {
+    } else if chart.m_main_indicator == "MA" {
 		chart.m_ma5 = ma_value(close_arr.clone(), 5);
 		chart.m_ma10 = ma_value(close_arr.clone(), 10);
 		chart.m_ma20 = ma_value(close_arr.clone(), 20);
@@ -1285,34 +1285,34 @@ pub fn calc_chart_indicator(chart:&mut FCChart){
 		chart.m_ma120 = ma_value(close_arr.clone(), 120);
 		chart.m_ma250 = ma_value(close_arr.clone(), 250);
     }
-    if (chart.m_show_indicator == "BIAS") {
+    if chart.m_show_indicator == "BIAS" {
 		get_bias_data(close_arr.clone(), &mut chart.m_bias1, &mut chart.m_bias2, &mut chart.m_bias3);
 	}
-	else if(chart.m_show_indicator == "DMA"){
+	else if chart.m_show_indicator == "DMA"{
 		get_dma_data(close_arr.clone(), &mut chart.m_dma1, &mut chart.m_dma2);
 	}
-	else if(chart.m_show_indicator == "BBI"){
+	else if chart.m_show_indicator == "BBI"{
 		get_bbi_data(close_arr.clone(), &mut chart.m_bbi);
 	}
-	else if(chart.m_show_indicator == "RSI"){
+	else if chart.m_show_indicator == "RSI"{
 		get_rsi_data(close_arr.clone(), &mut chart.m_rsi1, &mut chart.m_rsi2, &mut chart.m_rsi3);
 	}
-	else if(chart.m_show_indicator == "ROC"){
+	else if chart.m_show_indicator == "ROC"{
 		get_roc_data(close_arr.clone(), &mut chart.m_roc, &mut chart.m_roc_ma);
 	}
-	else if(chart.m_show_indicator == "TRIX"){
+	else if chart.m_show_indicator == "TRIX"{
 		get_trix_data(close_arr.clone(), &mut chart.m_trix, &mut chart.m_trix_ma);
 	}
-	else if(chart.m_show_indicator == "KDJ"){
+	else if chart.m_show_indicator == "KDJ"{
 		get_kdj_data(high_arr.clone(), low_arr.clone(), close_arr.clone(), &mut chart.m_kdj_k, &mut chart.m_kdj_d, &mut chart.m_kdj_j);
 	}
-	else if(chart.m_show_indicator == "WR"){
+	else if chart.m_show_indicator == "WR"{
 		get_wr_data(high_arr.clone(), low_arr.clone(), close_arr.clone(), &mut chart.m_wr1, &mut chart.m_wr2);
 	}
-	else if(chart.m_show_indicator == "CCI"){
+	else if chart.m_show_indicator == "CCI"{
 		get_cci_data(high_arr.clone(), low_arr.clone(), close_arr.clone(), &mut chart.m_cci);
 	}
-	else if(chart.m_show_indicator == "MACD"){
+	else if chart.m_show_indicator == "MACD"{
 		chart.m_allema12.push(close_arr[0]);
         chart.m_allema26.push(close_arr[0]);
 	    chart.m_alldeaarr.push(0.0);
@@ -1337,15 +1337,15 @@ pub fn calculate_chart_max_min(chart:&mut FCChart){
     chart.m_ind_min = 0.0;
     chart.m_ind_min = 0.0;
     let mut is_trend : bool = false;
-    if(chart.m_cycle == "trend"){
+    if chart.m_cycle == "trend"{
         is_trend = true;
     }
     let mut first_open : f64 = 0.0;
-    if(data_len > 0) {
+    if data_len > 0 {
         for i in chart.m_first_visible_index..(chart.m_last_visible_index + 1){
             let ui = i as usize;
-            if(i == chart.m_first_visible_index){
-                if(is_trend){
+            if i == chart.m_first_visible_index{
+                if is_trend{
                     chart.m_candle_max = chart.m_data[ui].m_close;
                     chart.m_candle_min = chart.m_data[ui].m_close;  
                     first_open = chart.m_data[ui].m_close;
@@ -1354,239 +1354,239 @@ pub fn calculate_chart_max_min(chart:&mut FCChart){
                     chart.m_candle_min = chart.m_data[ui].m_low;
                 }
                 chart.m_vol_max = chart.m_data[ui].m_volume;
-                if(chart.m_show_indicator == "MACD"){
+                if chart.m_show_indicator == "MACD"{
                     chart.m_ind_max = chart.m_alldifarr[ui];
                     chart.m_ind_min = chart.m_alldifarr[ui];
                 }
-                else if(chart.m_show_indicator == "KDJ"){
+                else if chart.m_show_indicator == "KDJ"{
                     chart.m_ind_max = chart.m_kdj_k[ui];
                     chart.m_ind_min = chart.m_kdj_k[ui];
                 }
-                else if(chart.m_show_indicator == "RSI"){
+                else if chart.m_show_indicator == "RSI"{
                     chart.m_ind_max = chart.m_rsi1[ui];
                     chart.m_ind_min = chart.m_rsi1[ui];
                 }
-                else if(chart.m_show_indicator == "BIAS"){
+                else if chart.m_show_indicator == "BIAS"{
                     chart.m_ind_max = chart.m_bias1[ui];
                     chart.m_ind_min = chart.m_bias1[ui];
                 }
-                 else if(chart.m_show_indicator == "ROC"){
+                 else if chart.m_show_indicator == "ROC"{
                     chart.m_ind_max = chart.m_roc[ui];
                     chart.m_ind_min = chart.m_roc[ui];
                 }
-                 else if(chart.m_show_indicator == "BOLL"){
+                 else if chart.m_show_indicator == "BOLL"{
                     chart.m_ind_max = chart.m_boll_mid[ui];
                     chart.m_ind_min = chart.m_boll_mid[ui];
                 }
-                else if(chart.m_show_indicator == "WR"){
+                else if chart.m_show_indicator == "WR"{
                     chart.m_ind_max = chart.m_wr1[ui];
                     chart.m_ind_min = chart.m_wr1[ui];
-                }else if(chart.m_show_indicator == "CCI"){
+                }else if chart.m_show_indicator == "CCI"{
                     chart.m_ind_max = chart.m_cci[ui];
                     chart.m_ind_min = chart.m_cci[ui];
-                }else if(chart.m_show_indicator == "BBI"){
+                }else if chart.m_show_indicator == "BBI"{
                     chart.m_ind_max = chart.m_bbi[ui];
                     chart.m_ind_min = chart.m_bbi[ui];
                 }
-                else if(chart.m_show_indicator == "TRIX"){
+                else if chart.m_show_indicator == "TRIX"{
                     chart.m_ind_max = chart.m_trix[ui];
                     chart.m_ind_min = chart.m_trix[ui];
                 }
-                else if(chart.m_show_indicator == "DMA"){
+                else if chart.m_show_indicator == "DMA"{
                     chart.m_ind_max = chart.m_dma1[ui];
                     chart.m_ind_min = chart.m_dma1[ui];
                 }
                
             }else{
-                if(is_trend){
-                    if(chart.m_candle_max < chart.m_data[ui].m_close){
+                if is_trend{
+                    if chart.m_candle_max < chart.m_data[ui].m_close{
                         chart.m_candle_max = chart.m_data[ui].m_close;
                     }
-                    if(chart.m_candle_min > chart.m_data[ui].m_close){
+                    if chart.m_candle_min > chart.m_data[ui].m_close{
                         chart.m_candle_min = chart.m_data[ui].m_close;
                     }
                 }else{
-                    if(chart.m_candle_max < chart.m_data[ui].m_high){
+                    if chart.m_candle_max < chart.m_data[ui].m_high{
                         chart.m_candle_max = chart.m_data[ui].m_high;
                     }
-                    if(chart.m_candle_min > chart.m_data[ui].m_low){
+                    if chart.m_candle_min > chart.m_data[ui].m_low{
                         chart.m_candle_min = chart.m_data[ui].m_low;
                     }
                 }
-                if(chart.m_vol_max < chart.m_data[ui].m_volume){
+                if chart.m_vol_max < chart.m_data[ui].m_volume{
                     chart.m_vol_max = chart.m_data[ui].m_volume;
                 }   
-				if(chart.m_show_indicator == "MACD"){
-					if (chart.m_ind_max < chart.m_alldifarr[ui]){
+				if chart.m_show_indicator == "MACD"{
+					if chart.m_ind_max < chart.m_alldifarr[ui]{
 						chart.m_ind_max = chart.m_alldifarr[ui];
 					}
-					if (chart.m_ind_max < chart.m_alldeaarr[ui]){
+					if chart.m_ind_max < chart.m_alldeaarr[ui]{
 						chart.m_ind_max = chart.m_alldeaarr[ui];
 					}
-					if (chart.m_ind_max < chart.m_allmacdarr[ui]){
+					if chart.m_ind_max < chart.m_allmacdarr[ui]{
 						chart.m_ind_max = chart.m_allmacdarr[ui];
 					}
-					if (chart.m_ind_min > chart.m_alldifarr[ui]){
+					if chart.m_ind_min > chart.m_alldifarr[ui]{
 						chart.m_ind_min = chart.m_alldifarr[ui];
 					}
-					if (chart.m_ind_min > chart.m_alldeaarr[ui]){
+					if chart.m_ind_min > chart.m_alldeaarr[ui]{
 						chart.m_ind_min = chart.m_alldeaarr[ui];
 					}
-					if (chart.m_ind_min > chart.m_allmacdarr[ui]){
+					if chart.m_ind_min > chart.m_allmacdarr[ui]{
 						chart.m_ind_min = chart.m_allmacdarr[ui];
 					}
-				}else if(chart.m_show_indicator == "KDJ"){
-					if (chart.m_ind_max < chart.m_kdj_k[ui]){
+				}else if chart.m_show_indicator == "KDJ"{
+					if chart.m_ind_max < chart.m_kdj_k[ui]{
 						chart.m_ind_max = chart.m_kdj_k[ui];
 					}
-					if (chart.m_ind_max < chart.m_kdj_d[ui]){
+					if chart.m_ind_max < chart.m_kdj_d[ui]{
 						chart.m_ind_max = chart.m_kdj_d[ui];
 					}
-					if (chart.m_ind_max < chart.m_kdj_j[ui]){
+					if chart.m_ind_max < chart.m_kdj_j[ui]{
 						chart.m_ind_max = chart.m_kdj_j[ui];
 					}
-					if (chart.m_ind_min > chart.m_kdj_k[ui]){
+					if chart.m_ind_min > chart.m_kdj_k[ui]{
 						chart.m_ind_min = chart.m_kdj_k[ui];
 					}
-					if (chart.m_ind_min > chart.m_kdj_d[ui]){
+					if chart.m_ind_min > chart.m_kdj_d[ui]{
 						chart.m_ind_min = chart.m_kdj_d[ui];
 					}
-					if (chart.m_ind_min > chart.m_kdj_j[ui]){
+					if chart.m_ind_min > chart.m_kdj_j[ui]{
 						chart.m_ind_min = chart.m_kdj_j[ui];
 					}
-				}else if(chart.m_show_indicator == "RSI"){
-					if (chart.m_ind_max < chart.m_rsi1[ui]){
+				}else if chart.m_show_indicator == "RSI"{
+					if chart.m_ind_max < chart.m_rsi1[ui]{
 						chart.m_ind_max = chart.m_rsi1[ui];
 					}
-					if (chart.m_ind_max < chart.m_rsi2[ui]){
+					if chart.m_ind_max < chart.m_rsi2[ui]{
 						 chart.m_ind_max = chart.m_rsi2[ui];
 					}
-					if (chart.m_ind_max < chart.m_rsi3[ui]){
+					if chart.m_ind_max < chart.m_rsi3[ui]{
 						chart.m_ind_max = chart.m_rsi3[ui];
 					}
-					if (chart.m_ind_min > chart.m_rsi1[ui]){
+					if chart.m_ind_min > chart.m_rsi1[ui]{
 						chart.m_ind_min = chart.m_rsi1[ui];
 					}
-					if (chart.m_ind_min > chart.m_rsi2[ui]){
+					if chart.m_ind_min > chart.m_rsi2[ui]{
 						chart.m_ind_min = chart.m_rsi2[ui];
 					}
-					if (chart.m_ind_min > chart.m_rsi3[ui]){
+					if chart.m_ind_min > chart.m_rsi3[ui]{
 						chart.m_ind_min = chart.m_rsi3[ui];
 					}
-				}else if(chart.m_show_indicator == "BIAS"){
-					if (chart.m_ind_max < chart.m_bias1[ui]){
+				}else if chart.m_show_indicator == "BIAS"{
+					if chart.m_ind_max < chart.m_bias1[ui]{
 						chart.m_ind_max = chart.m_bias1[ui];
 					}
-					if (chart.m_ind_max < chart.m_bias2[ui]){
+					if chart.m_ind_max < chart.m_bias2[ui]{
 						chart.m_ind_max = chart.m_bias2[ui];
 					}
-					if (chart.m_ind_max < chart.m_bias3[ui]){
+					if chart.m_ind_max < chart.m_bias3[ui]{
 						chart.m_ind_max = chart.m_bias3[ui];
 					}
-					if (chart.m_ind_min > chart.m_bias1[ui]){
+					if chart.m_ind_min > chart.m_bias1[ui]{
 						chart.m_ind_min = chart.m_bias1[ui];
 					}
-					if (chart.m_ind_min > chart.m_bias2[ui]){
+					if chart.m_ind_min > chart.m_bias2[ui]{
 						chart.m_ind_min = chart.m_bias2[ui];
 					}
-					if (chart.m_ind_min > chart.m_bias3[ui]){
+					if chart.m_ind_min > chart.m_bias3[ui]{
 						chart.m_ind_min = chart.m_bias3[ui];
 					}
-				}else if(chart.m_show_indicator == "ROC"){
-					if (chart.m_ind_max < chart. m_roc[ui]){
+				}else if chart.m_show_indicator == "ROC"{
+					if chart.m_ind_max < chart. m_roc[ui]{
 						chart.m_ind_max = chart.m_roc[ui];
 					}
-					if (chart.m_ind_max < chart.m_roc_ma[ui]){
+					if chart.m_ind_max < chart.m_roc_ma[ui]{
 						chart.m_ind_max = chart.m_roc_ma[ui];
 					}
-					if (chart.m_ind_min > chart.m_roc[ui]){
+					if chart.m_ind_min > chart.m_roc[ui]{
 						chart.m_ind_min = chart.m_roc[ui];
 					}
-					if (chart.m_ind_min > chart.m_roc_ma[ui]){
+					if chart.m_ind_min > chart.m_roc_ma[ui]{
 						chart.m_ind_min = chart.m_roc_ma[ui];
 					}
-				}else if(chart.m_show_indicator == "BOLL"){
-					if (chart.m_ind_max < chart.m_boll_mid[ui]){
+				}else if chart.m_show_indicator == "BOLL"{
+					if chart.m_ind_max < chart.m_boll_mid[ui]{
 						chart.m_ind_max = chart.m_boll_mid[ui];
 					}
-					if (chart.m_ind_max < chart.m_boll_up[ui]){
+					if chart.m_ind_max < chart.m_boll_up[ui]{
 						chart.m_ind_max = chart.m_boll_up[ui];
 					}
-					if (chart.m_ind_max < chart.m_boll_down[ui]){
+					if chart.m_ind_max < chart.m_boll_down[ui]{
 						chart.m_ind_max = chart.m_boll_down[ui];
 					}
-					if (chart.m_ind_min > chart.m_boll_mid[ui]){
+					if chart.m_ind_min > chart.m_boll_mid[ui]{
 						chart.m_ind_min = chart.m_boll_mid[ui];
 					}
-					if (chart.m_ind_min > chart.m_boll_up[ui]){
+					if chart.m_ind_min > chart.m_boll_up[ui]{
 						chart.m_ind_min = chart.m_boll_up[ui];
 					}
-					if (chart.m_ind_min > chart.m_boll_down[ui]){
+					if chart.m_ind_min > chart.m_boll_down[ui]{
 						chart.m_ind_min = chart.m_boll_down[ui];
 					}
 				}
-				else if(chart.m_show_indicator == "WR"){
-					if (chart.m_ind_max < chart.m_wr1[ui]){
+				else if chart.m_show_indicator == "WR"{
+					if chart.m_ind_max < chart.m_wr1[ui]{
 						chart.m_ind_max = chart.m_wr1[ui];
 					}
-					if (chart.m_ind_max < chart.m_wr2[ui]){
+					if chart.m_ind_max < chart.m_wr2[ui]{
 						chart.m_ind_max = chart.m_wr2[ui];
 					}
-					if (chart.m_ind_min > chart.m_wr1[ui]){
+					if chart.m_ind_min > chart.m_wr1[ui]{
 						chart.m_ind_min = chart.m_wr1[ui];
 					}
-					if (chart.m_ind_min > chart.m_wr2[ui]){
+					if chart.m_ind_min > chart.m_wr2[ui]{
 						chart.m_ind_min = chart.m_wr2[ui];
 					}
-				}else if(chart.m_show_indicator == "CCI"){
-					if (chart.m_ind_max < chart.m_cci[ui]){
+				}else if chart.m_show_indicator == "CCI"{
+					if chart.m_ind_max < chart.m_cci[ui]{
 						chart.m_ind_max = chart.m_cci[ui];
 					}
-					if (chart.m_ind_min > chart.m_cci[ui]){
+					if chart.m_ind_min > chart.m_cci[ui]{
 						chart.m_ind_min = chart.m_cci[ui];
 					}
-				}else if(chart.m_show_indicator == "BBI"){
-					if (chart.m_ind_max < chart.m_bbi[ui]){
+				}else if chart.m_show_indicator == "BBI"{
+					if chart.m_ind_max < chart.m_bbi[ui]{
 						chart.m_ind_max = chart.m_bbi[ui];
 					}
-					if (chart.m_ind_min > chart.m_bbi[ui]){
+					if chart.m_ind_min > chart.m_bbi[ui]{
 						chart.m_ind_min = chart.m_bbi[ui];
 					}
-				}else if(chart.m_show_indicator == "TRIX"){
-					if (chart.m_ind_max < chart.m_trix[ui]){
+				}else if chart.m_show_indicator == "TRIX"{
+					if chart.m_ind_max < chart.m_trix[ui]{
 						chart.m_ind_max = chart.m_trix[ui];
 					}
-					if (chart.m_ind_max < chart.m_trix_ma[ui]){
+					if chart.m_ind_max < chart.m_trix_ma[ui]{
 						chart.m_ind_max = chart.m_trix_ma[ui];
 					}
-					if (chart.m_ind_min > chart.m_trix[ui]){
+					if chart.m_ind_min > chart.m_trix[ui]{
 						chart.m_ind_min = chart.m_trix[ui];
 					}
-					if (chart.m_ind_min > chart.m_trix_ma[ui]){
+					if chart.m_ind_min > chart.m_trix_ma[ui]{
 						chart.m_ind_min = chart.m_trix_ma[ui];
 					}
-				}else if(chart.m_show_indicator == "DMA"){
-					if (chart.m_ind_max < chart.m_dma1[ui]){
+				}else if chart.m_show_indicator == "DMA"{
+					if chart.m_ind_max < chart.m_dma1[ui]{
 						chart.m_ind_max = chart.m_dma1[ui];
 					}
-					if (chart.m_ind_max < chart.m_dma2[ui]){
+					if chart.m_ind_max < chart.m_dma2[ui]{
 						chart.m_ind_max = chart.m_dma2[ui];
 					}
-					if (chart.m_ind_min > chart.m_dma1[ui]){
+					if chart.m_ind_min > chart.m_dma1[ui]{
 						chart.m_ind_min = chart.m_dma1[ui];
 					}
-					if (chart.m_ind_min > chart.m_dma2[ui]){
+					if chart.m_ind_min > chart.m_dma2[ui]{
 						chart.m_ind_min = chart.m_dma2[ui];
 					}
 				}
             }
         }
     }
-    if(is_trend){
+    if is_trend{
         let mut sub_max : f64 = 0.0;
         let f_value : f64 = (chart.m_candle_max - first_open).abs();
         let s_value : f64 = (chart.m_candle_min - first_open).abs();
-        if(f_value > s_value){
+        if f_value > s_value{
             sub_max = f_value;
         }else{
             sub_max = s_value;
@@ -1604,56 +1604,56 @@ pub fn mouse_move_chart(chart:&mut FCChart, first_touch:bool, second_touch:bool,
     let mp = FCPoint{x:mp_x, y:mp_y};
     chart.m_cross_stop_index = get_chart_index(chart, mp);
     let data_len = chart.m_data.len() as i32;
-	if(first_touch && chart.m_splot.m_id > 0){
+	if first_touch && chart.m_splot.m_id > 0{
 	    let new_index = get_chart_index(chart, FCPoint{x:mp_x, y:mp_y});
-	    if(new_index >= 0 && new_index < data_len){
+	    if new_index >= 0 && new_index < data_len{
 	        let new_date = get_chart_date_by_index(chart, new_index);
 	        let new_value = get_candle_div_value(chart, FCPoint{x:mp_x, y:mp_y});
-            if (chart.m_select_plot_point == 0){
+            if chart.m_select_plot_point == 0{
 	            chart.m_splot.m_key1 = new_date;
                 chart.m_splot.m_value1 = new_value;
-            } else if (chart.m_select_plot_point == 1){
+            } else if chart.m_select_plot_point == 1{
                 chart.m_splot.m_key2 = new_date;
                 chart.m_splot.m_value2 = new_value;
-            } else if (chart.m_select_plot_point == 2){
+            } else if chart.m_select_plot_point == 2{
                 chart.m_splot.m_key3 = new_date;
                 chart.m_splot.m_value3 = new_value;
 	        }
-            else if (chart.m_start_move_plot){
+            else if chart.m_start_move_plot{
 	            let bvalue = get_candle_div_value(chart, FCPoint{x:chart.m_mouse_down_position.x, y:chart.m_mouse_down_position.y});
 	            let bindex = get_chart_index(chart, FCPoint{x:chart.m_mouse_down_position.x, y:chart.m_mouse_down_position.y});
-                if (chart.m_splot.m_key1 > 0.0){
+                if chart.m_splot.m_key1 > 0.0{
                     chart.m_splot.m_value1 = chart.m_splot.m_start_value1 + (new_value - bvalue);
                     let start_index1 = get_chart_index_by_date(chart, chart.m_splot.m_start_key1);
                     let mut new_index1 = start_index1 + (new_index - bindex);
-                    if(new_index1 < 0){
+                    if new_index1 < 0{
                         new_index1 = 0;
                     }
-                    else if(new_index1 > data_len - 1){
+                    else if new_index1 > data_len - 1{
                         new_index1 = data_len - 1;
                     }
                     chart.m_splot.m_key1 = get_chart_date_by_index(chart, new_index1);
                 }
-                if (chart.m_splot.m_key2 > 0.0){
+                if chart.m_splot.m_key2 > 0.0{
                     chart.m_splot.m_value2 = chart.m_splot.m_start_value2 + (new_value - bvalue);
                     let start_index2 = get_chart_index_by_date(chart, chart.m_splot.m_start_key2);
                     let mut new_index2 = start_index2 + (new_index - bindex);
-                    if(new_index2 < 0){
+                    if new_index2 < 0{
                         new_index2 = 0;
                     }
-                    else if(new_index2 > data_len - 1){
+                    else if new_index2 > data_len - 1{
                         new_index2 = data_len - 1;
                     }
                     chart.m_splot.m_key2 = get_chart_date_by_index(chart, new_index2);
                 }
-                if (chart.m_splot.m_key3 > 0.0){
+                if chart.m_splot.m_key3 > 0.0{
                     chart.m_splot.m_value3 = chart.m_splot.m_start_value3 + (new_value - bvalue);
                     let start_index3 = get_chart_index_by_date(chart, chart.m_splot.m_start_key3);
                     let mut new_index3 = start_index3 + (new_index - bindex);
-                    if(new_index3 < 0){
+                    if new_index3 < 0{
                         new_index3 = 0;
                     }
-                    else if(new_index3 > data_len - 1){
+                    else if new_index3 > data_len - 1{
                         new_index3 = data_len - 1;
                     }
                     chart.m_splot.m_key3 = get_chart_date_by_index(chart, new_index3);
@@ -1662,15 +1662,15 @@ pub fn mouse_move_chart(chart:&mut FCChart, first_touch:bool, second_touch:bool,
 	    }
 	    for i in 0..chart.m_plots.len(){
 			let mut plot = chart.m_plots[i].clone();
-			if(plot.m_id == chart.m_splot.m_id){
+			if plot.m_id == chart.m_splot.m_id{
 				chart.m_plots[i] = chart.m_splot.clone();
 				break;
 			}
 		}
 	    return;
 	}
-	if (first_touch && second_touch) {
-        if (first_point.x > second_point.x) {
+	if first_touch && second_touch {
+        if first_point.x > second_point.x {
             chart.m_first_touch_point_cache.x = mp_x1;
             chart.m_first_touch_point_cache.y = mp_y2;
             chart.m_second_touch_point_cache.x = mp_x;
@@ -1681,15 +1681,15 @@ pub fn mouse_move_chart(chart:&mut FCChart, first_touch:bool, second_touch:bool,
             chart.m_second_touch_point_cache.x = mp_x1;
             chart.m_second_touch_point_cache.y = mp_y2;
         }
-        if (chart.m_first_touch_index_cache == -1 || chart.m_second_touch_index_cache == -1) {
+        if chart.m_first_touch_index_cache == -1 || chart.m_second_touch_index_cache == -1 {
             chart.m_first_touch_index_cache = get_chart_index(chart, FCPoint{x:chart.m_first_touch_point_cache.x, y:chart.m_first_touch_point_cache.y});
             chart.m_second_touch_index_cache = get_chart_index(chart, FCPoint{x:chart.m_second_touch_point_cache.x, y:chart.m_second_touch_point_cache.y});
             chart.m_first_index_cache = chart.m_first_visible_index;
             chart.m_last_index_cache = chart.m_last_visible_index;
         }
-    } else if (first_touch) {
+    } else if first_touch {
         chart.m_second_touch_index_cache = -1;
-        if (chart.m_first_touch_index_cache == -1) {
+        if chart.m_first_touch_index_cache == -1 {
             chart.m_first_touch_point_cache.x = mp_x;
             chart.m_first_touch_point_cache.y = mp_y;
             chart.m_first_touch_index_cache = get_chart_index(chart, FCPoint{x:chart.m_first_touch_point_cache.x, y:chart.m_first_touch_point_cache.y});
@@ -1698,11 +1698,11 @@ pub fn mouse_move_chart(chart:&mut FCChart, first_touch:bool, second_touch:bool,
         }
     }
 
-    if (first_touch && second_touch) {
-        if (chart.m_first_touch_index_cache != -1 && chart.m_second_touch_index_cache != -1) {
+    if first_touch && second_touch {
+        if chart.m_first_touch_index_cache != -1 && chart.m_second_touch_index_cache != -1 {
             let mut f_point = FCPoint{x:mp_x, y:mp_y};
             let mut s_point = FCPoint{x:mp_x1, y:mp_y2};
-            if (first_point.x > second_point.x) {
+            if first_point.x > second_point.x {
                 f_point.x = mp_x1;
                 f_point.y = mp_y2;
                 s_point.x = mp_x;
@@ -1710,19 +1710,19 @@ pub fn mouse_move_chart(chart:&mut FCChart, first_touch:bool, second_touch:bool,
             }
             let sub_x = (s_point.x - f_point.x).abs();
             let sub_index = (chart.m_second_touch_index_cache - chart.m_first_touch_index_cache).abs();
-            if (sub_x > 0.0 && sub_index > 0) {
+            if sub_x > 0.0 && sub_index > 0{
                 let mut new_scale_pixel = sub_x / (sub_index as f32);
-                if (new_scale_pixel >= 3.0) {
+                if new_scale_pixel >= 3.0 {
                     let int_scale_pixel = new_scale_pixel as i32;
                     new_scale_pixel = int_scale_pixel as f32;
                 }
-                if (new_scale_pixel != chart.m_hscale_pixel) {
+                if new_scale_pixel != chart.m_hscale_pixel {
                     let mut new_first_index = chart.m_first_touch_index_cache;
                     let mut this_x = f_point.x;
                     this_x = this_x - new_scale_pixel;
-                    while (this_x > chart.m_left_vscale_width + new_scale_pixel) {
+                    while this_x > chart.m_left_vscale_width + new_scale_pixel {
                         new_first_index = new_first_index - 1;
-                        if (new_first_index < 0) {
+                        if new_first_index < 0 {
                             new_first_index = 0;
                             break;
                         }
@@ -1732,9 +1732,9 @@ pub fn mouse_move_chart(chart:&mut FCChart, first_touch:bool, second_touch:bool,
                     this_x = s_point.x;
                     let mut new_second_index = chart.m_second_touch_index_cache;
                     this_x = this_x + new_scale_pixel;
-                    while (this_x < chart.m_view.m_size.cx - chart.m_right_vscale_width - new_scale_pixel) {
+                    while this_x < chart.m_view.m_size.cx - chart.m_right_vscale_width - new_scale_pixel {
                         new_second_index = new_second_index + 1;
-                        if (new_second_index > data_len) {
+                        if new_second_index > data_len {
                             new_second_index = data_len - 1;
                             break;
                         }
@@ -1743,8 +1743,8 @@ pub fn mouse_move_chart(chart:&mut FCChart, first_touch:bool, second_touch:bool,
                     set_chart_visible_index(chart, new_first_index, new_second_index);
                     let working_area_width = get_chart_workarea_width(chart);
                     let max_visible_record = get_max_visible_count(chart, chart.m_hscale_pixel, working_area_width);
-                    while (max_visible_record < chart.m_last_visible_index - chart.m_first_visible_index + 1
-                          && chart.m_last_visible_index > chart.m_first_visible_index) {
+                    while max_visible_record < chart.m_last_visible_index - chart.m_first_visible_index + 1
+                          && chart.m_last_visible_index > chart.m_first_visible_index {
                         chart.m_last_visible_index = chart.m_last_visible_index - 1;
                     }
                     check_chart_last_visible_index(chart);
@@ -1753,11 +1753,11 @@ pub fn mouse_move_chart(chart:&mut FCChart, first_touch:bool, second_touch:bool,
                 }
             }
         }
-    } else if (first_touch) {
+    } else if first_touch {
         let mut sub_index = ((chart.m_first_touch_point_cache.x - first_point.x) / chart.m_hscale_pixel) as i32;
-        if (chart.m_last_visible_index + sub_index > data_len - 1) {
+        if chart.m_last_visible_index + sub_index > data_len - 1 {
             sub_index = data_len - 1 - chart.m_last_index_cache;
-        } else if (chart.m_first_visible_index + sub_index < 0) {
+        } else if chart.m_first_visible_index + sub_index < 0 {
             sub_index = chart.m_first_index_cache;
         }
         chart.m_first_visible_index = chart.m_first_index_cache + sub_index;
@@ -1773,7 +1773,7 @@ pub fn get_lrband_range(chart:&mut FCChart, plot:&mut FCPlot, a:f32, b:f32, up_s
     let mut eindex = get_chart_index_by_date(chart, plot.m_key2);
     let mut temp_bindex : i32 = 0;
 	let mut temp_eindex : i32 = 0;
-	if(bindex > eindex){
+	if bindex > eindex{
 		temp_bindex = eindex;
 		temp_eindex = bindex;
 	}else{
@@ -1796,7 +1796,7 @@ pub fn get_lrband_range(chart:&mut FCChart, plot:&mut FCPlot, a:f32, b:f32, up_s
 }
 
 pub fn zoom_out_chart(chart:&mut FCChart){
-    if (!chart.m_auto_fill_hscale) {
+    if !chart.m_auto_fill_hscale {
         let mut h_scale_pixel = chart.m_hscale_pixel;
         let old_x = get_chart_x(chart, chart.m_cross_stop_index);
         let pure_h = get_chart_workarea_width(chart);
@@ -1806,15 +1806,15 @@ pub fn zoom_out_chart(chart:&mut FCChart){
         let data_count = chart.m_data.len() as i32;
         let mut findex = chart.m_first_visible_index;
         let mut lindex = chart.m_last_visible_index;
-        if (h_scale_pixel < 30.0) {
+        if h_scale_pixel < 30.0 {
             ori_max = get_max_visible_count(chart, h_scale_pixel, pure_h);
-            if (data_count < ori_max) {
+            if data_count < ori_max {
                 deal = 1;
             }
-            if (h_scale_pixel > 3.0) {
+            if h_scale_pixel > 3.0 {
                 h_scale_pixel = h_scale_pixel + 1.0;
             } else {
-                if (h_scale_pixel == 1.0) {
+                if h_scale_pixel == 1.0 {
                     h_scale_pixel = 2.0;
                 } else {
                     h_scale_pixel = h_scale_pixel * 1.5;
@@ -1824,12 +1824,12 @@ pub fn zoom_out_chart(chart:&mut FCChart){
                 }
             }
             max = get_max_visible_count(chart, h_scale_pixel, pure_h);
-            if (data_count >= max) {
-                if (deal == 1) {
+            if data_count >= max {
+                if deal == 1{
                     lindex = data_count - 1;
                 }
                 findex = lindex - max + 1;
-                if (findex < 0) {
+                if findex < 0 {
                     findex = 0;
                 }
             }
@@ -1837,25 +1837,25 @@ pub fn zoom_out_chart(chart:&mut FCChart){
         chart.m_hscale_pixel = h_scale_pixel;
         chart.m_first_visible_index = findex;
         chart.m_last_visible_index = lindex;
-        if (chart.m_show_cross_line){
+        if chart.m_show_cross_line{
             let mut new_x = get_chart_x(chart, chart.m_cross_stop_index);
-            if (new_x > old_x) {
-                while (chart.m_last_visible_index < data_count - 1){
+            if new_x > old_x {
+                while chart.m_last_visible_index < data_count - 1{
                     chart.m_first_visible_index = chart.m_first_visible_index + 1;
                     chart.m_last_visible_index = chart.m_last_visible_index + 1;
                     new_x = get_chart_x(chart, chart.m_cross_stop_index);
-                    if (new_x <= old_x){
+                    if new_x <= old_x{
                         break;
                     }
                 }
 
             }
-            else if (new_x < old_x){
-                while (chart.m_first_visible_index > 0){
+            else if new_x < old_x{
+                while chart.m_first_visible_index > 0{
                     chart.m_first_visible_index = chart.m_first_visible_index - 1;
                     chart.m_last_visible_index = chart.m_last_visible_index - 1;
                     new_x = get_chart_x(chart, chart.m_cross_stop_index);
-                    if (new_x >= old_x){
+                    if new_x >= old_x{
                         break;
                     }
                 }
@@ -1867,7 +1867,7 @@ pub fn zoom_out_chart(chart:&mut FCChart){
 }
 
 pub fn zoom_in_chart(chart:&mut FCChart){
-     if (!chart.m_auto_fill_hscale) {
+     if !chart.m_auto_fill_hscale {
         let mut h_scale_pixel = chart.m_hscale_pixel;
         let old_x = get_chart_x(chart, chart.m_cross_stop_index);
         let pure_h = get_chart_workarea_width(chart);
@@ -1875,17 +1875,17 @@ pub fn zoom_in_chart(chart:&mut FCChart){
         let data_count = chart.m_data.len() as i32;
         let mut findex = chart.m_first_visible_index;
         let mut lindex = chart.m_last_visible_index;
-        if (h_scale_pixel > 3.0) {
+        if h_scale_pixel > 3.0 {
             h_scale_pixel -= 1.0;
         } else {
             h_scale_pixel = h_scale_pixel * 2.0 / 3.0;
-            if (h_scale_pixel > 3.0) {
+            if h_scale_pixel > 3.0 {
                  h_scale_pixel = (h_scale_pixel as i32) as f32;
             }
         }
         max = get_max_visible_count(chart, h_scale_pixel, pure_h);
-        if (max >= data_count) {
-            if (h_scale_pixel < 1.0) {
+        if max >= data_count {
+            if h_scale_pixel < 1.0 {
                 h_scale_pixel = pure_h / (max as f32);
             }
             findex = 0;
@@ -1899,26 +1899,26 @@ pub fn zoom_in_chart(chart:&mut FCChart){
         chart.m_hscale_pixel = h_scale_pixel;
         chart.m_first_visible_index = findex;
         chart.m_last_visible_index = lindex;
-        if (chart.m_show_cross_line){
+        if chart.m_show_cross_line{
             let mut new_x = get_chart_x(chart, chart.m_cross_stop_index);
-            if (new_x > old_x){
-                while (chart.m_last_visible_index < data_count - 1){
+            if new_x > old_x{
+                while chart.m_last_visible_index < data_count - 1{
                     chart.m_first_visible_index = chart.m_first_visible_index + 1;
                     chart.m_last_visible_index = chart.m_last_visible_index + 1;
                     new_x = get_chart_x(chart, chart.m_cross_stop_index);
-                    if (new_x <= old_x)
+                    if new_x <= old_x
                     {
                         break;
                     }
                 }
 
             }
-            else if (new_x < old_x){
-                while (chart.m_first_visible_index > 0){
+            else if new_x < old_x{
+                while chart.m_first_visible_index > 0{
                     chart.m_first_visible_index = chart.m_first_visible_index - 1;
                     chart.m_last_visible_index = chart.m_last_visible_index - 1;
                     new_x = get_chart_x(chart, chart.m_cross_stop_index);
-                    if (new_x >= old_x){
+                    if new_x >= old_x{
                         break;
                     }
                 }
@@ -1934,18 +1934,18 @@ pub fn llv_value(ticks:Vec<f64>, days:i32)->Vec<f64>{
     let min = ticks[0];
     for i in 0..ticks.len(){
 		let mut min : f64 = 0.0;
-		if((i as i32) >= days) {
+		if (i as i32) >= days {
 			min = ticks[i as usize];
             let mut j = i as i32;
-            while(j > (i as i32) - days){
-                if(min > ticks[j as usize]) {
+            while j > (i as i32) - days{
+                if min > ticks[j as usize] {
 					min = ticks[j as usize];
 				}
                 j = j - 1;
             }
 			llv.push(min);
 		} else {
-			if(min > ticks[i as usize]) {
+			if min > ticks[i as usize] {
 				min = ticks[i as usize];
 			}
 			llv.push(min);
@@ -1959,18 +1959,18 @@ pub fn hhv_value(ticks:Vec<f64>, days:i32)->Vec<f64>{
 	let max = ticks[0];
 	for i in 0..ticks.len(){
 		let mut max : f64 = 0.0;
-		if((i as i32) >= days) {
+		if (i as i32) >= days{
 			max = ticks[i as usize];
 			let mut j = i as i32;
-            while(j > (i as i32) - days){
-                if(max < ticks[j as usize]) {
+            while j > (i as i32) - days{
+                if max < ticks[j as usize] {
 					max = ticks[j as usize];
 				}
                 j = j - 1;
             }
 			hhv.push(max);
 		} else {
-			if(max > ticks[i as usize]) {
+			if max > ticks[i as usize] {
 				max = ticks[i as usize];
 			}
 			hhv.push(max);
@@ -1984,7 +1984,7 @@ pub fn ref_value(ticks:Vec<f64>, days:i32)->Vec<f64>{
 	let length = ticks.len();
     for i in 0..length{
 		let mut ref_value : f64 = 0.0;
-		if((i as i32) >= days) {
+		if (i as i32) >= days {
 			ref_value = ticks[(i as i32 - days) as usize];
 		} else {
 			ref_value = ticks[0];
@@ -2026,7 +2026,7 @@ pub fn get_boll_data(ticks:Vec<f64>, ups:&mut Vec<f64>, mas:&mut Vec<f64>, lows:
         let mut bstart : i32 = 0;
         let mut md_sum : f64 = 0.0;
 		ma_sum = ma_sum + c;
-        if((i as i32) >= tick_begin) {
+        if (i as i32) >= tick_begin {
 			ma_sum = ma_sum - p;
 			ma = ma_sum / (ma_days as f64);
 			bstart = (i as i32) - tick_begin;
@@ -2061,10 +2061,10 @@ pub fn get_max_high_and_min_low(high_arr:Vec<f64>, low_arr:Vec<f64>, max_high:&m
     for i in 0..low_arr.len(){
         let high = high_arr[i as usize];
 		let low = low_arr[i as usize];
-		if(high > *max_high) {
+		if high > *max_high {
 			*max_high = high;
 		}
-		if(low < *min_low) {
+		if low < *min_low {
 			*min_low = low;
 		}
     }
@@ -2081,7 +2081,7 @@ pub fn get_kdj_data(high_arr:Vec<f64>, low_arr:Vec<f64>, close_arr:Vec<f64>, ks:
         let mut high_list: Vec<f64> = Vec::new();
         let mut low_list: Vec<f64> = Vec::new();
         let mut start_index : i32 = i as i32 - days;
-        if(start_index < 0){
+        if start_index < 0{
             start_index = 0;
         }
         for j in start_index..((i + 1) as i32){
@@ -2092,12 +2092,12 @@ pub fn get_kdj_data(high_arr:Vec<f64>, low_arr:Vec<f64>, close_arr:Vec<f64>, ks:
         let mut min : f64 = 0.0;
         let close = close_arr[i as usize];
         get_max_high_and_min_low(high_list.to_vec(), low_list.to_vec(), &mut max, &mut min);
-        if(max == min) {
+        if max == min {
 			rsvs.push(0.0);
 		} else {
 			rsvs.push((close - min) / (max - min) * 100.0);
 		}
-		if(i == 0) {
+		if i == 0 {
 			last_k = rsvs[i as usize];
             last_d = rsvs[i as usize];
 		}
@@ -2128,42 +2128,42 @@ pub fn get_rsi_data(ticks:Vec<f64>, rsi1:&mut Vec<f64>, rsi2:&mut Vec<f64>, rsi3
         let c = ticks[i as usize];
 		let m = (c - last_close_px).max(0.0);
 		let a = (c - last_close_px).abs();
-        if(i == 0){
+        if i == 0{
             last_sm1 = 0.0;
             last_sa1 = 0.0;
             rsi1.push(0.0);
         }else{
             last_sm1 = (m + ((n1 - 1) as f64) * last_sm1) / (n1 as f64);
 		    last_sa1 = (a + ((n1 - 1) as f64) * last_sa1)/ (n1 as f64);
-            if(last_sa1 != 0.0) {
+            if last_sa1 != 0.0 {
                 rsi1.push(last_sm1 / last_sa1 * 100.0);
 			} else {
 				rsi1.push(0.0);
 			}
         }
 
-         if(i == 0){
+         if i == 0{
             last_sm2 = 0.0;
             last_sa2 = 0.0;
             rsi2.push(0.0);
         }else{
             last_sm2 = (m + ((n2 - 1) as f64) * last_sm2) / (n2 as f64);
 		    last_sa2 = (a + ((n2 - 1) as f64) * last_sa2)/ (n2 as f64);
-            if(last_sa2 != 0.0) {
+            if last_sa2 != 0.0 {
                 rsi2.push(last_sm2 / last_sa2 * 100.0);
 			} else {
 				rsi2.push(0.0);
 			}
         }
 
-         if(i == 0){
+         if i == 0{
             last_sm3 = 0.0;
             last_sa3 = 0.0;
             rsi3.push(0.0);
         }else{
             last_sm3 = (m + ((n3 - 1) as f64) * last_sm3) / (n3 as f64);
 		    last_sa3 = (a + ((n3 - 1) as f64) * last_sa3)/ (n3 as f64);
-            if(last_sa3 != 0.0) {
+            if last_sa3 != 0.0 {
                 rsi3.push(last_sm3 / last_sa3 * 100.0);
 			} else {
 				rsi3.push(0.0);
@@ -2179,7 +2179,7 @@ pub fn ma_value(ticks:Vec<f64>, days:i32)->Vec<f64>{
 	let mut last : f64 = 0.0;
 	for i in 0..ticks.len(){
 		let mut ma : f64 = 0.0;
-		if((i as i32) >= days) {
+		if (i as i32) >= days {
 			last = ticks[(i as i32 - days) as usize];
 			ma_sum = ma_sum + ticks[i as usize] - last;
 			ma = ma_sum / (days as f64);
@@ -2197,7 +2197,7 @@ pub fn get_roc_data(ticks:Vec<f64>, roc:&mut Vec<f64>, maroc:&mut Vec<f64>){
 	let m : i32 = 6;
 	for i in 0..ticks.len(){
 		let mut curr_roc : f64 = 0.0;
-		if((i as i32) >= n) {
+		if (i as i32) >= n {
 			curr_roc = 100.0 * (ticks[i as usize] - ticks[(i as i32 - n) as usize]) / ticks[(i as i32 - n) as usize];
 			roc.push(curr_roc);
 		} else {
@@ -2296,7 +2296,7 @@ pub fn get_cci_data(high_arr:Vec<f64>, low_arr:Vec<f64>, close_arr:Vec<f64>, cci
 	for i in 0..close_arr.len(){
         let iu = i as usize;
 		let mut cci:f64 = 0.0;
-		if(ma_md[iu] != 0.0){
+		if ma_md[iu] != 0.0{
 			cci = (tp_arr[iu] - ma_close[iu]) / (ma_md[iu] * 0.015);
 		}
 		cci_arr.push(cci);
@@ -2344,7 +2344,7 @@ pub fn get_percent_params(y1:f32, y2:f32)->Vec<f32>{
     let mut y75 : f32 = 0.0;
     let mut y100 : f32 = 0.0;
     y0 = y1;
-    if(y1 <= y2){
+    if y1 <= y2{
         y25 = y1 + (y2 - y1) / 4.0;
         y50 = y1 + (y2 - y1) / 2.0;
         y75 = y1 + (y2 - y1) * 3.0 / 4.0;
@@ -2379,55 +2379,55 @@ pub fn select_plot(chart:&mut FCChart, mp:FCPoint)->FCPlot{
         let mut mpy2 : f32 = 0.0;
         let mut mpx3 : f32 = 0.0;
         let mut mpy3 : f32 = 0.0;
-        if(plot.m_key1 > 0.0){
+        if plot.m_key1 > 0.0{
             m_index1 = get_chart_index_by_date(chart, plot.m_key1);
             mpx1 = get_chart_x(chart, m_index1);
             mpy1 = get_chart_y(chart, 0, plot.m_value1);
-            if(mp.x >= mpx1 - plot_point_size && mp.x <= mpx1 + plot_point_size && mp.y >= mpy1 - plot_point_size && mp.y <= mpy1 + plot_point_size){
+            if mp.x >= mpx1 - plot_point_size && mp.x <= mpx1 + plot_point_size && mp.y >= mpy1 - plot_point_size && mp.y <= mpy1 + plot_point_size{
                 splot = plot.clone();
                 chart.m_select_plot_point = 0;
                 break;
             }
         }
-        if(plot.m_key2 > 0.0){
+        if plot.m_key2 > 0.0{
             m_index2 = get_chart_index_by_date(chart, plot.m_key2);
             mpx2 = get_chart_x(chart, m_index2);
             mpy2 = get_chart_y(chart, 0, plot.m_value2);
-            if(mp.x >= mpx2 - plot_point_size && mp.x <= mpx2 + plot_point_size && mp.y >= mpy2 - plot_point_size && mp.y <= mpy2 + plot_point_size){
+            if mp.x >= mpx2 - plot_point_size && mp.x <= mpx2 + plot_point_size && mp.y >= mpy2 - plot_point_size && mp.y <= mpy2 + plot_point_size{
                 splot = plot.clone();
                 chart.m_select_plot_point = 1;
                 break;
             }
         }
-        if(plot.m_key3 > 0.0){
+        if plot.m_key3 > 0.0{
             m_index3 = get_chart_index_by_date(chart, plot.m_key3);
             mpx3 = get_chart_x(chart, m_index3);
             mpy3 = get_chart_y(chart, 0, plot.m_value3);
-            if(mp.x >= mpx3 - plot_point_size && mp.x <= mpx3 + plot_point_size && mp.y >= mpy3 - plot_point_size && mp.y <= mpy3 + plot_point_size){
+            if mp.x >= mpx3 - plot_point_size && mp.x <= mpx3 + plot_point_size && mp.y >= mpy3 - plot_point_size && mp.y <= mpy3 + plot_point_size{
                 splot = plot.clone();
                 chart.m_select_plot_point = 2;
                 break;
             }
         }
-        if(chart.m_select_plot_point == -1){
-            if(plot.m_plot_type == "Line"){
+        if chart.m_select_plot_point == -1{
+            if plot.m_plot_type == "Line"{
                 chart.m_start_move_plot = select_line(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, mpx2, mpy2);
             }
-            else if(plot.m_plot_type == "AngleLine"){
+            else if plot.m_plot_type == "AngleLine"{
                 chart.m_start_move_plot = select_line(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, mpx2, mpy2);
-                if (!chart.m_start_move_plot){
+                if !chart.m_start_move_plot{
                     chart.m_start_move_plot = select_line(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, mpx3, mpy3);
                 }
             }
-            else if(plot.m_plot_type == "Parallel"){
+            else if plot.m_plot_type == "Parallel"{
                 chart.m_start_move_plot = select_line(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, mpx2, mpy2);
-                if (!chart.m_start_move_plot){
+                if !chart.m_start_move_plot{
                     let mut k : f32 = 0.0;
                     let mut b : f32 = 0.0;
                     line_xy(mpx1, mpy1, mpx2, mpy2, 0.0, 0.0, &mut k, &mut b);
                     let new_b = mpy3 - k * mpx3;
-                    if(mpx2 == mpx1){
-                        if(mp.x >= mpx3 - plot_point_size && mp.x <= mpx3 + plot_point_size){
+                    if mpx2 == mpx1{
+                        if mp.x >= mpx3 - plot_point_size && mp.x <= mpx3 + plot_point_size{
                             chart.m_start_move_plot = true;
                         }
                     }else{
@@ -2439,66 +2439,66 @@ pub fn select_plot(chart:&mut FCChart, mp:FCPoint)->FCPlot{
                     }
                 }
             }
-            else if(plot.m_plot_type == "LRLine"){
+            else if plot.m_plot_type == "LRLine"{
                 chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, mpx2, mpy2);
             }
-            else if(plot.m_plot_type == "Segment"){
+            else if plot.m_plot_type == "Segment"{
                 chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, mpx2, mpy2);
-            }else if(plot.m_plot_type == "Ray"){
+            }else if plot.m_plot_type == "Ray"{
                 chart.m_start_move_plot = select_ray(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, mpx2, mpy2);
             }
-            else if(plot.m_plot_type == "Triangle"){
+            else if plot.m_plot_type == "Triangle"{
                 chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, mpx2, mpy2);
-                if (!chart.m_start_move_plot){
+                if !chart.m_start_move_plot{
                     chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx2, mpy2, mpx3, mpy3);
                 }
-                if (!chart.m_start_move_plot){
+                if !chart.m_start_move_plot{
                     chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, mpx3, mpy3);
                 }
             }
-            else if(plot.m_plot_type == "Rect"){
+            else if plot.m_plot_type == "Rect"{
                 let s_x1 : f32 = mpx1.min(mpx2);
                 let s_y1 : f32 = mpy1.min(mpy2);
                 let s_x2 : f32 = mpx1.max(mpx2);
                 let s_y2 : f32 = mpy1.max(mpy2);
                 chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, s_x1, s_y1, s_x2, s_y1);
-                if (!chart.m_start_move_plot){
+                if !chart.m_start_move_plot{
                     chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, s_x2, s_y1, s_x2, s_y2);
                 }
-                if (!chart.m_start_move_plot){
+                if !chart.m_start_move_plot{
                     chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, s_x1, s_y2, s_x2, s_y2);
                 }
-                if (!chart.m_start_move_plot){
+                if !chart.m_start_move_plot{
                     chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, s_x1, s_y1, s_x1, s_y2);
                 }
             }
-            else if(plot.m_plot_type == "BoxLine"){
+            else if plot.m_plot_type == "BoxLine"{
                 let s_x1 : f32 = mpx1.min(mpx2);
                 let s_y1 : f32 = mpy1.min(mpy2);
                 let s_x2 : f32 = mpx1.max(mpx2);
                 let s_y2 : f32 = mpy1.max(mpy2);
                 chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, s_x1, s_y1, s_x2, s_y1);
-                if (!chart.m_start_move_plot){
+                if !chart.m_start_move_plot{
                     chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, s_x2, s_y1, s_x2, s_y2);
                 }
-                if (!chart.m_start_move_plot){
+                if !chart.m_start_move_plot{
                     chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, s_x1, s_y2, s_x2, s_y2);
                 }
-                if (!chart.m_start_move_plot){
+                if !chart.m_start_move_plot{
                     chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, s_x1, s_y1, s_x1, s_y2);
                 }
             }
-            else if(plot.m_plot_type == "TironeLevels"){
+            else if plot.m_plot_type == "TironeLevels"{
                 let s_x1 : f32 = mpx1.min(mpx2);
                 let s_y1 : f32 = mpy1.min(mpy2);
                 let s_x2 : f32 = mpx1.max(mpx2);
                 let s_y2 : f32 = mpy1.max(mpy2);
                 chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, s_x1, s_y1, s_x2, s_y1);
-                if (!chart.m_start_move_plot){
+                if !chart.m_start_move_plot{
                     chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, s_x1, s_y2, s_x2, s_y2);
                 }
             }
-            else if(plot.m_plot_type == "GoldenRatio"){
+            else if plot.m_plot_type == "GoldenRatio"{
                 let s_x1 : f32 = mpx1.min(mpx2);
                 let s_y1 : f32 = mpy1.min(mpy2);
                 let s_x2 : f32 = mpx1.max(mpx2);
@@ -2520,39 +2520,39 @@ pub fn select_plot(chart:&mut FCChart, mp:FCPoint)->FCPlot{
                 let max_value = plot.m_value1.max(plot.m_value2);
                 for j in 0..ranges.len(){
                     let mut new_y : f32 = 0.0;
-                    if(s_y1 <= s_y2){
+                    if s_y1 <= s_y2{
                         new_y = s_y1 + (s_y2 - s_y1) * ranges[j as usize];
                     }else{
                         new_y = s_y2 + (s_y1 - s_y2) * (1.0 - ranges[j as usize]);
                     }
                     chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, chart.m_left_vscale_width, new_y, chart.m_view.m_size.cx - chart.m_right_vscale_width, new_y);
-                    if (chart.m_start_move_plot){
+                    if chart.m_start_move_plot{
                         break;
                     }
                 }
             }
-            else if(plot.m_plot_type == "Cycle"){
+            else if plot.m_plot_type == "Cycle"{
                 let r = ((mpx2 - mpx1) * (mpx2 - mpx1) + (mpy2 - mpy1) * (mpy2 - mpy1)).abs().sqrt();
                 let round = (mp.x - mpx1) * (mp.x - mpx1) + (mp.y - mpy1) * (mp.y - mpy1);
-                if (round / (r * r) >= 0.9 && round / (r * r) <= 1.1){
+                if round / (r * r) >= 0.9 && round / (r * r) <= 1.1{
                     chart.m_start_move_plot = true;
                 }
-            }else if(plot.m_plot_type == "CircumCycle"){
+            }else if plot.m_plot_type == "CircumCycle"{
                 let mut o_x : f32 = 0.0;
                 let mut o_y : f32 = 0.0;
                 let mut r : f32 = 0.0;
                 ellipse_or(mpx1, mpy1, mpx2, mpy2, mpx3, mpy3, &mut o_x, &mut o_y, &mut r);
                 let round = (mp.x - o_x) * (mp.x - o_x) + (mp.y - o_y) * (mp.y - o_y);
-                if (round / (r * r) >= 0.9 && round / (r * r) <= 1.1){
+                if round / (r * r) >= 0.9 && round / (r * r) <= 1.1{
                     chart.m_start_move_plot = true;
                 }
             }
-            else if(plot.m_plot_type == "Ellipse"){
+            else if plot.m_plot_type == "Ellipse"{
                 let mut x1 : f32 = 0.0;
                 let mut y1 : f32 = 0.0;
                 let mut x2 : f32 = 0.0;
                 let mut y2 : f32 = 0.0;
-                if(mpx1 <= mpx2){
+                if mpx1 <= mpx2{
                     x1 = mpx2;
                     y1 = mpy2;
                     x2 = mpx1;
@@ -2567,7 +2567,7 @@ pub fn select_plot(chart:&mut FCChart, mp:FCPoint)->FCPlot{
                 let mut y : f32 = 0.0;
                 let width = (x1 - x2) * 2.0;
                 let mut height : f32 = 0.0;
-                if (y1 >= y2){
+                if y1 >= y2{
                     height = (y1 - y2) * 2.0;
                 }
                 else{
@@ -2577,9 +2577,9 @@ pub fn select_plot(chart:&mut FCChart, mp:FCPoint)->FCPlot{
                 let a = width / 2.0;
                 let b = height / 2.0;
                 chart.m_start_move_plot = ellipse_has_point(mp.x, mp.y, x + (width / 2.0), y + (height / 2.0), a, b);
-            }else if(plot.m_plot_type == "LRBand"){
+            }else if plot.m_plot_type == "LRBand"{
                 chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, mpx2, mpy2);
-                if (!chart.m_start_move_plot){
+                if !chart.m_start_move_plot{
                     let mut list: Vec<f64> = Vec::new();
                     let min_index = m_index1.min(m_index2);
                     let max_index = m_index1.max(m_index2);
@@ -2595,20 +2595,20 @@ pub fn select_plot(chart:&mut FCChart, mp:FCPoint)->FCPlot{
                     mpy1 = get_chart_y(chart, 0, plot.m_value1 + up_sub_value);
                     mpy2 = get_chart_y(chart, 0, plot.m_value2 + up_sub_value);
                     chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, mpx2, mpy2);
-                    if (!chart.m_start_move_plot){
+                    if !chart.m_start_move_plot{
                         mpy1 = get_chart_y(chart, 0, plot.m_value1 - down_sub_value);
                         mpy2 = get_chart_y(chart, 0, plot.m_value2 - down_sub_value);
                         chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, mpx2, mpy2);
                     }
                 }
-            }else if(plot.m_plot_type == "LRChannel"){
+            }else if plot.m_plot_type == "LRChannel"{
                 let mut k : f32 = 0.0;
                 let mut b : f32 = 0.0;
                 line_xy(mpx1, mpy1, mpx2, mpy2, 0.0, 0.0, &mut k, &mut b);
                 let right_x = chart.m_view.m_size.cx - chart.m_right_vscale_width;
                 let mut right_y = right_x * k + b;
                 chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, right_x, right_y);
-                if (!chart.m_start_move_plot){
+                if !chart.m_start_move_plot{
                     let mut list: Vec<f64> = Vec::new();
                     let min_index = m_index1.min(m_index2);
                     let max_index = m_index1.max(m_index2);
@@ -2626,7 +2626,7 @@ pub fn select_plot(chart:&mut FCChart, mp:FCPoint)->FCPlot{
                     line_xy(mpx1, mpy1, mpx2, mpy2, 0.0, 0.0, &mut k, &mut b);
                     right_y = right_x * k + b;
                     chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, right_x, right_y);
-                    if (!chart.m_start_move_plot){
+                    if !chart.m_start_move_plot{
                         mpy1 = get_chart_y(chart, 0, plot.m_value1 - down_sub_value);
                         mpy2 = get_chart_y(chart, 0, plot.m_value2 - down_sub_value);
                         line_xy(mpx1, mpy1, mpx2, mpy2, 0.0, 0.0, &mut k, &mut b);
@@ -2634,25 +2634,25 @@ pub fn select_plot(chart:&mut FCChart, mp:FCPoint)->FCPlot{
                         chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, right_x, right_y);
                     }
                 }
-            }else if(plot.m_plot_type == "ParalleGram"){
+            }else if plot.m_plot_type == "ParalleGram"{
                 let mut x4 : f32 = 0.0;
                 let mut y4 : f32 = 0.0;
                 parallelogram(mpx1, mpy1, mpx2, mpy2, mpx3, mpy3, &mut x4, &mut y4);
                 chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, mpx2, mpy2);
-                if (!chart.m_start_move_plot){
+                if !chart.m_start_move_plot{
                     chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx2, mpy2, mpx3, mpy3);
-                    if (!chart.m_start_move_plot){
+                    if !chart.m_start_move_plot{
                         chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx3, mpy3, x4, y4);
-                        if (!chart.m_start_move_plot){
+                        if !chart.m_start_move_plot{
                             chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, x4, y4, mpx1, mpy1);
                         }
                     }
                 }
             }
-            else if(plot.m_plot_type == "SpeedResist"){
+            else if plot.m_plot_type == "SpeedResist"{
                 chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, mpx2, mpy2);
-                if (!chart.m_start_move_plot){
-                    if (mpx1 != mpx2 && mpy1 != mpy2){
+                if !chart.m_start_move_plot{
+                    if mpx1 != mpx2 && mpy1 != mpy2{
                         let first_p = FCPoint{x:mpx2, y:mpy2 - (mpy2 - mpy1) / 3.0};
                         let second_p = FCPoint{x:mpx2, y:mpy2 - (mpy2 - mpy1) * 2.0 / 3.0};
                         let start_p = FCPoint{x:mpx1,y:mpy1};
@@ -2665,7 +2665,7 @@ pub fn select_plot(chart:&mut FCChart, mp:FCPoint)->FCPlot{
                         let mut new_yf : f32 = 0.0;
                         let mut new_ys : f32 = 0.0;
                         let mut new_x : f32 = 0.0;
-                        if (mpx2 > mpx1){
+                        if mpx2 > mpx1{
                             new_yf = f_k * (chart.m_view.m_size.cx - chart.m_right_vscale_width) + f_b;
                             new_ys = s_k * (chart.m_view.m_size.cx - chart.m_right_vscale_width) + s_b;
                             new_x = (chart.m_view.m_size.cx - chart.m_right_vscale_width);
@@ -2676,15 +2676,15 @@ pub fn select_plot(chart:&mut FCChart, mp:FCPoint)->FCPlot{
                             new_x = chart.m_left_vscale_width;
                         }
                         chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, start_p.x, start_p.y, new_x, new_yf);
-                        if (!chart.m_start_move_plot){
+                        if !chart.m_start_move_plot{
                             chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, start_p.x, start_p.y, new_x, new_ys);
                         }
                     }
                 }
-            }else if(plot.m_plot_type == "FiboFanline"){
+            }else if plot.m_plot_type == "FiboFanline"{
                 chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx1, mpy1, mpx2, mpy2);
-                if (!chart.m_start_move_plot){
-                    if (mpx1 != mpx2 && mpy1 != mpy2){
+                if !chart.m_start_move_plot{
+                    if mpx1 != mpx2 && mpy1 != mpy2{
                         let first_p = FCPoint{x:mpx2, y:mpy2 - (mpy2 - mpy1) * 0.382};
                         let second_p = FCPoint{x:mpx2, y:mpy2 - (mpy2 - mpy1) * 0.5};
                         let third_p = FCPoint{x:mpx2, y:mpy2 - (mpy2 - mpy1) * 0.618};
@@ -2700,7 +2700,7 @@ pub fn select_plot(chart:&mut FCChart, mp:FCPoint)->FCPlot{
                             line_xy(start_p.x, start_p.y, list_p[j as usize].x, list_p[j as usize].y, 0.0, 0.0, &mut k, &mut b);
                             let mut new_x : f32 = 0.0;
                             let mut new_y : f32 = 0.0;
-                            if (mpx2 > mpx1){
+                            if mpx2 > mpx1{
                                 new_y = k * (chart.m_view.m_size.cx - chart.m_right_vscale_width) + b;
                                 new_x = (chart.m_view.m_size.cx - chart.m_right_vscale_width);
                             }
@@ -2710,42 +2710,42 @@ pub fn select_plot(chart:&mut FCChart, mp:FCPoint)->FCPlot{
                                 new_x = chart.m_left_vscale_width;
                             }
                             chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, start_p.x, start_p.y, new_x, new_y);
-                            if (chart.m_start_move_plot){
+                            if chart.m_start_move_plot{
                                 break;
                             }
                         }
                     }
                 }
             }
-            else if(plot.m_plot_type == "FiboTimezone"){
+            else if plot.m_plot_type == "FiboTimezone"{
                 let mut f_value : i32 = 1;
                 let aindex = m_index1;
                 let mut pos : i32 = 1;
                 let div_height = get_candle_div_height(chart);
                 chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, mpx1, 0.0, mpx1, div_height);
-                if (!chart.m_start_move_plot){
-                    while (aindex + f_value <= chart.m_last_visible_index){
+                if !chart.m_start_move_plot{
+                    while aindex + f_value <= chart.m_last_visible_index{
                         f_value = fibonacci_value(pos);
                         let new_index = aindex + f_value;
                         let new_x = get_chart_x(chart, new_index);
                         chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, new_x, 0.0, new_x, div_height);
-                        if (chart.m_start_move_plot){
+                        if chart.m_start_move_plot{
                             break;
                         }
                         pos = pos + 1;
                     }
                 }
             }
-            else if(plot.m_plot_type == "Percent"){
+            else if plot.m_plot_type == "Percent"{
                 let list = get_percent_params(mpy1, mpy2);
                 for j in 0..list.len(){
                     chart.m_start_move_plot = select_segment(FCPoint{x:mp.x, y:mp.y}, chart.m_left_vscale_width, list[j as usize], chart.m_view.m_size.cx - chart.m_right_vscale_width, list[j as usize]);
-                    if (chart.m_start_move_plot){
+                    if chart.m_start_move_plot{
                         break;
                     }
                 }
             }
-            if (chart.m_start_move_plot){
+            if chart.m_start_move_plot{
 				plot.m_start_key1 = plot.m_key1;
                 plot.m_start_value1 = plot.m_value1;
                 plot.m_start_key2 = plot.m_key2;
@@ -2771,17 +2771,17 @@ pub fn draw_chart_lines(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
         let x = get_chart_x(chart, i);
         let value = datas[i as usize];
         let y = get_chart_y(chart, div_index, value);
-        if(i > chart.m_first_visible_index){
+        if i > chart.m_first_visible_index{
             M_PAINT.lock().unwrap().add_line(&context, last_x, last_y, x, y);
         }
         last_x = x;
         last_y = y;
-        if (selected) {
+        if selected {
             let mut kp_interval = max_visible_record / 30;
-            if (kp_interval < 2) {
+            if kp_interval < 2 {
                 kp_interval = 3;
             }
-            if (i % kp_interval == 0) {
+            if i % kp_interval == 0 {
                 M_PAINT.lock().unwrap().fill_rect(&context, color.clone(), x - 3.0, y - 3.0, x + 3.0, y + 3.0);
             }
         }
@@ -2792,21 +2792,21 @@ pub fn draw_chart_lines(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
 
 pub fn draw_chart_stock(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, chart:&mut FCChart, clip_rect:FCRect){
     let data_len = chart.m_data.len() as i32;
-    if(data_len > 0) {
+    if data_len > 0 {
 		let candle_height = get_candle_div_height(chart);
         let vol_height = get_vol_div_height(chart);
         let ind_height = get_ind_div_height(chart);
         let mut c_width = (((chart.m_hscale_pixel - 3.0) / 2.0) as i32) as f32;
         let working_area_width = get_chart_workarea_width(chart);
         let max_visible_record = get_max_visible_count(chart, chart.m_hscale_pixel, working_area_width);
-        if(c_width < 0.0){
+        if c_width < 0.0{
             c_width = 0.0;
         }
         let mut is_trend : bool = false;
-        if(chart.m_cycle == "trend"){
+        if chart.m_cycle == "trend"{
             is_trend = true;
         }
-        if(is_trend){
+        if is_trend{
             M_PAINT.lock().unwrap().begin_path(&context);
             let mut last_x : f32 = 0.0;
             let mut last_y : f32 = 0.0;
@@ -2814,7 +2814,7 @@ pub fn draw_chart_stock(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
                 let x = get_chart_x(chart, i);
                 let close = chart.m_data[i as usize].m_close;
                 let close_y = get_chart_y(chart, 0, close);
-                if(i > chart.m_first_visible_index){
+                if i > chart.m_first_visible_index{
                     M_PAINT.lock().unwrap().add_line(&context, last_x, last_y, x, close_y)
                 }
                 last_x = x;
@@ -2838,86 +2838,86 @@ pub fn draw_chart_stock(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
             let low_y = get_chart_y(chart, 0, low);
             let mut vol_y = 0.0;
             let mut zero_y = 0.0;
-            if(vol_height > 0.0){
+            if vol_height > 0.0{
                 let volume = chart.m_data[iu].m_volume;
                 vol_y = get_chart_y(chart, 1, volume);
                 zero_y = get_chart_y(chart, 1, 0.0);
             }
-            if(close >= open){
-                if(is_trend){
-                    if(vol_height > 0.0){
+            if close >= open{
+                if is_trend{
+                    if vol_height > 0.0{
                         M_PAINT.lock().unwrap().draw_line(&context, chart.m_indicator_colors[6].clone(), chart.m_line_width, Vec::new(), x, vol_y, x, zero_y);
                     }
                 }else{
                     M_PAINT.lock().unwrap().draw_line(&context, chart.m_up_color.clone(), chart.m_line_width, Vec::new(), x, high_y, x, low_y);
-                    if(c_width > 0.0){
-                        if(close == open){
+                    if c_width > 0.0{
+                        if close == open{
                             M_PAINT.lock().unwrap().draw_line(&context, chart.m_up_color.clone(), chart.m_line_width, Vec::new(), x - c_width, close_y, x + c_width, close_y);
                         }
                         else{
                             M_PAINT.lock().unwrap().fill_rect(&context, chart.m_up_color.clone(), x - c_width, close_y, x + c_width, open_y);
                         }
-                        if(vol_height > 0.0){
+                        if vol_height > 0.0{
                             M_PAINT.lock().unwrap().fill_rect(&context, chart.m_up_color.clone(), x - c_width, vol_y, x + c_width, zero_y);
                         }
          
                     }else
                     {
-                        if(vol_height > 0.0){
+                        if vol_height > 0.0{
                             M_PAINT.lock().unwrap().draw_line(&context, chart.m_up_color.clone(), chart.m_line_width, Vec::new(), x - c_width, vol_y, x + c_width, zero_y);
                         }
                     }
                 }
             }else{
-                if(is_trend){
-                    if(vol_height > 0.0){
+                if is_trend{
+                    if vol_height > 0.0{
                         M_PAINT.lock().unwrap().draw_line(&context, chart.m_indicator_colors[6].clone(), chart.m_line_width, Vec::new(), x, vol_y, x, zero_y);
                     }
                 }else{
                     M_PAINT.lock().unwrap().draw_line(&context, chart.m_down_color.clone(), chart.m_line_width, Vec::new(), x, high_y, x, low_y);
-                    if(c_width > 0.0){
+                    if c_width > 0.0{
                         M_PAINT.lock().unwrap().fill_rect(&context, chart.m_down_color.clone(), x - c_width, open_y, x + c_width, close_y);
-                        if(vol_height > 0.0){
+                        if vol_height > 0.0{
                             M_PAINT.lock().unwrap().fill_rect(&context, chart.m_down_color.clone(), x - c_width, vol_y, x + c_width, zero_y);
                         }
                     }else{
-                        if(vol_height > 0.0){
+                        if vol_height > 0.0{
                             M_PAINT.lock().unwrap().draw_line(&context, chart.m_down_color.clone(), chart.m_line_width, Vec::new(), x - c_width, vol_y, x + c_width, zero_y);
                         }
                     }
                 }
             }
-            if (chart.m_select_shape == "CANDLE") {
+            if chart.m_select_shape == "CANDLE" {
                 let mut kp_interval = max_visible_record / 30;
-                if (kp_interval < 2) {
+                if kp_interval < 2 {
                     kp_interval = 3;
                 }
-                if (i % kp_interval == 0) {
-                    if (is_trend) {
+                if i % kp_interval == 0{
+                    if is_trend {
                     } else {
                         M_PAINT.lock().unwrap().fill_rect(&context, chart.m_indicator_colors[0].clone(), x - 3.0, close_y - 3.0, x + 3.0, close_y + 3.0);
                     }
                 }
-            } else if (chart.m_select_shape == "VOL") {
+            } else if chart.m_select_shape == "VOL" {
                 let mut kp_interval = max_visible_record / 30;
-                if (kp_interval < 2) {
+                if kp_interval < 2 {
                     kp_interval = 3;
                 }
-                if (i % kp_interval == 0) {
+                if i % kp_interval == 0 {
                     M_PAINT.lock().unwrap().fill_rect(&context, chart.m_indicator_colors[0].clone(), x - 3.0, vol_y - 3.0, x + 3.0, vol_y + 3.0);
                 }
             }
-            if(!is_trend){
-                if(!has_max_tag){
-                    if(high == chart.m_candle_max){
+            if !is_trend{
+                if !has_max_tag{
+                    if high == chart.m_candle_max{
                         let tag = to_fixed(high, chart.m_candle_digit);
                         let t_size = M_PAINT.lock().unwrap().text_size(&context, tag.clone(), chart.m_font.clone());
                         M_PAINT.lock().unwrap().draw_text(&context, tag.clone(), chart.m_text_color.clone(), chart.m_font.clone(), x - t_size.cx / 2.0, high_y - t_size.cy / 2.0 - 2.0);
                         has_max_tag = true;
                     }
                 }
-                if(!has_min_tag){
-                    if(low == chart.m_candle_min){
+                if !has_min_tag{
+                    if low == chart.m_candle_min{
                         let tag = to_fixed(low, chart.m_candle_digit);
                         let t_size = M_PAINT.lock().unwrap().text_size(&context, tag.clone(), chart.m_font.clone());
                         M_PAINT.lock().unwrap().draw_text(&context, tag.clone(), chart.m_text_color.clone(), chart.m_font.clone(), x - t_size.cx / 2.0, low_y + 2.0 + t_size.cy / 2.0);
@@ -2926,52 +2926,52 @@ pub fn draw_chart_stock(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
                 }
             }
         }
-        if(!is_trend){
+        if !is_trend{
 			M_PAINT.lock().unwrap().save(&context);
             M_PAINT.lock().unwrap().set_clip(&context, chart.m_left_vscale_width, 20.0, chart.m_view.m_size.cx - chart.m_right_vscale_width, candle_height);
-			if (chart.m_main_indicator == "BOLL") {
-				if(chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "MID"){
+			if chart.m_main_indicator == "BOLL" {
+				if chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "MID"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_boll_mid.clone(), chart.m_indicator_colors[0].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_boll_mid.clone(), chart.m_indicator_colors[0].clone(), false);
 				}
-				if(chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "UP"){
+				if chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "UP"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_boll_up.clone(), chart.m_indicator_colors[1].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_boll_up.clone(), chart.m_indicator_colors[1].clone(), false);
 				}
-				if(chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "DOWM"){
+				if chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "DOWM"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_boll_down.clone(), chart.m_indicator_colors[2].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_boll_down.clone(), chart.m_indicator_colors[2].clone(), false);
 				}
-			}else if (chart.m_main_indicator == "MA"){
-				if(chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "5"){
+			}else if chart.m_main_indicator == "MA"{
+				if chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "5"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_ma5.clone(), chart.m_indicator_colors[0].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_ma5.clone(), chart.m_indicator_colors[0].clone(), false);
 				}
-				if(chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "10"){
+				if chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "10"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_ma10.clone(), chart.m_indicator_colors[1].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_ma10.clone(), chart.m_indicator_colors[1].clone(), false);
 				}
-				if(chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "20"){
+				if chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "20"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_ma20.clone(), chart.m_indicator_colors[2].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_ma20.clone(), chart.m_indicator_colors[2].clone(), false);
 				}
-				if(chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "30"){
+				if chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "30"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_ma30.clone(), chart.m_indicator_colors[3].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_ma30.clone(), chart.m_indicator_colors[3].clone(), false);
 				}
-				if(chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "120"){
+				if chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "120"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_ma120.clone(), chart.m_indicator_colors[4].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_ma120.clone(), chart.m_indicator_colors[4].clone(), false);
 				}
-				if(chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "250"){
+				if chart.m_select_shape == chart.m_main_indicator && chart.m_select_shape_ex == "250"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_ma250.clone(), chart.m_indicator_colors[5].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 0, chart.m_ma250.clone(), chart.m_indicator_colors[5].clone(), false);
@@ -2979,145 +2979,145 @@ pub fn draw_chart_stock(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
 			}
 			M_PAINT.lock().unwrap().restore(&context);
         }
-        if(ind_height > 0.0){
-			if (chart.m_show_indicator == "MACD") {
+        if ind_height > 0.0{
+			if chart.m_show_indicator == "MACD" {
 				let zero_y = get_chart_y(chart, 2, 0.0);
 				for i in chart.m_first_visible_index..(chart.m_last_visible_index + 1){
 					let x = get_chart_x(chart, i);
 					let iu = i as usize;
 					let macd = chart.m_allmacdarr[iu];
 					let macd_y = get_chart_y(chart, 2, macd);
-					if (macd_y < zero_y) {
+					if macd_y < zero_y {
                         M_PAINT.lock().unwrap().draw_line(&context, chart.m_indicator_colors[3].clone(), chart.m_line_width, Vec::new(), x, macd_y, x, zero_y);
                     } else {
                         M_PAINT.lock().unwrap().draw_line(&context, chart.m_indicator_colors[4].clone(), chart.m_line_width, Vec::new(), x, macd_y, x, zero_y);
                     }
-                    if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "MACD"){
+                    if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "MACD"{
 						 let mut kp_interval = max_visible_record / 30;
-						if (kp_interval < 2) {
+						if kp_interval < 2 {
 							kp_interval = 3;
 						}
-						if (i % kp_interval == 0) {
+						if i % kp_interval == 0 {
 							M_PAINT.lock().unwrap().fill_rect(&context, chart.m_indicator_colors[0].clone(), x - 3.0, macd_y - 3.0, x + 3.0, macd_y + 3.0);
 						}
                     }
 				}
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "DIF"){
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "DIF"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_alldifarr.clone(), chart.m_indicator_colors[0].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_alldifarr.clone(), chart.m_indicator_colors[0].clone(), false);
 				}
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "DEA"){
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "DEA"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_alldeaarr.clone(), chart.m_indicator_colors[1].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_alldeaarr.clone(), chart.m_indicator_colors[1].clone(), false);
 				}
-			} else if (chart.m_show_indicator == "KDJ") {
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "K"){
+			} else if chart.m_show_indicator == "KDJ" {
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "K"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_kdj_k.clone(), chart.m_indicator_colors[0].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_kdj_k.clone(), chart.m_indicator_colors[0].clone(), false);
 				}
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "D"){
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "D"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_kdj_d.clone(), chart.m_indicator_colors[1].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_kdj_d.clone(), chart.m_indicator_colors[1].clone(), false);
 				}
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "J"){
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "J"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_kdj_j.clone(), chart.m_indicator_colors[2].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_kdj_j.clone(), chart.m_indicator_colors[2].clone(), false);
 				}
-			} else if (chart.m_show_indicator == "RSI") {
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "6"){
+			} else if chart.m_show_indicator == "RSI" {
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "6"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_rsi1.clone(), chart.m_indicator_colors[5].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_rsi1.clone(), chart.m_indicator_colors[5].clone(), false);
 				}
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "12"){
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "12"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_rsi2.clone(), chart.m_indicator_colors[1].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_rsi2.clone(), chart.m_indicator_colors[1].clone(), false);
 				}
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "24"){
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "24"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_rsi3.clone(), chart.m_indicator_colors[2].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_rsi3.clone(), chart.m_indicator_colors[2].clone(), false);
 				}
 			}
-			else if (chart.m_show_indicator == "BIAS") {
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "1"){
+			else if chart.m_show_indicator == "BIAS" {
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "1"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_bias1.clone(), chart.m_indicator_colors[5].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_bias1.clone(), chart.m_indicator_colors[5].clone(), false);
 				}
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "2"){
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "2"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_bias2.clone(), chart.m_indicator_colors[1].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_bias2.clone(), chart.m_indicator_colors[1].clone(), false);
 				}
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "3"){
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "3"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_bias3.clone(), chart.m_indicator_colors[2].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_bias3.clone(), chart.m_indicator_colors[2].clone(), false);
 				}
 			}
-			else if (chart.m_show_indicator == "ROC") {
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "ROC"){
+			else if chart.m_show_indicator == "ROC" {
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "ROC"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_roc.clone(), chart.m_indicator_colors[0].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_roc.clone(), chart.m_indicator_colors[0].clone(), false);
 				}
 	        
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "ROCMA"){
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "ROCMA"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_roc_ma.clone(), chart.m_indicator_colors[1].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_roc_ma.clone(), chart.m_indicator_colors[1].clone(), false);
 				}
-			} else if (chart.m_show_indicator == "WR") {
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "1"){
+			} else if chart.m_show_indicator == "WR" {
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "1"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_wr1.clone(), chart.m_indicator_colors[0].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_wr1.clone(), chart.m_indicator_colors[0].clone(), false);
 				}
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "2"){
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "2"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_wr2.clone(), chart.m_indicator_colors[1].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_wr2.clone(), chart.m_indicator_colors[1].clone(), false);
 				}
-			} else if (chart.m_show_indicator == "CCI") {
-				if(chart.m_select_shape == chart.m_show_indicator){
+			} else if chart.m_show_indicator == "CCI"{
+				if chart.m_select_shape == chart.m_show_indicator{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_cci.clone(), chart.m_indicator_colors[0].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_cci.clone(), chart.m_indicator_colors[0].clone(), false);
 				}
-			} else if (chart.m_show_indicator == "BBI") {
-				if(chart.m_select_shape == chart.m_show_indicator){
+			} else if chart.m_show_indicator == "BBI" {
+				if chart.m_select_shape == chart.m_show_indicator{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_bbi.clone(), chart.m_indicator_colors[0].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_bbi.clone(), chart.m_indicator_colors[0].clone(), false);
 				}
-			} else if (chart.m_show_indicator == "TRIX") {
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "TRIX"){
+			} else if chart.m_show_indicator == "TRIX" {
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "TRIX"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_trix.clone(), chart.m_indicator_colors[0].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_trix.clone(), chart.m_indicator_colors[0].clone(), false);
 				}
 				
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "TRIXMA"){
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "TRIXMA"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_trix_ma.clone(), chart.m_indicator_colors[1].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_trix_ma.clone(), chart.m_indicator_colors[1].clone(), false);
 				}
 	        
-			} else if (chart.m_show_indicator == "DMA") {
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "DIF"){
+			} else if chart.m_show_indicator == "DMA" {
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "DIF"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_dma1.clone(), chart.m_indicator_colors[0].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_dma1.clone(), chart.m_indicator_colors[0].clone(), false);
 				}
 				
-				if(chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "DIFMA"){
+				if chart.m_select_shape == chart.m_show_indicator && chart.m_select_shape_ex == "DIFMA"{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_dma2.clone(), chart.m_indicator_colors[1].clone(), true);
 				}else{
 					draw_chart_lines(&context, chart, clip_rect.clone(), 2, chart.m_dma2.clone(), chart.m_indicator_colors[1].clone(), false);
@@ -3149,7 +3149,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
         let mut n_high : f64 = 0.0;
         let mut n_low : f64 = 0.0;
 
-       if(plot.m_plot_type == "LRLine" || plot.m_plot_type == "LRChannel" || plot.m_plot_type == "LRBand"){
+       if plot.m_plot_type == "LRLine" || plot.m_plot_type == "LRChannel" || plot.m_plot_type == "LRBand"{
             let mut list: Vec<f64> = Vec::new();
             m_index1 = get_chart_index_by_date(chart, plot.m_key1);
             m_index2 = get_chart_index_by_date(chart, plot.m_key2);
@@ -3162,7 +3162,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
             plot.m_value1 = rb as f64;
             plot.m_value2 = (rk * ((max_index - min_index + 1) as f32) + rb) as f64;
         }
-        else if(plot.m_plot_type == "BoxLine" || plot.m_plot_type == "TironeLevels"){
+        else if plot.m_plot_type == "BoxLine" || plot.m_plot_type == "TironeLevels"{
             get_candle_range(chart, &mut plot, &mut n_high, &mut n_low);
             m_index1 = get_chart_index_by_date(chart, plot.m_key1);
             m_index2 = get_chart_index_by_date(chart, plot.m_key2);
@@ -3171,38 +3171,38 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
             plot.m_value1 = n_high;
             plot.m_value2 = n_low;
         } 
-        if(plot.m_key1 > 0.0){
+        if plot.m_key1 > 0.0{
             m_index1 = get_chart_index_by_date(chart, plot.m_key1);
             mpx1 = get_chart_x(chart, m_index1);
             mpy1 = get_chart_y(chart, 0, plot.m_value1);
-            if (chart.m_splot.m_id == plot.m_id)
+            if chart.m_splot.m_id == plot.m_id
             {
                 M_PAINT.lock().unwrap().fill_ellipse(&context, plot.m_point_color.clone(), mpx1 - plot_point_size, mpy1 - plot_point_size, mpx1 + plot_point_size, mpy1 + plot_point_size);
             }
         }
-        if(plot.m_key2 > 0.0){
+        if plot.m_key2 > 0.0{
             m_index2 = get_chart_index_by_date(chart, plot.m_key2);
             mpx2 = get_chart_x(chart, m_index2);
             mpy2 = get_chart_y(chart, 0, plot.m_value2);
-            if (chart.m_splot.m_id == plot.m_id)
+            if chart.m_splot.m_id == plot.m_id
             {
                 M_PAINT.lock().unwrap().fill_ellipse(&context, plot.m_point_color.clone(), mpx2 - plot_point_size, mpy2 - plot_point_size, mpx2 + plot_point_size, mpy2 + plot_point_size);
             }
         }
-        if(plot.m_key3 > 0.0){
+        if plot.m_key3 > 0.0{
             m_index3 = get_chart_index_by_date(chart, plot.m_key3);
             mpx3 = get_chart_x(chart, m_index3);
             mpy3 = get_chart_y(chart, 0, plot.m_value3);
-            if (chart.m_splot.m_id == plot.m_id)
+            if chart.m_splot.m_id == plot.m_id
             {
                 M_PAINT.lock().unwrap().fill_ellipse(&context, plot.m_point_color.clone(), mpx3 - plot_point_size, mpy3 - plot_point_size, mpx3 + plot_point_size, mpy3 + plot_point_size);
             }
         }
-        if(plot.m_plot_type == "Line"){
+        if plot.m_plot_type == "Line"{
             let mut k : f32 = 0.0;
             let mut b : f32 = 0.0;
             line_xy(mpx1, mpy1, mpx2, mpy2, 0.0, 0.0, &mut k, &mut b);
-            if(mpx2 == mpx1){
+            if mpx2 == mpx1{
                 M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, 0.0, mpx1, div_height);
             }else{
                 let new_x1 = chart.m_left_vscale_width;
@@ -3212,11 +3212,11 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
                 M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), new_x1, new_y1, new_x2, new_y2);
             }
         }
-        else if(plot.m_plot_type == "AngleLine"){
+        else if plot.m_plot_type == "AngleLine"{
             let mut k : f32 = 0.0;
             let mut b : f32 = 0.0;
             line_xy(mpx1, mpy1, mpx2, mpy2, 0.0, 0.0, &mut k, &mut b);
-            if(mpx2 == mpx1){
+            if mpx2 == mpx1{
                 M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, 0.0, mpx1, div_height);
             }else{
                 let new_x1 = chart.m_left_vscale_width;
@@ -3226,7 +3226,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
                 M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), new_x1, new_y1, new_x2, new_y2);
             }
             line_xy(mpx1, mpy1, mpx3, mpy3, 0.0, 0.0, &mut k, &mut b);
-            if(mpx3 == mpx1){
+            if mpx3 == mpx1{
                 M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, 0.0, mpx1, div_height);
             }else{
                 let new_x1 = chart.m_left_vscale_width;
@@ -3236,11 +3236,11 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
                 M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), new_x1, new_y1, new_x2, new_y2);
             }
         }
-         else if(plot.m_plot_type == "Parallel"){
+         else if plot.m_plot_type == "Parallel"{
             let mut k : f32 = 0.0;
             let mut b : f32 = 0.0;
             line_xy(mpx1, mpy1, mpx2, mpy2, 0.0, 0.0, &mut k, &mut b);
-            if(mpx2 == mpx1){
+            if mpx2 == mpx1{
                 M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, 0.0, mpx1, div_height);
             }else{
                 let new_x1 = chart.m_left_vscale_width;
@@ -3250,7 +3250,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
                 M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), new_x1, new_y1, new_x2, new_y2);
             }
             let new_b = mpy3 - k * mpx3;
-            if(mpx2 == mpx1){
+            if mpx2 == mpx1{
                M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx3, 0.0, mpx3, div_height);
             }else{
                 let new_x1 = chart.m_left_vscale_width;
@@ -3260,7 +3260,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
                 M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), new_x1, new_y1, new_x2, new_y2);
             }
         }
-        else if(plot.m_plot_type == "Percent"){
+        else if plot.m_plot_type == "Percent"{
             let list = get_percent_params(mpy1, mpy2);
             let mut texts: Vec<String> = Vec::new();
             texts.push("0%".to_string());
@@ -3274,14 +3274,14 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
                 M_PAINT.lock().unwrap().draw_text(&context, texts[j as usize].clone(), chart.m_text_color.clone(), chart.m_font.clone(), chart.m_left_vscale_width + 5.0, list[j as usize] - t_size.cy / 2.0 - 2.0);
             }
         }
-        else if(plot.m_plot_type == "FiboTimezone"){
+        else if plot.m_plot_type == "FiboTimezone"{
             let mut f_value : i32 = 1;
             let aindex = m_index1;
             let mut pos : i32 = 1;
             M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, 0.0, mpx1, div_height);
             let t_size = M_PAINT.lock().unwrap().text_size(&context, "1".to_string(), chart.m_font.clone());
             M_PAINT.lock().unwrap().draw_text(&context, "1".to_string(), chart.m_text_color.clone(), chart.m_font.clone(), mpx1, div_height - t_size.cy / 2.0);
-            while (aindex + f_value <= chart.m_last_visible_index){
+            while aindex + f_value <= chart.m_last_visible_index{
                 f_value = fibonacci_value(pos);
                 let new_index = aindex + f_value;
                 let new_x = get_chart_x(chart, new_index);
@@ -3291,9 +3291,9 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
                 pos = pos + 1;
             }
         }
-        else if(plot.m_plot_type == "SpeedResist"){
+        else if plot.m_plot_type == "SpeedResist"{
             M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, mpy1, mpx2, mpy2);
-            if (mpx1 != mpx2 && mpy1 != mpy2){
+            if mpx1 != mpx2 && mpy1 != mpy2{
                 let first_p = FCPoint{x:mpx2, y:mpy2 - (mpy2 - mpy1) / 3.0};
                 let second_p = FCPoint{x:mpx2, y:mpy2 - (mpy2 - mpy1) * 2.0 / 3.0};
                 let start_p = FCPoint{x:mpx1,y:mpy1};
@@ -3309,7 +3309,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
                 let mut new_yf : f32 = 0.0;
                 let mut new_ys : f32 = 0.0;
                 let mut new_x : f32 = 0.0;
-                if (mpx2 > mpx1){
+                if mpx2 > mpx1{
                     new_yf = f_k * (chart.m_view.m_size.cx - chart.m_right_vscale_width) + f_b;
                     new_ys = s_k * (chart.m_view.m_size.cx - chart.m_right_vscale_width) + s_b;
                     new_x = (chart.m_view.m_size.cx - chart.m_right_vscale_width);
@@ -3323,10 +3323,10 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
                 M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), start_p.x, start_p.y, new_x, new_ys);
             }
         }
-        else if(plot.m_plot_type == "LRLine"){
+        else if plot.m_plot_type == "LRLine"{
             M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, mpy1, mpx2, mpy2);
         }
-        else if(plot.m_plot_type == "LRBand"){
+        else if plot.m_plot_type == "LRBand"{
             M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, mpy1, mpx2, mpy2);
             let mut up_sub_value : f64 = 0.0;
             let mut down_sub_value : f64 = 0.0;
@@ -3340,7 +3340,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
             mpy2 = get_chart_y(chart, 0, plot.m_value2 - down_sub_value);
             M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, mpy1, mpx2, mpy2);
         }
-        else if(plot.m_plot_type == "LRChannel"){
+        else if plot.m_plot_type == "LRChannel"{
 			let mut up_sub_value : f64 = 0.0;
             let mut down_sub_value : f64 = 0.0;
             get_lrband_range(chart, &mut plot, rk, rb, &mut up_sub_value, &mut down_sub_value);
@@ -3361,9 +3361,9 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
             right_y = right_x * k + b;
             M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, mpy1, right_x, right_y);
         }
-        else if(plot.m_plot_type == "FiboFanline"){
+        else if plot.m_plot_type == "FiboFanline"{
             M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, mpy1, mpx2, mpy2);
-            if (mpx1 != mpx2 && mpy1 != mpy2){
+            if mpx1 != mpx2 && mpy1 != mpy2{
                 let first_p = FCPoint{x:mpx2, y:mpy2 - (mpy2 - mpy1) * 0.382};
                 let second_p = FCPoint{x:mpx2, y:mpy2 - (mpy2 - mpy1) * 0.5};
                 let third_p = FCPoint{x:mpx2, y:mpy2 - (mpy2 - mpy1) * 0.618};
@@ -3379,7 +3379,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
                     line_xy(start_p.x, start_p.y, list_p[j as usize].x, list_p[j as usize].y, 0.0, 0.0, &mut k, &mut b);
                     let mut new_x : f32 = 0.0;
                     let mut new_y : f32 = 0.0;
-                    if (mpx2 > mpx1){
+                    if mpx2 > mpx1{
                         new_y = k * (chart.m_view.m_size.cx - chart.m_right_vscale_width) + b;
                         new_x = (chart.m_view.m_size.cx - chart.m_right_vscale_width);
                     }
@@ -3392,55 +3392,55 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
                 }
             }
         }
-        else if(plot.m_plot_type == "Segment"){
+        else if plot.m_plot_type == "Segment"{
             M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, mpy1, mpx2, mpy2);
-        }else if(plot.m_plot_type == "Ray"){
+        }else if plot.m_plot_type == "Ray"{
             let mut k : f32 = 0.0;
             let mut b : f32 = 0.0;
             line_xy(mpx1, mpy1, mpx2, mpy2, 0.0, 0.0, &mut k, &mut b);
-            if (k != 0.0 || b != 0.0) {
+            if k != 0.0 || b != 0.0 {
                 let left_x = chart.m_left_vscale_width;
                 let left_y = left_x * k + b;
                 let right_x = chart.m_view.m_size.cx - chart.m_right_vscale_width;
                 let right_y = right_x * k + b;
-                if (mpx1 >= mpx2) {
+                if mpx1 >= mpx2 {
                     M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), left_x, left_y, mpx1, mpy1);
                 } else {
                     M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, mpy1, right_x, right_y);
                 }
             }
             else {
-                if (mpy1 >= mpy2) {
+                if mpy1 >= mpy2 {
                     M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, mpy1, mpx1, 0.0);
                 } else {
                     M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, mpy1, mpx1, div_height);
                 }
             }
-        }else if(plot.m_plot_type == "Triangle"){
+        }else if plot.m_plot_type == "Triangle"{
             M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, mpy1, mpx2, mpy2);
             M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx2, mpy2, mpx3, mpy3);
             M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1, mpy1, mpx3, mpy3);
-        }else if(plot.m_plot_type == "Rect"){
+        }else if plot.m_plot_type == "Rect"{
             let mut s_x1 : f32 = mpx1.min(mpx2);
             let mut s_y1 : f32 = mpy1.min(mpy2);
             let mut s_x2 : f32 = mpx1.max(mpx2);
             let mut s_y2 : f32 = mpy1.max(mpy2);
             M_PAINT.lock().unwrap().draw_rect(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), s_x1, s_y1, s_x2, s_y2);
-        }else if(plot.m_plot_type == "Cycle"){
+        }else if plot.m_plot_type == "Cycle"{
             let r = ((mpx2 - mpx1) * (mpx2 - mpx1) + (mpy2 - mpy1) * (mpy2 - mpy1)).abs().sqrt();
             M_PAINT.lock().unwrap().draw_ellipse(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx1 - r, mpy1 - r, mpx1 + r, mpy1 + r);
-        }else if(plot.m_plot_type == "CircumCycle"){
+        }else if plot.m_plot_type == "CircumCycle"{
             let mut o_x : f32 = 0.0;
             let mut o_y : f32 = 0.0;
             let mut r : f32 = 0.0;
             ellipse_or(mpx1, mpy1, mpx2, mpy2, mpx3, mpy3, &mut o_x, &mut o_y, &mut r);
             M_PAINT.lock().unwrap().draw_ellipse(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), o_x - r, o_y - r, o_x + r, o_y + r);
-        }else if(plot.m_plot_type == "Ellipse"){
+        }else if plot.m_plot_type == "Ellipse"{
            let mut x1 : f32 = 0.0;
             let mut y1 : f32 = 0.0;
             let mut x2 : f32 = 0.0;
             let mut y2 : f32 = 0.0;
-            if(mpx1 <= mpx2){
+            if mpx1 <= mpx2{
                 x1 = mpx2;
                 y1 = mpy2;
                 x2 = mpx1;
@@ -3455,7 +3455,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
             let mut y : f32 = 0.0;
             let width = (x1 - x2) * 2.0;
             let mut height : f32 = 0.0;
-            if (y1 >= y2){
+            if y1 >= y2{
                 height = (y1 - y2) * 2.0;
             }
             else{
@@ -3463,7 +3463,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
             }
             y = y2 - height / 2.0;
             M_PAINT.lock().unwrap().draw_ellipse(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), x, y, x + width, y + height);
-        }else if(plot.m_plot_type == "ParalleGram"){
+        }else if plot.m_plot_type == "ParalleGram"{
             let mut x4 : f32 = 0.0;
             let mut y4 : f32 = 0.0;
             parallelogram(mpx1, mpy1, mpx2, mpy2, mpx3, mpy3, &mut x4, &mut y4);
@@ -3471,7 +3471,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
             M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx2, mpy2, mpx3, mpy3);
             M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), mpx3, mpy3, x4, y4);
             M_PAINT.lock().unwrap().draw_line(&context, plot.m_line_color.clone(), plot.m_line_width, Vec::new(), x4, y4, mpx1, mpy1);
-        }else if(plot.m_plot_type == "BoxLine"){
+        }else if plot.m_plot_type == "BoxLine"{
             let s_x1 : f32 = mpx1.min(mpx2);
             let s_y1 : f32 = mpy1.min(mpy2);
             let s_x2 : f32 = mpx1.max(mpx2);
@@ -3481,7 +3481,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
             let b_size = M_PAINT.lock().unwrap().text_size(&context, str.clone(), chart.m_font.clone());
             M_PAINT.lock().unwrap().draw_text(&context, str, chart.m_text_color.clone(), chart.m_font.clone(), s_x1 + 2.0, s_y1 + 2.0 + b_size.cy / 2.0);
             let mut close_list: Vec<f64> = Vec::new();
-            for j  in m_index1..(m_index2 + 1){
+            for j in m_index1..(m_index2 + 1){
                 close_list.push(chart.m_data[j as usize].m_close);
             }
             let avg_close = avg_value(close_list);
@@ -3491,7 +3491,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
             let t_size = M_PAINT.lock().unwrap().text_size(&context, draw_avg.clone(), chart.m_font.clone());
             M_PAINT.lock().unwrap().draw_text(&context, draw_avg.clone(), chart.m_text_color.clone(), chart.m_font.clone(), s_x1 + 2.0, close_y - t_size.cy / 2.0 - 2.0);
         }
-        else if(plot.m_plot_type == "TironeLevels"){
+        else if plot.m_plot_type == "TironeLevels"{
             let s_x1 : f32 = mpx1.min(mpx2);
             let s_y1 : f32 = mpy1.min(mpy2);
             let s_x2 : f32 = mpx1.max(mpx2);
@@ -3516,7 +3516,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
                 M_PAINT.lock().unwrap().draw_text(&context, str.clone(), chart.m_text_color.clone(), chart.m_font.clone(), chart.m_left_vscale_width + 2.0, y - t_size.cy / 2.0 - 2.0);
             }
         }
-        else if(plot.m_plot_type == "GoldenRatio"){
+        else if plot.m_plot_type == "GoldenRatio"{
             let s_x1 : f32 = mpx1.min(mpx2);
             let s_y1 : f32 = mpy1.min(mpy2);
             let s_x2 : f32 = mpx1.max(mpx2);
@@ -3538,7 +3538,7 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
             let max_value = plot.m_value1.max(plot.m_value2);
             for j in 0..ranges.len(){
                 let mut new_y : f32 = 0.0;
-                if(s_y1 <= s_y2){
+                if s_y1 <= s_y2{
                     new_y = s_y1 + (s_y2 - s_y1) * ranges[j as usize];
                 }else{
                     new_y =  s_y2 + (s_y1 - s_y2) * (1.0 - ranges[j as usize]);
@@ -3556,75 +3556,75 @@ pub fn draw_chart_plot(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, 
 }
 
 pub fn draw_chart_scale(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, chart:&mut FCChart, clip_rect:FCRect){
-    if(chart.m_left_vscale_width > 0.0){
+    if chart.m_left_vscale_width > 0.0{
         M_PAINT.lock().unwrap().draw_line(&context, chart.m_scale_color.clone(), chart.m_line_width, Vec::new(), chart.m_left_vscale_width, 0.0, chart.m_left_vscale_width, chart.m_view.m_size.cy - chart.m_hscale_height);
     }
-    if(chart.m_right_vscale_width > 0.0){
+    if chart.m_right_vscale_width > 0.0{
         M_PAINT.lock().unwrap().draw_line(&context, chart.m_scale_color.clone(), chart.m_line_width, Vec::new(), chart.m_view.m_size.cx - chart.m_right_vscale_width, 0.0, chart.m_view.m_size.cx - chart.m_right_vscale_width, chart.m_view.m_size.cy - chart.m_hscale_height);
     }
-    if(chart.m_hscale_height > 0.0){
+    if chart.m_hscale_height > 0.0{
         M_PAINT.lock().unwrap().draw_line(&context, chart.m_scale_color.clone(), chart.m_line_width, Vec::new(), 0.0, chart.m_view.m_size.cy - chart.m_hscale_height, chart.m_view.m_size.cx, chart.m_view.m_size.cy - chart.m_hscale_height);
     }
     let candle_div_height = get_candle_div_height(chart);
     let vol_div_height = get_vol_div_height(chart);
     let ind_div_height = get_ind_div_height(chart);
     let ind_div_height2 = get_ind_div_height2(chart);
-    if(vol_div_height > 0.0){
+    if vol_div_height > 0.0{
         M_PAINT.lock().unwrap().draw_line(&context, chart.m_scale_color.clone(), chart.m_line_width, Vec::new(), chart.m_left_vscale_width, candle_div_height, chart.m_view.m_size.cx - chart.m_right_vscale_width, candle_div_height);
     }
-    if(ind_div_height > 0.0){
+    if ind_div_height > 0.0{
         M_PAINT.lock().unwrap().draw_line(&context, chart.m_scale_color.clone(), chart.m_line_width, Vec::new(), chart.m_left_vscale_width, candle_div_height + vol_div_height, chart.m_view.m_size.cx - chart.m_right_vscale_width, candle_div_height + vol_div_height);
     }
-    if(ind_div_height2 > 0.0){
+    if ind_div_height2 > 0.0{
         M_PAINT.lock().unwrap().draw_line(&context, chart.m_scale_color.clone(), chart.m_line_width, Vec::new(), chart.m_left_vscale_width, candle_div_height + vol_div_height + ind_div_height, chart.m_view.m_size.cx - chart.m_right_vscale_width, candle_div_height + vol_div_height + ind_div_height);
     }
     let data_len = chart.m_data.len() as i32;
-    if(data_len > 0) {
+    if data_len > 0 {
 		let mut grid_step : f64 = 0.0;
 		let mut grid_digit : i32 = 0;
 		chart_grid_scale(chart.m_candle_min, chart.m_candle_max,  (candle_div_height - chart.m_candle_padding_top - chart.m_candle_padding_bottom) / 2.0, chart.m_vscale_distance, chart.m_vscale_distance / 2.0, ((candle_div_height - chart.m_candle_padding_top - chart.m_candle_padding_bottom) / chart.m_vscale_distance) as i32, &mut grid_step, &mut grid_digit);
-		if(grid_step > 0.0){
+		if grid_step > 0.0{
 			let mut draw_values: Vec<f64> = Vec::new();
 			let mut is_trend : bool = false;
-			if(chart.m_cycle == "trend"){
+			if chart.m_cycle == "trend"{
 				is_trend = true;
 			}
 			let mut first_open : f64 = 0.0;
-			if(is_trend){
+			if is_trend{
 				first_open = chart.m_data[chart.m_first_visible_index as usize].m_close;
 				let mut sub_value = (chart.m_candle_max - chart.m_candle_min);
 				let count = ((candle_div_height - chart.m_candle_padding_top - chart.m_candle_padding_bottom) / chart.m_vscale_distance) as i32;
-				if(count > 0){
+				if count > 0{
 					sub_value = sub_value / (count as f64);
 				}
 				let mut start = first_open;
-				while(start < chart.m_candle_max){
+				while start < chart.m_candle_max{
 					start = start + sub_value;
-					if(start <= chart.m_candle_max){
+					if start <= chart.m_candle_max{
 						draw_values.push(start);
 					}
 				}
 				start = first_open;
-				while(start > chart.m_candle_min){
+				while start > chart.m_candle_min{
 					start -= sub_value;
-					if(start >= chart.m_candle_min){
+					if start >= chart.m_candle_min{
 						draw_values.push(start);
 					}
 				}
 			}else{
 				let mut start : f64 = 0.0;
-				if (chart.m_candle_min >= 0.0) {
-					while (start + grid_step < chart.m_candle_min) {
+				if chart.m_candle_min >= 0.0 {
+					while start + grid_step < chart.m_candle_min {
 						start = start + grid_step;
 					}
 				} else {
-					while (start - grid_step > chart.m_candle_min) {
+					while start - grid_step > chart.m_candle_min {
 						start = start - grid_step;
 					}
 				}
 
-				while (start <= chart.m_candle_max) {
-					if(start > chart.m_candle_min){
+				while start <= chart.m_candle_max {
+					if start > chart.m_candle_min{
 						draw_values.push(start);
 					}
 					start = start + grid_step;
@@ -3638,10 +3638,10 @@ pub fn draw_chart_scale(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
 				M_PAINT.lock().unwrap().draw_line(&context, chart.m_scale_color.clone(), chart.m_line_width, Vec::new(), chart.m_left_vscale_width - 8.0, haxis_y, chart.m_left_vscale_width, haxis_y);
 				M_PAINT.lock().unwrap().draw_line(&context, chart.m_scale_color.clone(), chart.m_line_width, Vec::new(), chart.m_view.m_size.cx - chart.m_right_vscale_width, haxis_y, chart.m_view.m_size.cx - chart.m_right_vscale_width + 8.0, haxis_y);
 				let t_size =  M_PAINT.lock().unwrap().text_size(&context, to_fixed(start, chart.m_candle_digit), chart.m_font.clone());
-				if(is_trend){
+				if is_trend{
 					let diff_range = ((start - first_open) / first_open * 100.0);
 					let diff_range_str = to_fixed(diff_range, chart.m_candle_digit);
-					if(diff_range >= 0.0){
+					if diff_range >= 0.0{
 						M_PAINT.lock().unwrap().draw_text(&context, diff_range_str.clone(), chart.m_up_color.clone(), chart.m_font.clone(), chart.m_view.m_size.cx - chart.m_right_vscale_width + 10.0, haxis_y as f32 );
 					}else{
 						M_PAINT.lock().unwrap().draw_text(&context, diff_range_str.clone(), chart.m_down_color.clone(), chart.m_font.clone(), chart.m_view.m_size.cx - chart.m_right_vscale_width + 10.0, haxis_y as f32);
@@ -3653,19 +3653,19 @@ pub fn draw_chart_scale(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
 			}
 		}
 		chart_grid_scale(chart.m_vol_min, chart.m_vol_max, (vol_div_height - chart.m_vol_padding_top - chart.m_vol_padding_bottom) / 2.0, chart.m_vscale_distance, chart.m_vscale_distance / 2.0, ((vol_div_height - chart.m_vol_padding_top - chart.m_vol_padding_bottom) / chart.m_vscale_distance) as i32, &mut grid_step, &mut grid_digit);
-		if(grid_step > 0.0){
+		if grid_step > 0.0{
 			let mut start : f64 = 0.0;
-			if (chart.m_vol_min >= 0.0) {
-				while (start + grid_step < chart.m_vol_min) {
+			if chart.m_vol_min >= 0.0 {
+				while start + grid_step < chart.m_vol_min {
 					start = start + grid_step;
 				}
 			} else {
-				while (start - grid_step > chart.m_vol_min) {
+				while start - grid_step > chart.m_vol_min {
 					start = start - grid_step;
 				}
 			}
-			while (start <= chart.m_vol_max) {
-				if(start > chart.m_vol_min){
+			while start <= chart.m_vol_max {
+				if start > chart.m_vol_min{
 					let haxis_y = get_chart_y(chart, 1, start);
 					M_PAINT.lock().unwrap().draw_line(&context, chart.m_grid_color.clone(), chart.m_line_width, Vec::new(), chart.m_left_vscale_width, haxis_y, chart.m_view.m_size.cx - chart.m_right_vscale_width, haxis_y);
 					M_PAINT.lock().unwrap().draw_line(&context, chart.m_scale_color.clone(), chart.m_line_width, Vec::new(), chart.m_left_vscale_width - 8.0, haxis_y, chart.m_left_vscale_width, haxis_y);
@@ -3677,21 +3677,21 @@ pub fn draw_chart_scale(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
 				start = start + grid_step;
 			}
 		}
-		if(ind_div_height > 0.0){
+		if ind_div_height > 0.0{
 			chart_grid_scale(chart.m_ind_min, chart.m_ind_max, (ind_div_height - chart.m_ind_padding_top - chart.m_ind_padding_bottom) / 2.0, chart.m_vscale_distance, chart.m_vscale_distance / 2.0, ((ind_div_height - chart.m_ind_padding_top - chart.m_ind_padding_bottom) / chart.m_vscale_distance) as i32, &mut grid_step, &mut grid_digit);
-			if(grid_step > 0.0){
+			if grid_step > 0.0{
 				let mut start : f64 = 0.0;
-				if (chart.m_ind_min >= 0.0) {
-					while (start + grid_step < chart.m_ind_min) {
+				if chart.m_ind_min >= 0.0 {
+					while start + grid_step < chart.m_ind_min {
 						start = start + grid_step;
 					}
 				} else {
-					while (start - grid_step > chart.m_ind_min) {
+					while start - grid_step > chart.m_ind_min {
 						start = start - grid_step;
 					}
 				}
-				while (start <= chart.m_ind_max) {
-					if(start > chart.m_ind_min){
+				while start <= chart.m_ind_max {
+					if start > chart.m_ind_min{
 						let haxis_y = get_chart_y(chart, 2, start);
 						M_PAINT.lock().unwrap().draw_line(&context, chart.m_grid_color.clone(), chart.m_line_width, Vec::new(), chart.m_left_vscale_width, haxis_y, chart.m_view.m_size.cx - chart.m_right_vscale_width, haxis_y);
 						M_PAINT.lock().unwrap().draw_line(&context, chart.m_scale_color.clone(), chart.m_line_width, Vec::new(), chart.m_left_vscale_width - 8.0, haxis_y, chart.m_left_vscale_width, haxis_y);
@@ -3704,14 +3704,14 @@ pub fn draw_chart_scale(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
 				}
 			}  
 		}
-		if(chart.m_hscale_height > 0.0){
+		if chart.m_hscale_height > 0.0{
 			let mut d_left = chart.m_left_vscale_width + 10.0;
 			for i in chart.m_first_visible_index..(chart.m_last_visible_index + 1){
 				let x_text = chart.m_data[i as usize].m_date.to_string();
 				let t_size = M_PAINT.lock().unwrap().text_size(&context, x_text.clone(), chart.m_font.clone());
 				let x = get_chart_x(chart, i);
 				let dx = x - t_size.cx / 2.0;
-				if(dx > d_left && dx < chart.m_view.m_size.cx - chart.m_right_vscale_width - 10.0){
+				if dx > d_left && dx < chart.m_view.m_size.cx - chart.m_right_vscale_width - 10.0{
 					M_PAINT.lock().unwrap().draw_line(&context, chart.m_scale_color.clone(), chart.m_line_width, Vec::new(), x, chart.m_view.m_size.cy - chart.m_hscale_height, x, chart.m_view.m_size.cy - chart.m_hscale_height + 8.0);
 					M_PAINT.lock().unwrap().draw_text(&context, x_text.clone(), chart.m_text_color.clone(), chart.m_font.clone(), dx, chart.m_view.m_size.cy - chart.m_hscale_height + 8.0 + t_size.cy / 2.0);
 					d_left = x + t_size.cx;
@@ -3723,24 +3723,24 @@ pub fn draw_chart_scale(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
 
 pub fn draw_chart_cross_line(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, chart:&mut FCChart, clip_rect:FCRect){
 	let data_len = chart.m_data.len() as i32;
-    if(data_len > 0) {
+    if data_len > 0 {
 		let candle_div_height = get_candle_div_height(chart);
 		let vol_div_height = get_vol_div_height(chart);
 		let ind_div_height = get_ind_div_height(chart);
 		let mut cross_line_index = chart.m_cross_stop_index;
-		if (cross_line_index == -1) {
+		if cross_line_index == -1 {
 			cross_line_index = chart.m_last_visible_index;
 		}
-		if(vol_div_height > 0.0){
+		if vol_div_height > 0.0{
 			let voltxt = "VOL ".to_string() + &to_fixed(chart.m_data[cross_line_index as usize].m_volume, chart.m_vol_digit);
 			let vol_size = M_PAINT.lock().unwrap().text_size(&context, voltxt.clone(), chart.m_font.clone());
 			M_PAINT.lock().unwrap().draw_text(&context, voltxt.clone(), chart.m_text_color.clone(), chart.m_font.clone(), chart.m_left_vscale_width + 5.0, candle_div_height + 5.0 + vol_size.cy / 2.0);
 		}
 		let mut is_trend : bool = false;
-		if(!is_trend){
+		if !is_trend{
 			let mut draw_titles = Vec::new();
 			let mut draw_colors = Vec::new();
-			if (chart.m_main_indicator == "MA") {
+			if chart.m_main_indicator == "MA" {
 				draw_titles.push("MA5 ".to_string() + &to_fixed(chart.m_ma5[cross_line_index as usize], chart.m_candle_digit));
 				draw_titles.push("MA10 ".to_string() + &to_fixed(chart.m_ma10[cross_line_index as usize], chart.m_candle_digit));
 				draw_titles.push("MA20 ".to_string() + &to_fixed(chart.m_ma20[cross_line_index as usize], chart.m_candle_digit));
@@ -3753,7 +3753,7 @@ pub fn draw_chart_cross_line(context:&std::rc::Rc<web_sys::CanvasRenderingContex
 				draw_colors.push(chart.m_indicator_colors[5].clone());
 				draw_colors.push(chart.m_indicator_colors[4].clone());
 				draw_colors.push(chart.m_indicator_colors[3].clone());
-			} else if (chart.m_main_indicator == "BOLL") {
+			} else if chart.m_main_indicator == "BOLL" {
 				draw_titles.push("MID ".to_string() + &to_fixed(chart.m_boll_mid[cross_line_index as usize], chart.m_candle_digit));
 				draw_titles.push("UP ".to_string() + &to_fixed(chart.m_boll_up[cross_line_index as usize], chart.m_candle_digit));
 				draw_titles.push("LOW ".to_string() + &to_fixed(chart.m_boll_down[cross_line_index as usize], chart.m_candle_digit));
@@ -3768,24 +3768,24 @@ pub fn draw_chart_cross_line(context:&std::rc::Rc<web_sys::CanvasRenderingContex
 				i_left = i_left + t_size.cx + 5.0;
 			}
 		}
-		if(ind_div_height > 0.0){
+		if ind_div_height > 0.0{
 			let mut draw_titles = Vec::new();
 			let mut draw_colors = Vec::new();
-			if (chart.m_show_indicator == "MACD") {
+			if chart.m_show_indicator == "MACD" {
 				draw_titles.push("DIF ".to_string() + &to_fixed(chart.m_alldifarr[cross_line_index as usize], chart.m_ind_digit));
 				draw_titles.push("DEA ".to_string() + &to_fixed(chart.m_alldeaarr[cross_line_index as usize], chart.m_ind_digit));
 				draw_titles.push("MACD ".to_string() + &to_fixed(chart.m_allmacdarr[cross_line_index as usize], chart.m_ind_digit));
 				draw_colors.push(chart.m_indicator_colors[0].clone());
 				draw_colors.push(chart.m_indicator_colors[1].clone());
 				draw_colors.push(chart.m_indicator_colors[4].clone());
-			}else if (chart.m_show_indicator == "KDJ") {
+			}else if chart.m_show_indicator == "KDJ" {
 				draw_titles.push("K ".to_string() + &to_fixed(chart.m_kdj_k[cross_line_index as usize], chart.m_ind_digit));
 				draw_titles.push("D ".to_string() + &to_fixed(chart.m_kdj_d[cross_line_index as usize], chart.m_ind_digit));
 				draw_titles.push("J ".to_string() + &to_fixed(chart.m_kdj_j[cross_line_index as usize], chart.m_ind_digit));
 				draw_colors.push(chart.m_indicator_colors[0].clone());
 				draw_colors.push(chart.m_indicator_colors[1].clone());
 				draw_colors.push(chart.m_indicator_colors[2].clone());
-			}else if (chart.m_show_indicator == "RSI") {
+			}else if chart.m_show_indicator == "RSI" {
 				draw_titles.push("RSI6 ".to_string() + &to_fixed(chart.m_rsi1[cross_line_index as usize], chart.m_ind_digit));
 				draw_titles.push("RSI12 ".to_string() + &to_fixed(chart.m_rsi2[cross_line_index as usize], chart.m_ind_digit));
 				draw_titles.push("RSI24 ".to_string() + &to_fixed(chart.m_rsi3[cross_line_index as usize], chart.m_ind_digit));
@@ -3793,7 +3793,7 @@ pub fn draw_chart_cross_line(context:&std::rc::Rc<web_sys::CanvasRenderingContex
 				draw_colors.push(chart.m_indicator_colors[1].clone());
 				draw_colors.push(chart.m_indicator_colors[2].clone());
 			}
-			else if (chart.m_show_indicator == "BIAS") {
+			else if chart.m_show_indicator == "BIAS" {
 				draw_titles.push("BIAS6 ".to_string() + &to_fixed(chart.m_bias1[cross_line_index as usize], chart.m_ind_digit));
 				draw_titles.push("BIAS12 ".to_string() + &to_fixed(chart.m_bias2[cross_line_index as usize], chart.m_ind_digit));
 				draw_titles.push("BIAS24 ".to_string() + &to_fixed(chart.m_bias3[cross_line_index as usize], chart.m_ind_digit));
@@ -3801,28 +3801,28 @@ pub fn draw_chart_cross_line(context:&std::rc::Rc<web_sys::CanvasRenderingContex
 				draw_colors.push(chart.m_indicator_colors[1].clone());
 				draw_colors.push(chart.m_indicator_colors[2].clone());
 			}
-			else if (chart.m_show_indicator == "ROC") {
+			else if chart.m_show_indicator == "ROC" {
 				draw_titles.push("ROC ".to_string() + &to_fixed(chart.m_roc[cross_line_index as usize], chart.m_ind_digit));
 				draw_titles.push("ROCMA ".to_string() + &to_fixed(chart.m_roc_ma[cross_line_index as usize], chart.m_ind_digit));
 				draw_colors.push(chart.m_indicator_colors[0].clone());
 				draw_colors.push(chart.m_indicator_colors[1].clone());
-			}else if (chart.m_show_indicator == "WR") {
+			}else if chart.m_show_indicator == "WR" {
 				draw_titles.push("WR5 ".to_string() + &to_fixed(chart.m_wr1[cross_line_index as usize], chart.m_ind_digit));
 				draw_titles.push("WR10 ".to_string() + &to_fixed(chart.m_wr2[cross_line_index as usize], chart.m_ind_digit));
 				draw_colors.push(chart.m_indicator_colors[0].clone());
 				draw_colors.push(chart.m_indicator_colors[1].clone());
-			}else if (chart.m_show_indicator == "CCI") {
+			}else if chart.m_show_indicator == "CCI" {
 				draw_titles.push("CCI ".to_string() + &to_fixed(chart.m_cci[cross_line_index as usize], chart.m_ind_digit));
 				draw_colors.push(chart.m_indicator_colors[0].clone());
-			}else if (chart.m_show_indicator == "BBI") {
+			}else if chart.m_show_indicator == "BBI" {
 				draw_titles.push("BBI ".to_string() + &to_fixed(chart.m_bbi[cross_line_index as usize], chart.m_ind_digit));
 				draw_colors.push(chart.m_indicator_colors[0].clone());
-			}else if (chart.m_show_indicator == "TRIX") {
+			}else if chart.m_show_indicator == "TRIX" {
 				draw_titles.push("TRIX ".to_string() + &to_fixed(chart.m_trix[cross_line_index as usize], chart.m_ind_digit));
 				draw_titles.push("TRIXMA ".to_string() + &to_fixed(chart.m_trix_ma[cross_line_index as usize], chart.m_ind_digit));
 				draw_colors.push(chart.m_indicator_colors[0].clone());
 				draw_colors.push(chart.m_indicator_colors[1].clone());
-			}else if (chart.m_show_indicator == "DMA") {
+			}else if chart.m_show_indicator == "DMA" {
 				draw_titles.push("MA10 ".to_string() + &to_fixed(chart.m_dma1[cross_line_index as usize], chart.m_ind_digit));
 				draw_titles.push("MA50 ".to_string() + &to_fixed(chart.m_dma2[cross_line_index as usize], chart.m_ind_digit));
 				draw_colors.push(chart.m_indicator_colors[0].clone());
@@ -3835,41 +3835,41 @@ pub fn draw_chart_cross_line(context:&std::rc::Rc<web_sys::CanvasRenderingContex
 				i_left = i_left + t_size.cx + 5.0;
 			}
 		}
-		if(chart.m_show_cross_line){
+		if chart.m_show_cross_line{
 			let mut right_text = String::from("");
-			if(chart.m_mouse_position.y < candle_div_height) {
+			if chart.m_mouse_position.y < candle_div_height {
 				right_text = to_fixed(get_chart_value(chart, chart.m_mouse_position.clone()), chart.m_candle_digit);
 			}
-			else if(chart.m_mouse_position.y > candle_div_height && chart.m_mouse_position.y < candle_div_height + vol_div_height) {
+			else if chart.m_mouse_position.y > candle_div_height && chart.m_mouse_position.y < candle_div_height + vol_div_height {
 				right_text = to_fixed(get_chart_value(chart, chart.m_mouse_position.clone()), chart.m_vol_digit);
-			}else if(chart.m_mouse_position.y > candle_div_height + vol_div_height && chart.m_mouse_position.y < candle_div_height + vol_div_height + ind_div_height){
+			}else if chart.m_mouse_position.y > candle_div_height + vol_div_height && chart.m_mouse_position.y < candle_div_height + vol_div_height + ind_div_height{
 				right_text = to_fixed(get_chart_value(chart, chart.m_mouse_position.clone()), chart.m_ind_digit);
 			}
 
 			let mut draw_y = chart.m_mouse_position.y;
-			if(draw_y > chart.m_view.m_size.cy - chart.m_hscale_height){
+			if draw_y > chart.m_view.m_size.cy - chart.m_hscale_height{
 				draw_y = chart.m_view.m_size.cy - chart.m_hscale_height;
 			}
 			let t_size = M_PAINT.lock().unwrap().text_size(&context, right_text.clone(), chart.m_font.clone());
-			if(chart.m_left_vscale_width > 0.0){
+			if chart.m_left_vscale_width > 0.0{
 				M_PAINT.lock().unwrap().fill_rect(&context, chart.m_cross_tip_color.clone(), chart.m_left_vscale_width - t_size.cx, draw_y - t_size.cy / 2.0 - 4.0, chart.m_left_vscale_width, draw_y + t_size.cy / 2.0 + 3.0);
 				M_PAINT.lock().unwrap().draw_text(&context, right_text.clone(), chart.m_text_color.clone(), chart.m_font.clone(), chart.m_left_vscale_width - t_size.cx, draw_y);
 			}
-			if(chart.m_right_vscale_width > 0.0){
+			if chart.m_right_vscale_width > 0.0{
 				M_PAINT.lock().unwrap().fill_rect(&context, chart.m_cross_tip_color.clone(), chart.m_view.m_size.cx - chart.m_right_vscale_width, draw_y - t_size.cy / 2.0 - 4.0, chart.m_view.m_size.cx - chart.m_right_vscale_width + t_size.cx, draw_y + t_size.cy / 2.0 + 3.0);
 				M_PAINT.lock().unwrap().draw_text(&context, right_text.clone(), chart.m_text_color.clone(), chart.m_font.clone(), chart.m_view.m_size.cx - chart.m_right_vscale_width, draw_y);
 			}
 			let mut draw_x = chart.m_mouse_position.x;
-			if(draw_x < chart.m_left_vscale_width){
+			if draw_x < chart.m_left_vscale_width{
 				draw_x = chart.m_left_vscale_width;
 			}
-			if(draw_x > chart.m_view.m_size.cx - chart.m_right_vscale_width){
+			if draw_x > chart.m_view.m_size.cx - chart.m_right_vscale_width{
 				draw_x = chart.m_view.m_size.cx - chart.m_right_vscale_width;
 			}
 			M_PAINT.lock().unwrap().draw_line(&context, chart.m_cross_line_color.clone(), chart.m_line_width, Vec::new(), chart.m_left_vscale_width, draw_y, chart.m_view.m_size.cx - chart.m_right_vscale_width, draw_y);
 			M_PAINT.lock().unwrap().draw_line(&context, chart.m_cross_line_color.clone(), chart.m_line_width, Vec::new(), draw_x, 0.0, draw_x, chart.m_view.m_size.cy - chart.m_hscale_height);
 	        
-			if (chart.m_cross_stop_index != -1){
+			if chart.m_cross_stop_index != -1{
 				let x_text = chart.m_data[chart.m_cross_stop_index as usize].m_date.to_string();
 				let x_size = M_PAINT.lock().unwrap().text_size(&context, x_text.clone(), chart.m_font.clone());
 				M_PAINT.lock().unwrap().fill_rect(&context, chart.m_cross_tip_color.clone(), draw_x - x_size.cx / 2.0 - 2.0, candle_div_height + vol_div_height + ind_div_height, draw_x + x_size.cx / 2.0 + 2.0, candle_div_height + vol_div_height + ind_div_height + x_size.cy + 6.0);
