@@ -94,7 +94,7 @@ pub fn on_paint(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>, view:FC
 			}
 		}	
 	}
-	else if view.m_type == "tab" || view.m_type == "tabpage" || view.m_type == "layout"{
+	else if view.m_type == "tab" || view.m_type == "tabpage" || view.m_type == "layout" || view.m_type == "div"{
 		let mut cview = view.clone();
 		draw_div(&context, &mut cview, clip_rect.clone());
 	}
@@ -703,6 +703,7 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 	}
 	let node_value = element.node_value();
 	let node_attributes = element.attributes();
+	let mut isDiv:bool = true;
 	for i in 0..node_attributes.length(){
 		let attribute = node_attributes.item(i).expect("REASON");
 		let atr_name = attribute.name().to_lowercase();
@@ -710,6 +711,7 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 		set_view_attribute(&mut view, atr_name.clone(), atr_value.clone());
 		if node_name == "div" || node_name == "view"{
 			if atr_name == "type"{
+				isDiv = false;
 				if atr_value == "splitlayout"{
 					view.m_type = "split".to_string();
 				}
@@ -750,6 +752,12 @@ pub fn read_xml_node(element:&std::rc::Rc<web_sys::Element>, parent:&mut FCView)
 				}
 			}
 		}
+	}
+	if isDiv {
+		view.m_type = "div".to_string();
+		view.m_show_vscrollbar = true;
+		view.m_show_hscrollbar = true;
+		view.m_allow_drag_scroll = true;
 	}
 	if node_name == "chart"{
 		view.m_type = "chart".to_string();
@@ -2293,7 +2301,7 @@ pub fn start() -> Result<(), JsValue> {
 		calc_chart_indicator(&mut chart);
 		M_CHART_MAP.lock().unwrap().insert(chart_view.m_id, chart.clone());
 	}else if rustMode == 1{
-		let xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<html xmlns=\"facecat\">\r\n  <head>\r\n  </head>\r\n  <body>\r\n    <div type=\"splitlayout\" layoutstyle=\"lefttoright\" bordercolor=\"none\" dock=\"fill\" size=\"400,400\" candragsplitter=\"true\" splitmode=\"percentsize\" splittervisible=\"true\" splitter-bordercolor=\"-200000000105\" splitterposition=\"200,10\">\r\n      <div name=\"div1\" backcolor=\"rgb(59,174,218)\" />\r\n      <div name=\"div2\" backcolor=\"rgb(150,123,220)\" />\r\n    </div>\r\n  </body>\r\n</html>".to_string();
+		let xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<html xmlns=\"facecat\">\r\n  <head>\r\n</head>\r\n  <body>\r\n    <div type=\"splitlayout\" layoutstyle=\"lefttoright\" bordercolor=\"none\" dock=\"fill\" size=\"400,400\" candragsplitter=\"true\" splittervisible=\"true\" splitterposition=\"200,5\">\r\n      <div name=\"div1\" backcolor=\"rgb(216,112,173)\"/>\r\n      <div name=\"div2\" backcolor=\"rgb(75,137,220)\"/>\r\n    </div>\r\n  </body>\r\n</html>\r\n".to_string();
 		let dom_parse = DomParser::new();
 		let s_type = SupportedType::TextXml;
 		let xml_doc = dom_parse?.parse_from_string(&xml, s_type);

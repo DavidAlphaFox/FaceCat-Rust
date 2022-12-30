@@ -670,6 +670,7 @@ pub fn touch_move(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pres
 						if parentView.m_type == "split"{
 							for (id, v) in M_SPLIT_MAP.lock().unwrap().iter_mut(){
 								if parentView.m_id == *id{
+									(*v).m_splitter = dragging_view.clone();
 									reset_split_layout_div(&mut *v);
 								}
 							}
@@ -809,6 +810,7 @@ pub fn mouse_move(context: &std::rc::Rc<web_sys::CanvasRenderingContext2d>, pres
 						if parentView.m_type == "split"{
 							for (id, v) in M_SPLIT_MAP.lock().unwrap().iter_mut(){
 								if parentView.m_id == *id{
+									(*v).m_splitter = dragging_view.clone();
 									reset_split_layout_div(&mut *v);
 								}
 							}
