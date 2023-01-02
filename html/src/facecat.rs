@@ -1015,13 +1015,13 @@ pub fn find_view(mp:FCPoint, views:Vec<FCView>)->FCView{
 		let view = &views[views_size - i - 1];
 		if view.m_visible && view.m_top_most {
 			if contains_point(view.clone(), mp.clone()) {
-			    if view.m_show_hscrollbar && view.m_scroll_size > 0.0{
+			    if view.m_show_vscrollbar && view.m_scroll_size > 0.0{
 			        let clx = client_x(view.clone());
 	                if mp.x >= clx + view.m_size.cx - view.m_scroll_size{
 	                    return view.clone();
 	                }
 			    }
-			    if view.m_show_vscrollbar && view.m_scroll_size > 0.0{
+			    if view.m_show_hscrollbar && view.m_scroll_size > 0.0{
 			        let cly = client_y(view.clone());
 	                if mp.y >= cly + view.m_size.cy - view.m_scroll_size{
 	                    return view.clone();
@@ -1043,13 +1043,13 @@ pub fn find_view(mp:FCPoint, views:Vec<FCView>)->FCView{
 		let view = &views[views_size - i - 1];
 		if view.m_visible && !view.m_top_most {
 			if contains_point(view.clone(), mp.clone()){
-			    if view.m_show_hscrollbar && view.m_scroll_size > 0.0{
+			    if view.m_show_vscrollbar && view.m_scroll_size > 0.0{
 			        let clx = client_x(view.clone());
 	                if mp.x >= clx + view.m_size.cx - view.m_scroll_size{
 	                    return view.clone();
 	                }
 			    }
-			    if view.m_show_vscrollbar && view.m_scroll_size > 0.0{
+			    if view.m_show_hscrollbar && view.m_scroll_size > 0.0{
 			        let cly = client_y(view.clone());
 	                if mp.y >= cly + view.m_size.cy - view.m_scroll_size{
 	                    return view.clone();

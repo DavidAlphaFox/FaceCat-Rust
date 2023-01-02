@@ -400,7 +400,7 @@ pub fn mouse_down_grid(grid:&mut FCGrid, first_touch:bool, second_touch:bool, fi
 	    let content_height = get_grid_content_height(grid);
 		if content_height > grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size {
 			let s_top = grid.m_header_height + grid.m_view.m_scroll_v / content_height * (grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size);
-			let mut s_bottom  = (grid.m_view.m_scroll_v + (grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size)) / content_height * (grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size);
+			let mut s_bottom  = grid.m_header_height + (grid.m_view.m_scroll_v + (grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size)) / content_height * (grid.m_view.m_size.cy - grid.m_header_height - grid.m_view.m_scroll_size);
 			if s_bottom  - s_top < grid.m_view.m_scroll_size {
 				s_bottom  = s_top + grid.m_view.m_scroll_size;
 			}

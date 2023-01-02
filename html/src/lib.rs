@@ -1018,7 +1018,7 @@ pub fn set_split_attribute(split:&mut FCSplitLayoutDiv, name:String, value:Strin
 	if name == "layoutstyle"{
 		split.m_layout_style = value.to_lowercase();
 	}else if name == "splitmode"{
-		split.m_split_mode = value;
+		split.m_split_mode = value.to_lowercase();
 	}
 }
 
