@@ -1593,6 +1593,23 @@ pub fn calculate_chart_max_min(chart:&mut FCChart){
         }
         chart.m_candle_max = first_open + sub_max;
         chart.m_candle_min = first_open - sub_max;
+    }else{
+        if (chart.m_candle_max == 0.0 && chart.m_candle_min == 0.0) {
+            chart.m_candle_max = 1.0;
+            chart.m_candle_min = -1.0;
+        }
+        if (chart.m_vol_max == 0.0 && chart.m_vol_min == 0.0) {
+            chart.m_vol_max = 1.0;
+            chart.m_vol_min = -1.0;
+        }
+        if (chart.m_ind_max == 0.0 && chart.m_ind_min == 0.0) {
+            chart.m_ind_max = 1.0;
+            chart.m_ind_min = -1.0;
+        }
+        if (chart.m_ind_max2 == 0.0 && chart.m_ind_min2 == 0.0) {
+            chart.m_ind_max2 = 1.0;
+            chart.m_ind_min2 = -1.0;
+        }
     }
 }
 
