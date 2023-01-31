@@ -962,65 +962,67 @@ pub fn get_candle_div_value(chart:&mut FCChart, point:FCPoint)->f64{
 }
 
 pub fn select_lines(chart:&mut FCChart, mp:FCPoint, div_index:i32, datas:Vec<f64>, cur_index:i32)->bool{
-	let top_y = get_chart_y(chart, div_index, datas[cur_index as usize]);
-    if chart.m_hscale_pixel <= 1.0 {
-        if mp.y >= top_y - 8.0 && mp.y <= top_y + 8.0 {
-            return true;
-        }
-    } else {
-        let index = cur_index;
-        let scale_x = get_chart_x(chart, index);
-        let mut judge_top = 0.0;
-        let mut judge_scale_x = scale_x;
-        if mp.x >= scale_x {
-            let left_index = cur_index + 1;
-            if cur_index < chart.m_last_visible_index {
-                let right_value = datas[left_index as usize];
-                judge_top = get_chart_y(chart, div_index, right_value);
+    if(datas.len() > 0){
+	    let top_y = get_chart_y(chart, div_index, datas[cur_index as usize]);
+        if chart.m_hscale_pixel <= 1.0 {
+            if mp.y >= top_y - 8.0 && mp.y <= top_y + 8.0 {
+                return true;
+            }
+        } else {
+            let index = cur_index;
+            let scale_x = get_chart_x(chart, index);
+            let mut judge_top = 0.0;
+            let mut judge_scale_x = scale_x;
+            if mp.x >= scale_x {
+                let left_index = cur_index + 1;
+                if cur_index < chart.m_last_visible_index {
+                    let right_value = datas[left_index as usize];
+                    judge_top = get_chart_y(chart, div_index, right_value);
+                }
+                else {
+                    judge_top = top_y;
+                }
             }
             else {
-                judge_top = top_y;
+                judge_scale_x = scale_x - chart.m_hscale_pixel;
+                let right_index = cur_index - 1;
+                if cur_index > 0 {
+                    let left_value = datas[right_index as usize];
+                    judge_top = get_chart_y(chart, div_index, left_value);
+                }else {
+                    judge_top = top_y;
+                }
             }
-        }
-        else {
-            judge_scale_x = scale_x - chart.m_hscale_pixel;
-            let right_index = cur_index - 1;
-            if cur_index > 0 {
-                let left_value = datas[right_index as usize];
-                judge_top = get_chart_y(chart, div_index, left_value);
-            }else {
-                judge_top = top_y;
+            let line_width : f32 = 4.0;
+            let mut judge_x : f32 = 0.0;
+            let mut judge_y : f32 = 0.0;
+            let mut judge_w : f32 = 0.0;
+            let mut judge_h : f32 = 0.0;
+            if judge_top >= top_y {
+                judge_x = judge_scale_x;
+                judge_y = top_y - 2.0 - line_width;
+                judge_w = chart.m_hscale_pixel;
+                if judge_top - top_y + line_width < 4.0{
+				    judge_h = 4.0;
+                }else{
+				    judge_h = judge_top - top_y + 4.0 + line_width;
+                }
             }
-        }
-        let line_width : f32 = 4.0;
-        let mut judge_x : f32 = 0.0;
-        let mut judge_y : f32 = 0.0;
-        let mut judge_w : f32 = 0.0;
-        let mut judge_h : f32 = 0.0;
-        if judge_top >= top_y {
-            judge_x = judge_scale_x;
-            judge_y = top_y - 2.0 - line_width;
-            judge_w = chart.m_hscale_pixel;
-            if judge_top - top_y + line_width < 4.0{
-				judge_h = 4.0;
-            }else{
-				judge_h = judge_top - top_y + 4.0 + line_width;
+            else {
+                judge_x = judge_scale_x;
+                judge_y = judge_top - 2.0 - line_width / 2.0;
+                judge_w = chart.m_hscale_pixel;
+                if top_y - judge_top + line_width < 4.0{
+				    judge_h = 4.0;
+                }else{
+				    judge_h = top_y - judge_top + 4.0 + line_width;
+                }
             }
-        }
-        else {
-            judge_x = judge_scale_x;
-            judge_y = judge_top - 2.0 - line_width / 2.0;
-            judge_w = chart.m_hscale_pixel;
-            if top_y - judge_top + line_width < 4.0{
-				judge_h = 4.0;
-            }else{
-				judge_h = top_y - judge_top + 4.0 + line_width;
-            }
-        }
        
-        if mp.x >= judge_x && mp.x <= judge_x + judge_w && mp.y >= judge_y && mp.y <= judge_y + judge_h {
+            if mp.x >= judge_x && mp.x <= judge_x + judge_w && mp.y >= judge_y && mp.y <= judge_y + judge_h {
            
-            return true;
+                return true;
+            }
         }
     }
     return false;
@@ -3758,12 +3760,36 @@ pub fn draw_chart_cross_line(context:&std::rc::Rc<web_sys::CanvasRenderingContex
 			let mut draw_titles = Vec::new();
 			let mut draw_colors = Vec::new();
 			if chart.m_main_indicator == "MA" {
-				draw_titles.push("MA5 ".to_string() + &to_fixed(chart.m_ma5[cross_line_index as usize], chart.m_candle_digit));
-				draw_titles.push("MA10 ".to_string() + &to_fixed(chart.m_ma10[cross_line_index as usize], chart.m_candle_digit));
-				draw_titles.push("MA20 ".to_string() + &to_fixed(chart.m_ma20[cross_line_index as usize], chart.m_candle_digit));
-				draw_titles.push("MA30 ".to_string() + &to_fixed(chart.m_ma30[cross_line_index as usize], chart.m_candle_digit));
-				draw_titles.push("MA120 ".to_string() + &to_fixed(chart.m_ma120[cross_line_index as usize], chart.m_candle_digit));
-				draw_titles.push("MA250 ".to_string() + &to_fixed(chart.m_ma250[cross_line_index as usize], chart.m_candle_digit));
+                if(chart.m_ma5.len() > 0){
+				    draw_titles.push("MA5 ".to_string() + &to_fixed(chart.m_ma5[cross_line_index as usize], chart.m_candle_digit));
+                }else{
+                    draw_titles.push("MA5".to_string());
+                }
+                 if(chart.m_ma10.len() > 0){
+				    draw_titles.push("MA10 ".to_string() + &to_fixed(chart.m_ma10[cross_line_index as usize], chart.m_candle_digit));
+                 }else{
+                     draw_titles.push("MA10".to_string());
+                 }
+                 if(chart.m_ma20.len() > 0){
+				    draw_titles.push("MA20 ".to_string() + &to_fixed(chart.m_ma20[cross_line_index as usize], chart.m_candle_digit));
+                 }else{
+                     draw_titles.push("MA20".to_string());
+                 }
+                 if(chart.m_ma30.len() > 0){
+				    draw_titles.push("MA30 ".to_string() + &to_fixed(chart.m_ma30[cross_line_index as usize], chart.m_candle_digit));
+                 }else{
+                     draw_titles.push("MA30".to_string());
+                 }
+                 if(chart.m_ma120.len() > 0){
+				    draw_titles.push("MA120 ".to_string() + &to_fixed(chart.m_ma120[cross_line_index as usize], chart.m_candle_digit));
+                 }else{
+                     draw_titles.push("MA120".to_string());
+                 }
+                 if(chart.m_ma250.len() > 0){
+				    draw_titles.push("MA250 ".to_string() + &to_fixed(chart.m_ma250[cross_line_index as usize], chart.m_candle_digit));
+                 }else{
+                     draw_titles.push("MA250".to_string());
+                 }
 				draw_colors.push(chart.m_indicator_colors[0].clone());
 				draw_colors.push(chart.m_indicator_colors[1].clone());
 				draw_colors.push(chart.m_indicator_colors[2].clone());
@@ -3771,9 +3797,21 @@ pub fn draw_chart_cross_line(context:&std::rc::Rc<web_sys::CanvasRenderingContex
 				draw_colors.push(chart.m_indicator_colors[4].clone());
 				draw_colors.push(chart.m_indicator_colors[3].clone());
 			} else if chart.m_main_indicator == "BOLL" {
-				draw_titles.push("MID ".to_string() + &to_fixed(chart.m_boll_mid[cross_line_index as usize], chart.m_candle_digit));
-				draw_titles.push("UP ".to_string() + &to_fixed(chart.m_boll_up[cross_line_index as usize], chart.m_candle_digit));
-				draw_titles.push("LOW ".to_string() + &to_fixed(chart.m_boll_down[cross_line_index as usize], chart.m_candle_digit));
+                if(chart.m_boll_mid.len() > 0){
+				    draw_titles.push("MID ".to_string() + &to_fixed(chart.m_boll_mid[cross_line_index as usize], chart.m_candle_digit));
+                }else{
+                    draw_titles.push("MID".to_string());
+                }
+                if(chart.m_boll_up.len() > 0){
+				    draw_titles.push("UP ".to_string() + &to_fixed(chart.m_boll_up[cross_line_index as usize], chart.m_candle_digit));
+                }else{
+                    draw_titles.push("UP".to_string());
+                }
+                if(chart.m_boll_down.len() > 0){
+				    draw_titles.push("LOW ".to_string() + &to_fixed(chart.m_boll_down[cross_line_index as usize], chart.m_candle_digit));
+                }else{
+                    draw_titles.push("LOW".to_string());
+                }
 				draw_colors.push(chart.m_indicator_colors[0].clone());
 				draw_colors.push(chart.m_indicator_colors[1].clone());
 				draw_colors.push(chart.m_indicator_colors[2].clone());
@@ -3789,59 +3827,147 @@ pub fn draw_chart_cross_line(context:&std::rc::Rc<web_sys::CanvasRenderingContex
 			let mut draw_titles = Vec::new();
 			let mut draw_colors = Vec::new();
 			if chart.m_show_indicator == "MACD" {
-				draw_titles.push("DIF ".to_string() + &to_fixed(chart.m_alldifarr[cross_line_index as usize], chart.m_ind_digit));
-				draw_titles.push("DEA ".to_string() + &to_fixed(chart.m_alldeaarr[cross_line_index as usize], chart.m_ind_digit));
-				draw_titles.push("MACD ".to_string() + &to_fixed(chart.m_allmacdarr[cross_line_index as usize], chart.m_ind_digit));
+                if(chart.m_alldifarr.len() > 0){
+				    draw_titles.push("DIF ".to_string() + &to_fixed(chart.m_alldifarr[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("DIF".to_string());
+                }
+                if(chart.m_alldeaarr.len() > 0){
+				    draw_titles.push("DEA ".to_string() + &to_fixed(chart.m_alldeaarr[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("DEA".to_string());
+                }
+                if(chart.m_allmacdarr.len() > 0){
+				    draw_titles.push("MACD ".to_string() + &to_fixed(chart.m_allmacdarr[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("MACD".to_string());
+                }
 				draw_colors.push(chart.m_indicator_colors[0].clone());
 				draw_colors.push(chart.m_indicator_colors[1].clone());
 				draw_colors.push(chart.m_indicator_colors[4].clone());
 			}else if chart.m_show_indicator == "KDJ" {
-				draw_titles.push("K ".to_string() + &to_fixed(chart.m_kdj_k[cross_line_index as usize], chart.m_ind_digit));
-				draw_titles.push("D ".to_string() + &to_fixed(chart.m_kdj_d[cross_line_index as usize], chart.m_ind_digit));
-				draw_titles.push("J ".to_string() + &to_fixed(chart.m_kdj_j[cross_line_index as usize], chart.m_ind_digit));
+                if(chart.m_kdj_k.len() > 0){
+				    draw_titles.push("K ".to_string() + &to_fixed(chart.m_kdj_k[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("K".to_string());
+                }
+                if(chart.m_kdj_d.len() > 0){
+				    draw_titles.push("D ".to_string() + &to_fixed(chart.m_kdj_d[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("D".to_string());
+                }
+                if(chart.m_kdj_j.len() > 0){
+				    draw_titles.push("J ".to_string() + &to_fixed(chart.m_kdj_j[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("J".to_string());
+                }
 				draw_colors.push(chart.m_indicator_colors[0].clone());
 				draw_colors.push(chart.m_indicator_colors[1].clone());
 				draw_colors.push(chart.m_indicator_colors[2].clone());
 			}else if chart.m_show_indicator == "RSI" {
-				draw_titles.push("RSI6 ".to_string() + &to_fixed(chart.m_rsi1[cross_line_index as usize], chart.m_ind_digit));
-				draw_titles.push("RSI12 ".to_string() + &to_fixed(chart.m_rsi2[cross_line_index as usize], chart.m_ind_digit));
-				draw_titles.push("RSI24 ".to_string() + &to_fixed(chart.m_rsi3[cross_line_index as usize], chart.m_ind_digit));
+                if(chart.m_rsi1.len() > 0){
+				    draw_titles.push("RSI6 ".to_string() + &to_fixed(chart.m_rsi1[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("RSI6".to_string());
+                }
+                if(chart.m_rsi2.len() > 0){
+				    draw_titles.push("RSI12 ".to_string() + &to_fixed(chart.m_rsi2[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("RSI12".to_string());
+                }
+                if(chart.m_rsi3.len() > 0){
+				    draw_titles.push("RSI24 ".to_string() + &to_fixed(chart.m_rsi3[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("RSI24".to_string());
+                }
 				draw_colors.push(chart.m_indicator_colors[5].clone());
 				draw_colors.push(chart.m_indicator_colors[1].clone());
 				draw_colors.push(chart.m_indicator_colors[2].clone());
 			}
 			else if chart.m_show_indicator == "BIAS" {
-				draw_titles.push("BIAS6 ".to_string() + &to_fixed(chart.m_bias1[cross_line_index as usize], chart.m_ind_digit));
-				draw_titles.push("BIAS12 ".to_string() + &to_fixed(chart.m_bias2[cross_line_index as usize], chart.m_ind_digit));
-				draw_titles.push("BIAS24 ".to_string() + &to_fixed(chart.m_bias3[cross_line_index as usize], chart.m_ind_digit));
+                if(chart.m_bias1.len() > 0){
+				    draw_titles.push("BIAS6 ".to_string() + &to_fixed(chart.m_bias1[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("BIAS6".to_string());
+                }
+                if(chart.m_bias2.len() > 0){
+				    draw_titles.push("BIAS12 ".to_string() + &to_fixed(chart.m_bias2[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("BIAS12".to_string());
+                }
+                if(chart.m_bias3.len() > 0){
+				    draw_titles.push("BIAS24 ".to_string() + &to_fixed(chart.m_bias3[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("BIAS24".to_string());
+                }
 				draw_colors.push(chart.m_indicator_colors[5].clone());
 				draw_colors.push(chart.m_indicator_colors[1].clone());
 				draw_colors.push(chart.m_indicator_colors[2].clone());
 			}
 			else if chart.m_show_indicator == "ROC" {
-				draw_titles.push("ROC ".to_string() + &to_fixed(chart.m_roc[cross_line_index as usize], chart.m_ind_digit));
-				draw_titles.push("ROCMA ".to_string() + &to_fixed(chart.m_roc_ma[cross_line_index as usize], chart.m_ind_digit));
+                if(chart.m_roc.len() > 0){
+				    draw_titles.push("ROC ".to_string() + &to_fixed(chart.m_roc[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("ROC".to_string());
+                }
+                if(chart.m_roc_ma.len() > 0){
+				    draw_titles.push("ROCMA ".to_string() + &to_fixed(chart.m_roc_ma[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("ROCMA".to_string());
+                }
 				draw_colors.push(chart.m_indicator_colors[0].clone());
 				draw_colors.push(chart.m_indicator_colors[1].clone());
 			}else if chart.m_show_indicator == "WR" {
-				draw_titles.push("WR5 ".to_string() + &to_fixed(chart.m_wr1[cross_line_index as usize], chart.m_ind_digit));
-				draw_titles.push("WR10 ".to_string() + &to_fixed(chart.m_wr2[cross_line_index as usize], chart.m_ind_digit));
+                if(chart.m_wr1.len() > 0){
+				    draw_titles.push("WR5 ".to_string() + &to_fixed(chart.m_wr1[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("WR5".to_string());
+                }
+                if(chart.m_wr2.len() > 0){
+				    draw_titles.push("WR10 ".to_string() + &to_fixed(chart.m_wr2[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("WR10".to_string());
+                }
 				draw_colors.push(chart.m_indicator_colors[0].clone());
 				draw_colors.push(chart.m_indicator_colors[1].clone());
 			}else if chart.m_show_indicator == "CCI" {
-				draw_titles.push("CCI ".to_string() + &to_fixed(chart.m_cci[cross_line_index as usize], chart.m_ind_digit));
+                if(chart.m_cci.len() > 0){
+				    draw_titles.push("CCI ".to_string() + &to_fixed(chart.m_cci[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("CCI".to_string());
+                }
 				draw_colors.push(chart.m_indicator_colors[0].clone());
 			}else if chart.m_show_indicator == "BBI" {
-				draw_titles.push("BBI ".to_string() + &to_fixed(chart.m_bbi[cross_line_index as usize], chart.m_ind_digit));
+                if(chart.m_bbi.len() > 0){
+				    draw_titles.push("BBI ".to_string() + &to_fixed(chart.m_bbi[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("BBI".to_string());
+                }
 				draw_colors.push(chart.m_indicator_colors[0].clone());
 			}else if chart.m_show_indicator == "TRIX" {
-				draw_titles.push("TRIX ".to_string() + &to_fixed(chart.m_trix[cross_line_index as usize], chart.m_ind_digit));
-				draw_titles.push("TRIXMA ".to_string() + &to_fixed(chart.m_trix_ma[cross_line_index as usize], chart.m_ind_digit));
+                if(chart.m_trix.len() > 0){
+				    draw_titles.push("TRIX ".to_string() + &to_fixed(chart.m_trix[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("TRIX".to_string());
+                }
+                if(chart.m_trix_ma.len() > 0){
+				    draw_titles.push("TRIXMA ".to_string() + &to_fixed(chart.m_trix_ma[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("TRIXMA".to_string());
+                }
 				draw_colors.push(chart.m_indicator_colors[0].clone());
 				draw_colors.push(chart.m_indicator_colors[1].clone());
 			}else if chart.m_show_indicator == "DMA" {
-				draw_titles.push("MA10 ".to_string() + &to_fixed(chart.m_dma1[cross_line_index as usize], chart.m_ind_digit));
-				draw_titles.push("MA50 ".to_string() + &to_fixed(chart.m_dma2[cross_line_index as usize], chart.m_ind_digit));
+                if(chart.m_dma1.len() > 0){
+				    draw_titles.push("MA10 ".to_string() + &to_fixed(chart.m_dma1[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("MA10".to_string());
+                }
+                if(chart.m_dma2.len() > 0){
+				    draw_titles.push("MA50 ".to_string() + &to_fixed(chart.m_dma2[cross_line_index as usize], chart.m_ind_digit));
+                }else{
+                    draw_titles.push("MA50".to_string());
+                }
 				draw_colors.push(chart.m_indicator_colors[0].clone());
 				draw_colors.push(chart.m_indicator_colors[1].clone());
 			}
