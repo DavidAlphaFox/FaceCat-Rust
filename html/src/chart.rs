@@ -1825,7 +1825,7 @@ pub fn zoom_out_chart(chart:&mut FCChart){
         let data_count = chart.m_data.len() as i32;
         let mut findex = chart.m_first_visible_index;
         let mut lindex = chart.m_last_visible_index;
-        if h_scale_pixel < 30.0 {
+        if h_scale_pixel < pure_h {
             ori_max = get_max_visible_count(chart, h_scale_pixel, pure_h);
             if data_count < ori_max {
                 deal = 1;
@@ -2855,6 +2855,66 @@ pub fn draw_chart_stock(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
             let close_y = get_chart_y(chart, 0, close);
             let high_y = get_chart_y(chart, 0, high);
             let low_y = get_chart_y(chart, 0, low);
+            if close >= open{
+                if is_trend{
+                }else{
+                    M_PAINT.lock().unwrap().draw_line(&context, chart.m_up_color.clone(), chart.m_line_width, Vec::new(), x, high_y, x, low_y);
+                    if c_width > 0.0{
+                        if close == open{
+                            M_PAINT.lock().unwrap().draw_line(&context, chart.m_up_color.clone(), chart.m_line_width, Vec::new(), x - c_width, close_y, x + c_width, close_y);
+                        }
+                        else{
+                            M_PAINT.lock().unwrap().fill_rect(&context, chart.m_up_color.clone(), x - c_width, close_y, x + c_width, open_y);
+                        }
+                    }
+                }
+            }else{
+                if is_trend{
+                }else{
+                    M_PAINT.lock().unwrap().draw_line(&context, chart.m_down_color.clone(), chart.m_line_width, Vec::new(), x, high_y, x, low_y);
+                    if c_width > 0.0{
+                        M_PAINT.lock().unwrap().fill_rect(&context, chart.m_down_color.clone(), x - c_width, open_y, x + c_width, close_y);
+                    }
+                }
+            }
+            if chart.m_select_shape == "CANDLE" {
+                let mut kp_interval = max_visible_record / 30;
+                if kp_interval < 2 {
+                    kp_interval = 3;
+                }
+                if i % kp_interval == 0{
+                    if is_trend {
+                    } else {
+                        M_PAINT.lock().unwrap().fill_rect(&context, chart.m_indicator_colors[0].clone(), x - 3.0, close_y - 3.0, x + 3.0, close_y + 3.0);
+                    }
+                }
+            } 
+            if !is_trend{
+                if !has_max_tag{
+                    if high == chart.m_candle_max{
+                        let tag = to_fixed(high, chart.m_candle_digit);
+                        let t_size = M_PAINT.lock().unwrap().text_size(&context, tag.clone(), chart.m_font.clone());
+                        M_PAINT.lock().unwrap().draw_text(&context, tag.clone(), chart.m_text_color.clone(), chart.m_font.clone(), x - t_size.cx / 2.0, high_y - t_size.cy / 2.0 - 2.0);
+                        has_max_tag = true;
+                    }
+                }
+                if !has_min_tag{
+                    if low == chart.m_candle_min{
+                        let tag = to_fixed(low, chart.m_candle_digit);
+                        let t_size = M_PAINT.lock().unwrap().text_size(&context, tag.clone(), chart.m_font.clone());
+                        M_PAINT.lock().unwrap().draw_text(&context, tag.clone(), chart.m_text_color.clone(), chart.m_font.clone(), x - t_size.cx / 2.0, low_y + 2.0 + t_size.cy / 2.0);
+                        has_min_tag = true;
+                    }
+                }
+            }
+        }
+         for i in chart.m_first_visible_index..(chart.m_last_visible_index + 1){
+            let x = get_chart_x(chart, i);
+            let iu = i as usize;
+            let open = chart.m_data[iu].m_open;
+            let close = chart.m_data[iu].m_close;
+            let open_y = get_chart_y(chart, 0, open);
+            let close_y = get_chart_y(chart, 0, close);
             let mut vol_y = 0.0;
             let mut zero_y = 0.0;
             if vol_height > 0.0{
@@ -2868,14 +2928,7 @@ pub fn draw_chart_stock(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
                         M_PAINT.lock().unwrap().draw_line(&context, chart.m_indicator_colors[6].clone(), chart.m_line_width, Vec::new(), x, vol_y, x, zero_y);
                     }
                 }else{
-                    M_PAINT.lock().unwrap().draw_line(&context, chart.m_up_color.clone(), chart.m_line_width, Vec::new(), x, high_y, x, low_y);
                     if c_width > 0.0{
-                        if close == open{
-                            M_PAINT.lock().unwrap().draw_line(&context, chart.m_up_color.clone(), chart.m_line_width, Vec::new(), x - c_width, close_y, x + c_width, close_y);
-                        }
-                        else{
-                            M_PAINT.lock().unwrap().fill_rect(&context, chart.m_up_color.clone(), x - c_width, close_y, x + c_width, open_y);
-                        }
                         if vol_height > 0.0{
                             M_PAINT.lock().unwrap().fill_rect(&context, chart.m_up_color.clone(), x - c_width, vol_y, x + c_width, zero_y);
                         }
@@ -2893,9 +2946,7 @@ pub fn draw_chart_stock(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
                         M_PAINT.lock().unwrap().draw_line(&context, chart.m_indicator_colors[6].clone(), chart.m_line_width, Vec::new(), x, vol_y, x, zero_y);
                     }
                 }else{
-                    M_PAINT.lock().unwrap().draw_line(&context, chart.m_down_color.clone(), chart.m_line_width, Vec::new(), x, high_y, x, low_y);
                     if c_width > 0.0{
-                        M_PAINT.lock().unwrap().fill_rect(&context, chart.m_down_color.clone(), x - c_width, open_y, x + c_width, close_y);
                         if vol_height > 0.0{
                             M_PAINT.lock().unwrap().fill_rect(&context, chart.m_down_color.clone(), x - c_width, vol_y, x + c_width, zero_y);
                         }
@@ -2906,42 +2957,13 @@ pub fn draw_chart_stock(context:&std::rc::Rc<web_sys::CanvasRenderingContext2d>,
                     }
                 }
             }
-            if chart.m_select_shape == "CANDLE" {
-                let mut kp_interval = max_visible_record / 30;
-                if kp_interval < 2 {
-                    kp_interval = 3;
-                }
-                if i % kp_interval == 0{
-                    if is_trend {
-                    } else {
-                        M_PAINT.lock().unwrap().fill_rect(&context, chart.m_indicator_colors[0].clone(), x - 3.0, close_y - 3.0, x + 3.0, close_y + 3.0);
-                    }
-                }
-            } else if chart.m_select_shape == "VOL" {
+            if chart.m_select_shape == "VOL" {
                 let mut kp_interval = max_visible_record / 30;
                 if kp_interval < 2 {
                     kp_interval = 3;
                 }
                 if i % kp_interval == 0 {
                     M_PAINT.lock().unwrap().fill_rect(&context, chart.m_indicator_colors[0].clone(), x - 3.0, vol_y - 3.0, x + 3.0, vol_y + 3.0);
-                }
-            }
-            if !is_trend{
-                if !has_max_tag{
-                    if high == chart.m_candle_max{
-                        let tag = to_fixed(high, chart.m_candle_digit);
-                        let t_size = M_PAINT.lock().unwrap().text_size(&context, tag.clone(), chart.m_font.clone());
-                        M_PAINT.lock().unwrap().draw_text(&context, tag.clone(), chart.m_text_color.clone(), chart.m_font.clone(), x - t_size.cx / 2.0, high_y - t_size.cy / 2.0 - 2.0);
-                        has_max_tag = true;
-                    }
-                }
-                if !has_min_tag{
-                    if low == chart.m_candle_min{
-                        let tag = to_fixed(low, chart.m_candle_digit);
-                        let t_size = M_PAINT.lock().unwrap().text_size(&context, tag.clone(), chart.m_font.clone());
-                        M_PAINT.lock().unwrap().draw_text(&context, tag.clone(), chart.m_text_color.clone(), chart.m_font.clone(), x - t_size.cx / 2.0, low_y + 2.0 + t_size.cy / 2.0);
-                        has_min_tag = true;
-                    }
                 }
             }
         }
